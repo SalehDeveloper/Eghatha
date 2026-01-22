@@ -1,0 +1,6 @@
+@Eghatha.Api_HostAddress = http://localhost:5098
+
+GET {{Eghatha.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
