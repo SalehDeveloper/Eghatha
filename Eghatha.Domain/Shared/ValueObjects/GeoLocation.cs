@@ -22,7 +22,7 @@ namespace Eghatha.Domain.Shared.ValueObjects
         }
 
 
-        public ErrorOr<GeoLocation> Create ( double latitude, double longitude)
+        public static ErrorOr<GeoLocation> Create ( double latitude, double longitude)
         {
             if (latitude < -90 || latitude > 90)
                 Error.Validation(
