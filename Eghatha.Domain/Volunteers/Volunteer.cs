@@ -67,6 +67,8 @@ namespace Eghatha.Domain.Volunteers
             List<Equipment> equipments
             )
         {
+            if (id == Guid.Empty)
+                return DomainErrors.IdMustBeProvided;
             if (userId == Guid.Empty)
                 return DomainErrors.UserIdRequired;
 
