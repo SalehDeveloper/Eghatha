@@ -9,13 +9,13 @@ namespace Eghatha.Domain.Disasters
 {
     public class DisasterStatus : SmartEnum<DisasterStatus>
     { 
-        public static readonly DisasterStatus InProgress = new DisasterStatus(nameof(InProgress), 1);
+        public static readonly DisasterStatus Reported = new DisasterStatus(nameof(Reported), 1);
 
-        public static readonly DisasterStatus Resolved = new DisasterStatus(nameof(Resolved),2);
+        public static readonly DisasterStatus InProgress = new DisasterStatus(nameof(InProgress),2);
 
-        public static readonly DisasterStatus Closed = new DisasterStatus(nameof(Closed),3);
+        public static readonly DisasterStatus Resolved = new DisasterStatus(nameof(Resolved),3);
 
-        public static readonly DisasterStatus Reported = new DisasterStatus(nameof(Reported), 4);
+        public static readonly DisasterStatus Closed = new DisasterStatus(nameof(Closed), 4);
 
         public DisasterStatus(string name, int value) 
             : base(name, value)
