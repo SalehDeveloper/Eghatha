@@ -14,7 +14,7 @@ namespace Eghatha.Domain.Volunteers.Equipments
         public string Name { get; private set; }
         public EquipmentCategory Category { get; private set; }
 
-        public int Quantity { get; private set; }   
+        public int Quantity { get; private set; }
 
         public EquipmentStatus Status { get; private set; }
 
@@ -24,7 +24,7 @@ namespace Eghatha.Domain.Volunteers.Equipments
             string name,
             EquipmentCategory category,
             int quantity)
-            :base(id)
+            : base(id)
         {
             Name = name;
             Category = category;
@@ -39,7 +39,7 @@ namespace Eghatha.Domain.Volunteers.Equipments
             int quantity)
         {
             if (id == Guid.Empty)
-                return DomainErrors.IdMustBeProvided;
+                return DomainErrors.IdMustBeProvided(nameof(Equipment));
 
             if (string.IsNullOrWhiteSpace(name))
                 return EquipmentErrors.NameRequired;
@@ -52,16 +52,16 @@ namespace Eghatha.Domain.Volunteers.Equipments
 
             return new Equipment(id, name, category, quantity);
 
-             
+
         }
 
         public ErrorOr<Updated> Update(
-            string? name =null,
-            EquipmentCategory? category=null,
+            string? name = null,
+            EquipmentCategory? category = null,
             EquipmentStatus? status = null,
             int? quantity = null)
         {
-            
+
             if (name is not null && string.IsNullOrWhiteSpace(name))
                 return EquipmentErrors.NameRequired;
 
@@ -71,11 +71,11 @@ namespace Eghatha.Domain.Volunteers.Equipments
             if (status is not null && !VolunteerStatus.TryFromName(status.Name, out _))
                 return EquipmentErrors.InvalidStatus;
 
-            if ( quantity is not null && quantity <= 0)
+            if (quantity is not null && quantity <= 0)
                 return EquipmentErrors.QuantityShouldBeGreaterThanZero;
 
             Name = name ?? Name;
-            Status = status?? Status;
+            Status = status ?? Status;
             Category = category ?? Category;
             Quantity = quantity ?? Quantity;
 
@@ -85,7 +85,7 @@ namespace Eghatha.Domain.Volunteers.Equipments
 
         public ErrorOr<Updated> ChangeQuantity(int quantity)
         {
-            if (quantity<= 0)
+            if (quantity <= 0)
                 return EquipmentErrors.QuantityShouldBeGreaterThanZero;
 
             Quantity = quantity;
@@ -93,11 +93,11 @@ namespace Eghatha.Domain.Volunteers.Equipments
             return Result.Updated;
         }
 
-        public ErrorOr<Updated> UpdateStatus( EquipmentStatus status)
+        public ErrorOr<Updated> UpdateStatus(EquipmentStatus status)
         {
             if (!EquipmentStatus.TryFromName(status.Name, out _))
                 return EquipmentErrors.InvalidStatus;
-           
+
             Status = status;
             return Result.Updated;
         }
