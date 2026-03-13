@@ -68,7 +68,7 @@ namespace Eghatha.Domain.Volunteers
             )
         {
             if (id == Guid.Empty)
-                return DomainErrors.IdMustBeProvided;
+                return DomainErrors.IdMustBeProvided(nameof(Volunteer));
             if (userId == Guid.Empty)
                 return DomainErrors.UserIdRequired;
 
@@ -154,44 +154,45 @@ namespace Eghatha.Domain.Volunteers
             return Result.Updated;
         }
 
-        public ErrorOr<Updated> AssignEquipments(List<Equipment> equipments)
+        public ErrorOr<Updated> AssignEquipments(IEnumerable<(string name, EquipmentCategory category, int quantity)> equipments)
         {
             foreach (var equipment in equipments)
-            {  
-
-                var result = _AssignEquipment(equipment);
-                if (result.IsError)
+            {
+                if (_equipments.Any(e => e.Name.Equals(equipment.name, StringComparison.OrdinalIgnoreCase) && e.Category == equipment.category))
                     continue;
+
+                var newEquipment = Equipment.Create(
+                    Guid.NewGuid(),
+                    equipment.name,
+                    equipment.category,
+                    equipment.quantity
+                    );
+
+                if (newEquipment.IsError)
+                    return newEquipment.Errors;
+
+                _equipments.Add(newEquipment.Value);
+
 
             }
 
             return Result.Updated;
         }
-        private ErrorOr<Created> _AssignEquipment(Equipment equipment)
+
+        public ErrorOr<Updated> UpdateEquipments(IEnumerable<(Guid id, string name, EquipmentCategory category, EquipmentStatus status, int quantity)> equipments)
         {
-            if (equipment is null)
-                return VolunteerErrors.EquipmentRequired;
-
-            if (_equipments.Any(e => e.Name.Equals(equipment.Name , StringComparison.OrdinalIgnoreCase) && e.Category == equipment.Category))
-                return VolunteerErrors.EquipmentAlreadyAssigned;
-
-            _equipments.Add(equipment);
-
-            return Result.Created;
-        }
-
-        public ErrorOr<Updated> UpdateEquipments(List<Equipment> equipments)
-        {
-             foreach (var equipment in equipments)
+            foreach (var equipment in equipments)
             {
-               var existing = _equipments.FirstOrDefault(e => e.Id == equipment.Id);
+                var existing = _equipments.FirstOrDefault(e => e.Id == equipment.id);
+
                 if (existing is null)
                     continue;
+
                 var result = existing.Update(
-                    name: equipment.Name,
-                    category: equipment.Category,
-                    status: equipment.Status,
-                    quantity: equipment.Quantity
+                     equipment.name,
+                     equipment.category,
+                     equipment.status,
+                     equipment.quantity
                     );
 
                 if (result.IsError)
@@ -200,7 +201,6 @@ namespace Eghatha.Domain.Volunteers
 
             return Result.Updated;
         }
-
 
         public ErrorOr<Deleted> RemoveEquipment(Guid equipmentId)
         {
@@ -258,7 +258,7 @@ namespace Eghatha.Domain.Volunteers
         {
             if (score < 0)
                 return VolunteerErrors.ScoreMustBeGreaterThanZero;
-          
+
             TotalScore += score;
             return Result.Updated;
         }
