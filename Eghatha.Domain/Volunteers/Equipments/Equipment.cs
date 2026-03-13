@@ -39,7 +39,7 @@ namespace Eghatha.Domain.Volunteers.Equipments
             int quantity)
         {
             if (id == Guid.Empty)
-                return EquipmentErrors.IdRequired;
+                return DomainErrors.IdMustBeProvided;
 
             if (string.IsNullOrWhiteSpace(name))
                 return EquipmentErrors.NameRequired;
