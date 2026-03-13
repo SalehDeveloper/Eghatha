@@ -15,9 +15,9 @@ namespace Eghatha.Domain.Shared.Errors
             description: "UserId is required .");
 
 
-        public static readonly Error IdMustBeProvided = Error.Validation(
+        public static Error IdMustBeProvided(string entityName) => Error.Validation(
             code: "Entity.IdMustBeProvided",
-            description: "EntityId cannot be empty.");
+            description: $"{entityName} Id cannot be empty.");
 
 
     }
