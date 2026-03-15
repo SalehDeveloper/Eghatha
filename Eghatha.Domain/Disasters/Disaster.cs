@@ -230,10 +230,14 @@ namespace Eghatha.Domain.Disasters
         }
 
 
-        public ErrorOr<Updated> AssignResource(Guid resourceId, int quantitySent, DateTimeOffset assignedAt, string? notes = null)
+        public ErrorOr<Updated> AssignResource(Guid resourceId,Guid teamId ,  int quantitySent, DateTimeOffset assignedAt, string? notes = null)
         {
             if (resourceId == Guid.Empty)
                 return DomainErrors.IdMustBeProvided("Resource");
+
+            if (teamId == Guid.Empty)
+                return DomainErrors.IdMustBeProvided("Team");
+
 
             if (Status != DisasterStatus.InProgress)
                 return DisasterErrors.CannotAssignResourceWhenNotInProgress;
@@ -252,7 +256,7 @@ namespace Eghatha.Domain.Disasters
             if (quantitySent <= 0)
                 return DisasterErrors.ResourceQuantityshouldBeGreaterThanZero;
 
-            var res = DisasterResource.Create(Guid.NewGuid(), Id, resourceId, quantitySent, assignedAt, notes);
+            var res = DisasterResource.Create(Guid.NewGuid(), Id, resourceId,teamId ,  quantitySent, assignedAt, notes);
 
             if (res.IsError)
                 return res.Errors;
