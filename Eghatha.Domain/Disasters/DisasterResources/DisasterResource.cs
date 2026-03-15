@@ -92,7 +92,7 @@ namespace Eghatha.Domain.Disasters.DisasterResources
                 return DisasterErrors.ResourceQuantityshouldBeGreaterThanZero;
 
             if (quantity > RemainingQuantity)
-                return DisasterErrors.ResourceConsumptionExceedsSent;
+                return DisasterResourceErrors.ResourceConsumptionExceedsSent;
 
             QuantityConsumed += quantity;
 
@@ -105,7 +105,7 @@ namespace Eghatha.Domain.Disasters.DisasterResources
                 return DisasterErrors.ResourceQuantityshouldBeGreaterThanZero;
 
             if (quantity > RemainingQuantity)
-                return DisasterErrors.InvalidReturnQuantity;
+                return DisasterResourceErrors.InvalidReturnQuantity;
 
             QuantityReturned += quantity;
 
@@ -118,7 +118,7 @@ namespace Eghatha.Domain.Disasters.DisasterResources
                 return DisasterErrors.ResourceQuantityshouldBeGreaterThanZero;
 
             if (quantity > RemainingQuantity)
-                return DisasterErrors.InvalidDamagedQuantity;
+                return DisasterResourceErrors.InvalidDamagedQuantity;
 
             QuantityDamaged += quantity;
 
