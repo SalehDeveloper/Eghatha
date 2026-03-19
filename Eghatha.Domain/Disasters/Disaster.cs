@@ -342,6 +342,8 @@ namespace Eghatha.Domain.Disasters
 
              var report = Report.Create( summary, teams, resources, affectedPersons, issuedAt);
             
+             Report = report.Value;
+             
             if (report.IsError)
                 return report.Errors;
 
