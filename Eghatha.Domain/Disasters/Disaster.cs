@@ -1,4 +1,5 @@
 ﻿using Eghatha.Domain.Abstractions;
+using Eghatha.Domain.Disaster;
 using Eghatha.Domain.Disasters.AffectedPersons;
 using Eghatha.Domain.Disasters.DisasterResources;
 using Eghatha.Domain.Disasters.DisasterVolunteers;
@@ -6,11 +7,7 @@ using Eghatha.Domain.Disasters.Reports;
 using Eghatha.Domain.Shared.Errors;
 using Eghatha.Domain.Shared.ValueObjects;
 using ErrorOr;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Eghatha.Domain.Disasters
 {
@@ -102,7 +99,8 @@ namespace Eghatha.Domain.Disasters
             if (type == DisasterType.Other && string.IsNullOrWhiteSpace(customeTypeDescription))
                 return DisasterErrors.CustomTypeDescriptionRequired;
 
-            return new Disaster(
+             
+            var disaster =  new Disaster(
                 id,
                 type,
                 title,
@@ -111,6 +109,10 @@ namespace Eghatha.Domain.Disasters
                 startTime,
                 reporter,
                 customeTypeDescription);
+
+            disaster.AddDomainEvent(new DisasterCreated(id, location.Latitude, location.Longitude, type, customeTypeDescription, startTime));
+           
+            return disaster;
         }
 
         public ErrorOr<Updated> StartResponse()
@@ -119,7 +121,8 @@ namespace Eghatha.Domain.Disasters
                 return DisasterErrors.InvalidStatusTransition(Status, DisasterStatus.InProgress);
 
             Status = DisasterStatus.InProgress;
-
+              
+             AddDomainEvent(new DisasterResponseStarted(Id, Status , StartTime)); 
             return Result.Updated;
         }
 
@@ -131,6 +134,8 @@ namespace Eghatha.Domain.Disasters
             Status = DisasterStatus.Resolved;
             EndTime = date;
 
+             AddDomainEvent(new DisasterResolved(Id, Status,  date));
+
             return Result.Updated;
         }
 
@@ -140,6 +145,8 @@ namespace Eghatha.Domain.Disasters
                 return DisasterErrors.InvalidStatusTransition(Status, DisasterStatus.Closed);
 
             Status = DisasterStatus.Closed;
+
+            AddDomainEvent(new DisasterClosed(Id, Status));
             return Result.Updated;
         }
 
@@ -150,6 +157,8 @@ namespace Eghatha.Domain.Disasters
 
             Status = DisasterStatus.Cancelled;
             EndTime = date;
+
+            AddDomainEvent(new DisasterCancelled(Id, Status, date));
             return Result.Updated;
         }
 
