@@ -1,5 +1,5 @@
 ﻿
-namespace Eghatha.Domain.Abstractions
+namespace Eghatha.Application.Common.Models
 {
     public enum SortOrder
     {
