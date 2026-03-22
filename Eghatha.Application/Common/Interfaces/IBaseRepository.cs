@@ -17,13 +17,9 @@ namespace Eghatha.Domain.Abstractions
 
         public Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
-        public Task<IReadOnlyList<T>> GetAllAsync(  int pageNumber=1  , int pageSize=10, CancellationToken cancellationToken = default);
+        public  Task<bool> ExistsAsync(Guid id , CancellationToken cancellationToken = default);
 
-        public Task<(IEnumerable<T>, int)> FindAllWithOptionsAsync(
-            Expression<Func<T, bool>> criteria,
-            QueryOptions options,
-            CancellationToken cancellationToken = default,
-            params Expression<Func<T, object>>[] includes);
+     
 
     }
 }
