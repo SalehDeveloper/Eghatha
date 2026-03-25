@@ -53,14 +53,14 @@ namespace Eghatha.Domain.Disasters
             code: "DisasterErrors.VolunteerAlreadyAssigned",
             description: "volunteer already assigned to disaster");
 
-        public static Error CannotAssignVolunteerWhenNotInProgress = Error.Conflict(
-            code: "DisasterErrors.CannotAssignVolunteerWhenNotInProgress",
-            description:"you cannot assign a volunteer when disaster not in progress");
+        public static Error CannotAssignVolunteerWhenNotInValidStatus = Error.Conflict(
+            code: "DisasterErrors.CannotAssignVolunteerWhenNotInValidStatus",
+            description:"you cannot assign a volunteer when disaster not in a reported or in-progress status ");
 
 
-        public static Error CannotAssignResourceWhenNotInProgress = Error.Conflict(
-            code: "DisasterErrors.CannotAssignResourceWhenNotInProgress",
-            description: "you cannot assign resource when disaster not in progress");
+        public static Error CannotAssignResourceWhenNotInValidStatus = Error.Conflict(
+               code: "DisasterErrors.CannotAssignResourceWhenNotInValidStatus",
+               description: "you cannot assign a resource when disaster not in a reported or in-progress status ");
 
         public static Error CannotRemoveVolunteerWhenNotInReportedStatus = Error.Conflict(
            code: "DisasterErrors.CannotRemoveVolunteerWhenNotReported",
@@ -95,6 +95,17 @@ namespace Eghatha.Domain.Disasters
             code: "DisasterErrors.ReportAlreadyExist",
             description: "disaster already has a report");
 
+        public static Error CannotAssignTeamWhenNotInValidStatus = Error.Conflict(
+          code: "DisasterErrors.CannotAssignTeamWhenNotInValidStatus",
+          description: "you cannot assign a team when disaster not in a reported or in-progress status ");
+
+        public static Error TeamAlreadyAssigned = Error.Conflict(
+          code: "DisasterErrors.TeamAlreadyAssigned",
+          description: "team already assigned to disaster");
+
+        public static Error TeamNotFound = Error.NotFound(
+          code: "DisasterErrors.Team.NotFound",
+          description: "team is not assinged to this disaster");
 
     }
 }
