@@ -164,7 +164,7 @@ namespace Eghatha.Domain.Teams
             if (isLeader && _members.Any(m => m.IsLeader))
                 return TeamErrors.TeamAlreadyHasLeader;
 
-            var member = TeamMember.Create(Guid.NewGuid(), userId, Id, jobTitle, isLeader, joinedAt);
+            var member = TeamMember.Create(Guid.NewGuid(), userId,  jobTitle, isLeader, joinedAt);
 
             if (member.IsError)
                 return member.Errors;

@@ -41,6 +41,9 @@ namespace Eghatha.Domain.Disasters
         private readonly List<AffectedPerson> _affectedPeople = new();
         public IReadOnlyList<AffectedPerson> AffectedPeople => _affectedPeople.AsReadOnly();
 
+        private readonly List<Guid> _teamIds = new();
+        public IReadOnlyList<Guid> TeamIds => _teamIds.AsReadOnly();
+
         public Report? Report { get; private set; }
 
         private Disaster()
@@ -164,8 +167,8 @@ namespace Eghatha.Domain.Disasters
 
         public ErrorOr<Updated> AssignVolunteer(Guid volunteerId)
         {
-            if (Status != DisasterStatus.InProgress)
-                return DisasterErrors.CannotAssignVolunteerWhenNotInProgress;
+            if (Status != DisasterStatus.Reported && Status != DisasterStatus.InProgress)
+                return DisasterErrors.CannotAssignVolunteerWhenNotInValidStatus;
 
             if (_volunteers.Any(v => v.VolunteerId == volunteerId))
                 return DisasterErrors.VolunteerAlreadyAssigned;
@@ -185,8 +188,8 @@ namespace Eghatha.Domain.Disasters
 
         public ErrorOr<Updated> AssignVolunteers(List<Guid> volunteerIds)
         {
-            if (Status != DisasterStatus.InProgress)
-                return DisasterErrors.CannotAssignVolunteerWhenNotInProgress;
+            if (Status != DisasterStatus.Reported && Status != DisasterStatus.InProgress)
+                return DisasterErrors.CannotAssignVolunteerWhenNotInValidStatus;
 
             foreach (var volunteerId in volunteerIds)
             {
@@ -239,6 +242,39 @@ namespace Eghatha.Domain.Disasters
         }
 
 
+        public ErrorOr<Updated> AssignTeam(Guid teamId)
+        {
+            if (teamId == Guid.Empty)
+                return DomainErrors.IdMustBeProvided("Team");
+
+            if (Status != DisasterStatus.Reported && Status != DisasterStatus.InProgress)
+                return DisasterErrors.CannotAssignTeamWhenNotInValidStatus;
+
+            if (_teamIds.Contains(teamId))
+                return DisasterErrors.TeamAlreadyAssigned;
+
+            _teamIds.Add(teamId);
+
+            return Result.Updated;
+        }
+
+        public ErrorOr<Updated> RemoveTeam(Guid teamId)
+        {
+            if (!_teamIds.Contains(teamId))
+                return DisasterErrors.TeamNotFound;
+
+
+            if (Status != DisasterStatus.Reported)
+                return DisasterErrors.CannotRemoveVolunteerWhenNotInReportedStatus;
+
+            _teamIds.Remove(teamId);
+
+            return Result.Updated;
+
+
+        }
+
+
         public ErrorOr<Updated> AssignResource(Guid resourceId,Guid teamId ,  int quantitySent, DateTimeOffset assignedAt, string? notes = null)
         {
             if (resourceId == Guid.Empty)
@@ -247,9 +283,8 @@ namespace Eghatha.Domain.Disasters
             if (teamId == Guid.Empty)
                 return DomainErrors.IdMustBeProvided("Team");
 
-
-            if (Status != DisasterStatus.InProgress)
-                return DisasterErrors.CannotAssignResourceWhenNotInProgress;
+            if (Status != DisasterStatus.Reported && Status != DisasterStatus.InProgress)
+                return DisasterErrors.CannotAssignVolunteerWhenNotInValidStatus;
 
             var resource = _resources.FirstOrDefault(r => r.ResourceId == resourceId);
 

@@ -19,12 +19,12 @@ namespace Eghatha.Domain.Abstractions
             
         }
 
-        public DateTime CreatedAt { get; protected set; }
-        public string? CreatedBy { get; protected set; }
+        public DateTimeOffset CreatedAt { get;  set; }
+        public string? CreatedBy { get;  set; }
 
 
-        public DateTime LastModifiedUtc { get; protected set; }
-        public string? LastModifiedBy { get; protected set; }
+        public DateTimeOffset LastModifiedUtc { get;  set; }
+        public string? LastModifiedBy { get;  set; }
 
 
     }

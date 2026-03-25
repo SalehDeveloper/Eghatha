@@ -13,7 +13,7 @@ namespace Eghatha.Domain.Teams.TeamMembers
     {
         public Guid UserId { get; private set; }
 
-        public Guid TeamId { get; private set; }
+    
 
         public string JobTitle { get; private set; }
 
@@ -31,7 +31,6 @@ namespace Eghatha.Domain.Teams.TeamMembers
         private TeamMember(
             Guid id,
             Guid userId,
-            Guid teamId,
             string jobTitle,
             bool isLeader,
             TeamMemberStatus status,
@@ -39,7 +38,6 @@ namespace Eghatha.Domain.Teams.TeamMembers
             : base(id)
         {
             UserId = userId;
-            TeamId = teamId;
             JobTitle = jobTitle;
             IsLeader = isLeader;
             Status = status;
@@ -49,7 +47,6 @@ namespace Eghatha.Domain.Teams.TeamMembers
 
         public static ErrorOr<TeamMember> Create(Guid id,
             Guid userId,
-            Guid teamId,
             string jobTitle,
             bool isLeader,
             DateTimeOffset joinedAt
@@ -63,13 +60,10 @@ namespace Eghatha.Domain.Teams.TeamMembers
             if (userId == Guid.Empty)
                 return DomainErrors.IdMustBeProvided("User");
 
-            if (teamId == Guid.Empty)
-                return DomainErrors.IdMustBeProvided("Team");
-
             if (string.IsNullOrWhiteSpace(jobTitle))
                 return TeamMemberErrors.JobTitleRequired;
 
-            return new TeamMember(id, userId, teamId, jobTitle, isLeader, TeamMemberStatus.Active, joinedAt);
+            return new TeamMember(id, userId,  jobTitle, isLeader, TeamMemberStatus.Active, joinedAt);
 
 
         }

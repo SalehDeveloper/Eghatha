@@ -1,34 +1,22 @@
 
-namespace Eghatha.Api
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+using Eghatha.Application;
+using Eghatha.Infastructure;
 
-            builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
+var builder = WebApplication.CreateBuilder(args);
 
-            var app = builder.Build();
+var config = builder.Configuration;
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.MapOpenApi();
-            }
+builder.Services.AddApplication().AddInfrastructure(config);
 
-            app.UseHttpsRedirection();
+builder.Services.AddControllers();
 
-            app.UseAuthorization();
+var app = builder.Build();
 
+app.UseHttpsRedirection();
 
-            app.MapControllers();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
 
-            app.Run();
-        }
-    }
-}
+app.Run();
