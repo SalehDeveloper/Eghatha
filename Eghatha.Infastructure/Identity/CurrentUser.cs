@@ -18,7 +18,7 @@ namespace Eghatha.Api.Services
             .User.GetUserId()
             ?? throw new ApplicationException("User context is unavailable");
 
-        public Role Role => _contextAccessor.HttpContext?.User.GetUserRole() 
+        public List<string> Role => _contextAccessor.HttpContext?.User.GetUserRole() 
            ?? throw new ApplicationException("User context is unavailable");
     }
 }

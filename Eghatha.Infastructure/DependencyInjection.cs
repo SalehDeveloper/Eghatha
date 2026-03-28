@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -24,6 +25,11 @@ namespace Eghatha.Infastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddHybridCache(options => options.DefaultEntryOptions = new HybridCacheEntryOptions
+            {
+                Expiration = TimeSpan.FromMinutes(10), // L2, L3
+                LocalCacheExpiration = TimeSpan.FromSeconds(30), // L1
+            });
             AddPersistence(services, configuration);
             AddAuthentication(services, configuration);
 
@@ -42,6 +48,7 @@ namespace Eghatha.Infastructure
 
                 options.AddInterceptors(serviceProvider.GetServices<ISaveChangesInterceptor>());
 
+              
                 options.EnableSensitiveDataLogging();
             });
 
