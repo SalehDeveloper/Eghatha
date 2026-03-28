@@ -1,29 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>2c122ece-99e2-4af2-956e-3f78301cd997</UserSecretsId>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>2c122ece-99e2-4af2-956e-3f78301cd997</UserSecretsId>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.11" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.14">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	  </PackageReference>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Asp.Versioning.Mvc" Version="8.1.1" />
+		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.1" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.11" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.14">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Scalar.AspNetCore" Version="2.13.16" />
+		<!-- REMOVE THIS LINE -->
+		<!-- <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" /> -->
+	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Services\" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Eghatha.Application\Eghatha.Application.csproj" />
-    <ProjectReference Include="..\Eghatha.Infastructure\Eghatha.Infastructure.csproj" />
-	  
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Eghatha.Application\Eghatha.Application.csproj" />
+		<ProjectReference Include="..\Eghatha.Contract\Eghatha.Contract.csproj" />
+		<ProjectReference Include="..\Eghatha.Infastructure\Eghatha.Infastructure.csproj" />
+	</ItemGroup>
 
 </Project>
