@@ -11,6 +11,9 @@ namespace Eghatha.Domain.Identity
 {
     public sealed class RefreshToken: AuditableEntity
     {
+        public readonly static  int AccessTokenDurationInMinutes = 15;
+        public readonly static int RefreshTokenDurationInDays = 7;
+
         public Guid UserId { get; private set; }
 
         public string Token { get; private set; }
