@@ -1,4 +1,5 @@
-﻿using ErrorOr;
+﻿using Eghatha.Application.Features.Authentication.Dtos;
+using ErrorOr;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,7 @@ namespace Eghatha.Application.Common.Authentication
         Task<ErrorOr< AppUserDto>> AuthenticateAsync(string email, string password , CancellationToken cancellationToken);
 
         Task<ErrorOr<AppUserDto>> GetUserByIdAsync (Guid userId, CancellationToken cancellationToken);
+
+        Task<ErrorOr<MeDto>> GetUserDetailsByIdAsync(Guid userId, CancellationToken cancellationToken);
     }
 }

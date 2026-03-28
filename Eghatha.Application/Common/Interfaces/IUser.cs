@@ -11,6 +11,6 @@ namespace Eghatha.Application.Common.Interfaces
     {
         public Guid Id { get; }
 
-        public Role Role { get; }
+        public List<string> Role { get; }
     }
 }

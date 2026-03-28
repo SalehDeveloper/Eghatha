@@ -17,7 +17,7 @@ namespace Eghatha.Application
 
             services.AddMediatR(cfg =>
             {
-                cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+                cfg.RegisterServicesFromAssemblyContaining(typeof(DependencyInjection));
                 cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
                 cfg.AddOpenBehavior(typeof(CachingBehavior<,>));
             });
