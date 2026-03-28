@@ -19,14 +19,17 @@ namespace Eghatha.Infastructure.Identity
                 : throw new ApplicationException("User id is unavailable");
         }
 
-        public static string GetUserRole(this ClaimsPrincipal claims)
+        public static List<string> GetUserRole(this ClaimsPrincipal claims)
         {
-            var role = claims.FindFirstValue(ClaimTypes.Role);
+            var roles = claims.FindAll(ClaimTypes.Role)
+                        .Select(c => c.Value)
+                        .Where(r => !string.IsNullOrWhiteSpace(r))
+                        .ToList();
 
-            if (string.IsNullOrWhiteSpace(role))
-                throw new UnauthorizedAccessException("Role not found");
+            if (roles.Count == 0)
+                throw new UnauthorizedAccessException("Roles not found");
 
-            return role;
+            return roles;
         }
     }
 }

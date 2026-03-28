@@ -1,4 +1,5 @@
 ﻿using Eghatha.Application.Common.Authentication;
+using Eghatha.Application.Features.Authentication.Dtos;
 using Eghatha.Domain.Identity;
 using Eghatha.Infastructure.Data;
 using ErrorOr;
@@ -54,6 +55,17 @@ namespace Eghatha.Infastructure.Identity
             var roles = await _userManager.GetRolesAsync(user);
 
             return new AppUserDto(userId , user.Email , roles);
+        }
+
+        public async Task<ErrorOr<MeDto>> GetUserDetailsByIdAsync(Guid userId, CancellationToken cancellationToken)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user is null) return Error.NotFound("User_Not_Found", $"User with id {(userId)} not found");
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            return new MeDto(user.Id, user.Email, roles, user.PhoneNumber, user.FirstName, user.LastName, user.PhotoUrl);
         }
     }
 }

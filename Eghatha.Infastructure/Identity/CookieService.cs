@@ -1,6 +1,7 @@
 ﻿using Eghatha.Application.Common.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,11 +20,11 @@ namespace Eghatha.Infastructure.Identity
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public CookieService(
-            AuthenticationOptions options,
+            IOptions< AuthenticationOptions> options,
             TimeProvider timeProvider,
             IHttpContextAccessor httpContextAccessor)
         {
-            _options = options;
+            _options = options.Value;
             _timeProvider = timeProvider;
             _httpContextAccessor = httpContextAccessor;
         }
