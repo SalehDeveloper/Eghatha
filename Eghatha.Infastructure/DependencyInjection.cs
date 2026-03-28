@@ -1,13 +1,20 @@
 ﻿using Eghatha.Api.Services;
+using Eghatha.Application.Common.Authentication;
 using Eghatha.Application.Common.Interfaces;
 using Eghatha.Domain.Abstractions;
 using Eghatha.Infastructure.Data;
 using Eghatha.Infastructure.Data.Interceptors;
+using Eghatha.Infastructure.Identity;
+using Eghatha.Infastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+
+
 
 
 
@@ -18,6 +25,7 @@ namespace Eghatha.Infastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             AddPersistence(services, configuration);
+            AddAuthentication(services, configuration);
 
             return services;
         }
@@ -53,13 +61,34 @@ namespace Eghatha.Infastructure
                     options.Lockout.MaxFailedAccessAttempts = 5;
                     options.User.RequireUniqueEmail = true;
                 })
-                .AddRoles<IdentityRole<Guid>>() 
+                .AddRoles<IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<AppDbContext>();
 
             services.AddHttpContextAccessor();
             services.AddScoped<IUser, CurrentUser>();
-        
-            
+
+
+            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            services.AddScoped<IRefreshTokenRepository , RefreshTokenRepository>();
+
+
         }
+
+
+        private static void AddAuthentication(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<Eghatha.Infastructure.Identity.AuthenticationOptions>(
+                     configuration.GetSection("Authentication"));
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+              .AddJwtBearer();
+
+            services.ConfigureOptions<JwtBearerOptionsSetup>();
+            services.AddScoped<IJwtService, JwtService>();
+
+            services.AddTransient<IIdentityService, IdentityService>();
+            services.AddScoped<ICookieService , CookieService>();   
+        }
+
     }
 }
