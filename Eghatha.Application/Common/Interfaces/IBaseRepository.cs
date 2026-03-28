@@ -15,9 +15,9 @@ namespace Eghatha.Domain.Abstractions
 
         public void SoftDelete(T entity);
 
-        public Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+        public Task<T?> GetByIdAsync(Guid Id, CancellationToken cancellationToken = default);
 
-        public  Task<bool> ExistsAsync(Guid id , CancellationToken cancellationToken = default);
+        public  Task<bool> ExistsAsync(Guid Id , CancellationToken cancellationToken = default);
 
      
 
