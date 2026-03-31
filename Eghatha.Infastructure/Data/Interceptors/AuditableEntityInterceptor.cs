@@ -11,58 +11,72 @@ using System.Threading.Tasks;
 
 namespace Eghatha.Infastructure.Data.Interceptors
 {
-    public class AuditableEntityInterceptor(IUser user, TimeProvider dateTime) : SaveChangesInterceptor
-    {
-        private readonly IUser _user = user;
-        private readonly TimeProvider _dateTime = dateTime;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.ChangeTracking;
+    using Microsoft.EntityFrameworkCore.Diagnostics;
 
-        public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
+    public class AuditableEntityInterceptor : SaveChangesInterceptor
+    {
+        private readonly IUser _user;
+        private readonly TimeProvider _dateTime;
+
+        public AuditableEntityInterceptor(IUser user, TimeProvider dateTime)
+        {
+            _user = user;
+            _dateTime = dateTime;
+        }
+
+        public override InterceptionResult<int> SavingChanges(
+            DbContextEventData eventData,
+            InterceptionResult<int> result)
         {
             UpdateEntities(eventData.Context);
-
             return base.SavingChanges(eventData, result);
         }
 
-        public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
+        public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
+            DbContextEventData eventData,
+            InterceptionResult<int> result,
+            CancellationToken cancellationToken = default)
         {
             UpdateEntities(eventData.Context);
-
             return base.SavingChangesAsync(eventData, result, cancellationToken);
         }
 
-        public void UpdateEntities(DbContext? context)
+        private void UpdateEntities(DbContext? context)
         {
-            if (context == null)
-            {
-                return;
-            }
+            if (context == null) return;
+
+            var userId = _user.Id?.ToString() ?? "system";
+            var utcNow = _dateTime.GetUtcNow();
 
             foreach (var entry in context.ChangeTracker.Entries<AuditableEntity>())
             {
-                if (entry.State is EntityState.Added or EntityState.Modified || entry.HasChangedOwnedEntities())
+                if (entry.State is EntityState.Added or EntityState.Modified
+                    || entry.HasChangedOwnedEntities())
                 {
-                    var utcNow = _dateTime.GetUtcNow();
-
                     if (entry.State == EntityState.Added)
                     {
-                        entry.Entity.CreatedBy = _user.Id.ToString();
+                        entry.Entity.CreatedBy = userId;
                         entry.Entity.CreatedAt = utcNow;
                     }
 
-                    entry.Entity.LastModifiedBy = _user.Id.ToString();
+                    entry.Entity.LastModifiedBy = userId;
                     entry.Entity.LastModifiedUtc = utcNow;
 
+                    // Handle owned entities
                     foreach (var ownedEntry in entry.References)
                     {
-                        if (ownedEntry.TargetEntry is { Entity: AuditableEntity ownedEntity } && ownedEntry.TargetEntry.State is EntityState.Added or EntityState.Modified)
+                        if (ownedEntry.TargetEntry is { Entity: AuditableEntity ownedEntity } target &&
+                            target.State is EntityState.Added or EntityState.Modified)
                         {
-                            if (ownedEntry.TargetEntry.State == EntityState.Added)
+                            if (target.State == EntityState.Added)
                             {
-                                ownedEntity.CreatedBy = _user.Id.ToString() ;
+                                ownedEntity.CreatedBy = userId;
                                 ownedEntity.CreatedAt = utcNow;
                             }
 
-                            ownedEntity.LastModifiedBy = _user.Id.ToString();
+                            ownedEntity.LastModifiedBy = userId;
                             ownedEntity.LastModifiedUtc = utcNow;
                         }
                     }

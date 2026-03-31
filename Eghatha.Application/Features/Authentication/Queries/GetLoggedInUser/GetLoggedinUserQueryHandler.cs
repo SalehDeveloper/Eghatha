@@ -1,5 +1,6 @@
 ﻿using Eghatha.Application.Common.Authentication;
 using Eghatha.Application.Common.Interfaces;
+using Eghatha.Application.Common.Models;
 using Eghatha.Application.Features.Authentication.Dtos;
 using ErrorOr;
 using MediatR;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Eghatha.Application.Features.Authentication.Queries.GetLoggedInUser
 {
-    public class GetLoggedinUserQueryHandler : IRequestHandler<GetLoggedinUserQuery, ErrorOr<MeDto>>
+    public class GetLoggedinUserQueryHandler : IRequestHandler<GetLoggedinUserQuery, ErrorOr<IdentityUser>>
     {
         private readonly IUser _user;
         private readonly IIdentityService _identityService;
@@ -22,17 +23,17 @@ namespace Eghatha.Application.Features.Authentication.Queries.GetLoggedInUser
             _identityService = identityService;
         }
 
-        public async Task<ErrorOr<MeDto>> Handle(GetLoggedinUserQuery request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<IdentityUser>> Handle(GetLoggedinUserQuery request, CancellationToken cancellationToken)
         {
             var userId = _user.Id;
 
-            var user = await _identityService.GetUserDetailsByIdAsync(userId , cancellationToken);
+            var user = await _identityService.GetUserDetailsByIdAsync(userId.Value , cancellationToken);
 
             if (user.IsError) return user.Errors;
 
+            return user.Value;
 
-
-            return new MeDto(user.Value.Id, user.Value.Email, user.Value.Roles, user.Value.PhoneNumber, user.Value.FirstName, user.Value.LastName, user.Value.PhotoUrl);
+           
             
         }
     }

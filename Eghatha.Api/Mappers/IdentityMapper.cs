@@ -1,5 +1,5 @@
 ﻿using Eghatha.Application.Common.Authentication;
-using Eghatha.Application.Features.Authentication.Dtos;
+using Eghatha.Application.Common.Models;
 using Eghatha.Contract.Identity.Responses;
 
 namespace Eghatha.Api.Mappers
@@ -14,16 +14,16 @@ namespace Eghatha.Api.Mappers
                 userDto.Roles);
         }
 
-        public static MeResponse ToMeResponse(this MeDto me)
+        public static MeResponse ToMeResponse(this IdentityUser user)
         {
             return new MeResponse(
-                me.Id,
-                me.Email,
-                me.Roles,
-                me.PhoneNumber,
-                me.FirstName,
-                me.LastName,
-                me.PhotoUrl);
+                user.Id,
+                user.Email,
+                user.Roles,
+                user.PhoneNumber,
+                user.FirstName,
+                user.LastName,
+                user.PhotoUrl);
         }
     }
 }

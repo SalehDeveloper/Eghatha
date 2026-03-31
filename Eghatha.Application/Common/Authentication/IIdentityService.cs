@@ -1,4 +1,5 @@
-﻿using Eghatha.Application.Features.Authentication.Dtos;
+﻿using Eghatha.Application.Common.Models;
+using Eghatha.Application.Features.Authentication.Dtos;
 using ErrorOr;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,18 @@ namespace Eghatha.Application.Common.Authentication
 
         Task<ErrorOr<AppUserDto>> GetUserByIdAsync (Guid userId, CancellationToken cancellationToken);
 
-        Task<ErrorOr<MeDto>> GetUserDetailsByIdAsync(Guid userId, CancellationToken cancellationToken);
+        Task<ErrorOr<IdentityUser>> GetUserDetailsByIdAsync(Guid userId, CancellationToken cancellationToken);
+
+        Task<ErrorOr<IdentityUser>> GetIdentityUserByEmailAsync(string email, CancellationToken cancellationToken);
+
+        Task<ErrorOr<Success>> ResetPasswordAsync(string email, string newPassword, CancellationToken cancellationToken);
+
+        Task<ErrorOr<Success>> ConfirmEmail(string email);
+
+        Task<ErrorOr<Success>> DeActivateUser(Guid id);
+
+        Task<ErrorOr<Success>> ActivateUser(Guid id);
+
+        Task<PaginatedList<IdentityUser>> GetAccountsAsync(int page, int pageSize, string? searchTearm, string? role, bool? isActive, CancellationToken cancellationToken);
     }
 }

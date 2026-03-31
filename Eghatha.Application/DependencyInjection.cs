@@ -20,6 +20,7 @@ namespace Eghatha.Application
                 cfg.RegisterServicesFromAssemblyContaining(typeof(DependencyInjection));
                 cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
                 cfg.AddOpenBehavior(typeof(CachingBehavior<,>));
+                cfg.AddOpenBehavior(typeof(UnhandledExceptionBehavior<,>));
             });
 
             return services;

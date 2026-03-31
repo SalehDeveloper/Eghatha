@@ -12,5 +12,14 @@ namespace Eghatha.Application.Common.Errors
         public static readonly Error InvalidRefreshToken = Error.Unauthorized(
            code: "Auth.InvalidRefreshToken",
            description: "Invalid RefreshToken.");
+
+        public static readonly Error InvalidOtp = Error.Conflict(
+           code: "Auth.InvalidOtp",
+           description: "Otp code is wrong or expired.");
+
+
+        public static readonly Error EmailAlreadyConfirmed = Error.Conflict(
+           code: "Auth.EmailAlreadyConfirmed",
+           description: "Email is already confirmed.");
     }
 }

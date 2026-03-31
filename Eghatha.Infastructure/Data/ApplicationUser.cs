@@ -18,7 +18,8 @@ namespace Eghatha.Infastructure.Data
        string firstName,
        string lastName,
        string email,
-       string phoneNumber)
+       string phoneNumber , 
+       string photoUrl)
         {
             Id = Guid.NewGuid();
 
@@ -28,7 +29,7 @@ namespace Eghatha.Infastructure.Data
             Email = email;
             UserName = email; 
             PhoneNumber = phoneNumber;
-
+            PhotoUrl= photoUrl;
             IsActive = true;
         }
 

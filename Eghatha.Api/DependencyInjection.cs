@@ -1,6 +1,8 @@
 ﻿using Asp.Versioning;
 using Eghatha.Api.Infrastructure;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Options;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 
@@ -43,9 +45,13 @@ namespace Eghatha.Api
 
         public static IServiceCollection AddControllerWithJsonConfiguration(this IServiceCollection services)
         {
-            services.AddControllers().AddJsonOptions(options => options
-                .JsonSerializerOptions
-                .DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull);
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                    options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+                    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                });
 
             return services;
         }

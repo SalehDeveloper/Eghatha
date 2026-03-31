@@ -1,59 +1,73 @@
-
 using ErrorOr;
 using MediatR;
 using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 
 
-public class CachingBehavior<TRequest , TResponse> (
-    HybridCache cache , 
-    ILogger<CachingBehavior<TRequest , TResponse>> logger
-): IPipelineBehavior<TRequest , TResponse>
-where TRequest : notnull
+public class CachingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : notnull
 {
-    private readonly HybridCache _cache = cache;
+    private readonly HybridCache _cache;
+    private readonly ILogger<CachingBehavior<TRequest, TResponse>> _logger;
 
-    private readonly ILogger<CachingBehavior<TRequest , TResponse>> _logger = logger;
+    public CachingBehavior(HybridCache cache, ILogger<CachingBehavior<TRequest, TResponse>> logger)
+    {
+        _cache = cache;
+        _logger = logger;
+    }
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         if (request is not ICachedQuery cachedRequest)
-         return await next(cancellationToken);
+            return await next(cancellationToken);
 
-        _logger.LogInformation("Checking cache for {RequestName}", typeof(TRequest).Name);
+        var cacheKey = cachedRequest.CachKey;
 
-        var result = await _cache.GetOrCreateAsync<TResponse>(
-            cachedRequest.CachKey , 
-            _ => new ValueTask<TResponse>((TResponse)(object)null!),
-            new HybridCacheEntryOptions
-            {
-                Flags = HybridCacheEntryFlags.DisableUnderlyingData
-            } , cancellationToken:cancellationToken
+        var options = new HybridCacheEntryOptions
+        {
+            Expiration = cachedRequest.Expiration
+        };
+
+        try
+        {
+            var response = await _cache.GetOrCreateAsync<TResponse>(
+                cacheKey,
+                async ct =>
+                {
+                    _logger.LogDebug("Cache MISS for key: {CacheKey}", cacheKey);
+
+                    var result = await next(ct);
+
+                    return result;
+                },
+                options,
+                cachedRequest.Tags,
+                cancellationToken
             );
 
-            if (result is null )
-        {
-            result = await next(cancellationToken);
+            _logger.LogDebug("Cache HIT for key: {CacheKey}", cacheKey);
 
-            if (result is IErrorOr res && res.IsError == false)
+            if (response is IErrorOr errorOr && errorOr.IsError)
             {
-                 _logger.LogInformation("Caching result for {RequestName}", typeof(TRequest).Name);
-                  
-                await _cache.SetAsync(
-                    cachedRequest.CachKey,
-                    result,
-                    new HybridCacheEntryOptions
-                    {
-                         Expiration = cachedRequest.Expiration
-                    },
-                    cachedRequest.Tags,
-                    cancellationToken
-                );
+                _logger.LogWarning("Cached response contains error. Removing cache key: {CacheKey}", cacheKey);
+
+                await _cache.RemoveAsync(cacheKey, cancellationToken);
             }
+
+            return response;
         }
-        
-            return result;
-    
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Caching failed for key: {CacheKey}", cacheKey);
+
+            
+            return await next(cancellationToken);
+        }
     }
 }
+
