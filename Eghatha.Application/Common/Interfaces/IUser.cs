@@ -9,7 +9,7 @@ namespace Eghatha.Application.Common.Interfaces
 {
     public interface  IUser
     {
-        public Guid Id { get; }
+        public Guid? Id { get; }
 
         public List<string> Role { get; }
     }
