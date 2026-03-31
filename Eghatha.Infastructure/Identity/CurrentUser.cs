@@ -14,9 +14,9 @@ namespace Eghatha.Api.Services
             _contextAccessor = contextAccessor;
         }
 
-        public Guid Id => _contextAccessor.HttpContext?
-            .User.GetUserId()
-            ?? throw new ApplicationException("User context is unavailable");
+        public Guid? Id => _contextAccessor.HttpContext?
+            .User.GetUserId();
+           
 
         public List<string> Role => _contextAccessor.HttpContext?.User.GetUserRole() 
            ?? throw new ApplicationException("User context is unavailable");

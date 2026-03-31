@@ -10,14 +10,15 @@ namespace Eghatha.Infastructure.Identity
 {
     public static class ClaimsPrincipalsExtensions
     {
-        public static Guid GetUserId(this ClaimsPrincipal? claims)
+        public static Guid? GetUserId(this ClaimsPrincipal? claims)
         {
-            var userId = claims?.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = claims?.FindFirstValue("userId");
 
             return Guid.TryParse(userId, out Guid parsedUserId)
                 ? parsedUserId
-                : throw new ApplicationException("User id is unavailable");
+                : null;
         }
+        
 
         public static List<string> GetUserRole(this ClaimsPrincipal claims)
         {

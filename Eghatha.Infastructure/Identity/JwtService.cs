@@ -36,6 +36,7 @@ namespace Eghatha.Infastructure.Identity
                   new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
                   new Claim(JwtRegisteredClaimNames.Email, user.Email),
                   new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                  new Claim("userId" , user.UserId.ToString())
 
 
             };
