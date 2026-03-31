@@ -1,11 +1,14 @@
 ﻿using Eghatha.Api.Services;
 using Eghatha.Application.Common.Authentication;
 using Eghatha.Application.Common.Interfaces;
+using Eghatha.Application.Common.Models;
+using Eghatha.Application.Common.Services;
 using Eghatha.Domain.Abstractions;
 using Eghatha.Infastructure.Data;
 using Eghatha.Infastructure.Data.Interceptors;
 using Eghatha.Infastructure.Identity;
 using Eghatha.Infastructure.Repositories;
+using Eghatha.Infastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +17,7 @@ using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using static Eghatha.Infastructure.Services.EmailService;
 
 
 
@@ -57,7 +61,7 @@ namespace Eghatha.Infastructure
             services
                 .AddIdentityCore<ApplicationUser>(options =>
                 {
-                    options.Password.RequiredLength = 6;
+                    options.Password.RequiredLength = 8;
                     options.Password.RequireDigit = false;
                     options.Password.RequireNonAlphanumeric = false;
                     options.Password.RequireUppercase = false;
@@ -74,9 +78,19 @@ namespace Eghatha.Infastructure
             services.AddHttpContextAccessor();
             services.AddScoped<IUser, CurrentUser>();
 
+           services.Configure<OtpSettings>(
+                                 configuration.GetSection("OtpSettings"));
+
+            services.Configure<EmailOptions>(configuration.GetSection("EmailConfiguration"));
 
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IRefreshTokenRepository , RefreshTokenRepository>();
+            services.AddScoped<IRedisCacheService, RedisCacheService>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IOtpCodeGenerator, OtpCodeGenerator>();
+            services.AddSingleton<IEmailTemplateBuilder, EmailTemplateBuilder>();
+            services.AddScoped<IOtpService, OtpService>();
+            services.AddScoped<IDashboardService, DashboardService>();
 
 
         }
