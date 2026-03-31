@@ -7,5 +7,4 @@ using System.Threading.Tasks;
 namespace Eghatha.Contract.Identity.Responses
 {
     public sealed record  MeResponse(Guid Id, string Email, IList<string> Roles, string PhoneNumber, string FirstName, string LastName, string PhotoUrl);
-    
 }
