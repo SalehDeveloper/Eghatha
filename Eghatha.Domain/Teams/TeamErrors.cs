@@ -1,4 +1,5 @@
-﻿using ErrorOr;
+﻿using Eghatha.Domain.Teams.TeamMembers;
+using ErrorOr;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,7 +67,12 @@ namespace Eghatha.Domain.Teams
             code: "TeamErrors.Status.Invalid",
             description: "Team status is invalid.");
 
+        public static Error MemberMustBeActiveToBecomeLeader =
+        Error.Conflict("Team.MemberNotActive", "Only active members can become leader.");
 
+        public static Error InvalidStatusTransition(TeamStatus current, TeamStatus next) => Error.Conflict(
+ code: "TeamErrors.InvalidStatusTransition",
+ description: $"Team Invalid Status transition from '{current}' to '{next}'.");
 
     }
 }
