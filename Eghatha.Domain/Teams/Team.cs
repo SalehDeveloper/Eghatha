@@ -1,6 +1,7 @@
 ﻿using Eghatha.Domain.Abstractions;
 using Eghatha.Domain.Shared.Errors;
 using Eghatha.Domain.Shared.ValueObjects;
+using Eghatha.Domain.Teams.Events;
 using Eghatha.Domain.Teams.Resources;
 using Eghatha.Domain.Teams.TeamMembers;
 using ErrorOr;
@@ -100,13 +101,15 @@ namespace Eghatha.Domain.Teams
 
         }
 
-        public ErrorOr<Updated> UpdateLocation(GeoLocation newLocation)
+        public ErrorOr<Updated> UpdateBaseLocation(GeoLocation newLocation)
         {
             if (newLocation is null)
                 return TeamErrors.LocationRequired;
 
             Location = newLocation;
 
+            // add domain event , and push the update to the admin 
+            AddDomainEvent(new TeamLocationChangedEvent(Id, Name, Location));
             return Result.Updated;
 
 
@@ -120,8 +123,21 @@ namespace Eghatha.Domain.Teams
             if (!TeamStatus.List.Contains(newStatus))
                 return TeamErrors.InvalidStatus;
 
-            if (Status == TeamStatus.OnMission && newStatus == TeamStatus.Active)
-                return TeamErrors.CannotSetToActiveWhenInMission;
+            if (!TeamStatusTransitions.CanTransition(Status, newStatus))
+                return TeamErrors.InvalidStatusTransition(Status, newStatus);
+
+            if (newStatus == TeamStatus.Inactive)
+            {
+                foreach (var member in _members)
+                {
+                    if (member.Status != TeamMemberStatus.Inactive)
+                    {
+                        var updateResult = member.UpdateStatus(TeamMemberStatus.Inactive);
+                        if (updateResult.IsError)
+                            return updateResult.Errors;
+                    }
+                }
+            }
 
             Status = newStatus;
 
@@ -156,7 +172,7 @@ namespace Eghatha.Domain.Teams
 
         }
 
-        public ErrorOr<Updated> AddMember(Guid userId, string jobTitle, bool isLeader, DateTimeOffset joinedAt)
+        public ErrorOr<TeamMember> AddMember(Guid userId, string jobTitle, bool isLeader, DateTimeOffset joinedAt)
         {
             if (userId == Guid.Empty)
                 return DomainErrors.IdMustBeProvided("User");
@@ -171,27 +187,9 @@ namespace Eghatha.Domain.Teams
 
             _members.Add(member.Value);
 
-            return Result.Updated;
-        }
+            AddDomainEvent(new TeamMemeberAddedEvent( Id , Name,  userId ,member.Value.Id ));
 
-        public ErrorOr<Updated> RemoveMember(Guid memberId)
-        {
-            if (Status == TeamStatus.OnMission)
-                return TeamErrors.CannotRemoveMemberWhenInMission;
-
-            var member = _members.FirstOrDefault(m => m.Id == memberId);
-
-            if (member is null)
-                return TeamErrors.MemberNotFound;
-
-            if (member.IsLeader)
-                return TeamErrors.CannotRemoveLeader;
-
-
-            _members.Remove(member);
-
-
-            return Result.Updated;
+            return member.Value;
         }
 
         public ErrorOr<Updated> UpdateMemberStatus(Guid memberId, TeamMemberStatus newStatus)
@@ -222,6 +220,9 @@ namespace Eghatha.Domain.Teams
             if (member is null)
                 return TeamErrors.MemberNotFound;
 
+            if (member.Status == TeamMemberStatus.Inactive)
+                return TeamErrors.MemberMustBeActiveToBecomeLeader;
+
 
             foreach (var m in _members)
             {
@@ -237,7 +238,7 @@ namespace Eghatha.Domain.Teams
         public bool IsReadyForMission => Status == TeamStatus.Active && _members.Any(m => m.Status == TeamMemberStatus.Active);
         public TeamMember? Leader => _members.FirstOrDefault(m => m.IsLeader);
 
-        public ErrorOr<Updated> AddResource(int quantity, ResourceType type)
+        public ErrorOr<Resource> AddResource(int quantity, ResourceType type)
         {
 
             var existing = _resources.FirstOrDefault(r => r.Type == type);
@@ -246,7 +247,7 @@ namespace Eghatha.Domain.Teams
             {
                 existing.IncreaseQuantity(quantity);
 
-                return Result.Updated;
+                return existing;
 
             }
 
@@ -256,6 +257,34 @@ namespace Eghatha.Domain.Teams
                 return newResource.Errors;
 
             _resources.Add(newResource.Value);
+
+            return newResource.Value;
+        }
+
+        public ErrorOr<Updated> IncreaseResourceQuantity(Guid resourceId, int quantity)
+        {
+            var resource = _resources.FirstOrDefault(r => r.Id == resourceId);
+            if (resource is null)
+                return ResourceErrors.NotFound;
+
+           var res = resource.IncreaseQuantity(quantity);
+            
+            if (res.IsError)
+                return res.Errors;
+            
+            return Result.Updated;
+        }
+
+        public ErrorOr<Updated> DecreaseResourceQuantity(Guid resourceId, int quantity)
+        {
+            var resource = _resources.FirstOrDefault(r => r.Id == resourceId);
+            if (resource is null)
+                return ResourceErrors.NotFound;
+
+            var res = resource.DecreaseQuantity(quantity);
+
+            if (res.IsError)
+                return res.Errors;
 
             return Result.Updated;
         }

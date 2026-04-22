@@ -202,5 +202,85 @@ namespace Eghatha.Infastructure.Services
 </body>
 </html>";
         }
+
+
+        public string BuildTeamInvitationEmail(
+    string fullName,
+    string teamName,
+    string otpCode,
+    int expirationMinutes)
+        {
+            return $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Team Invitation</title>
+</head>
+
+<body style='margin:0; padding:0; font-family:Segoe UI, Arial; background:#f4f4f5;'>
+
+<table align='center' width='100%' style='max-width:600px; margin:0 auto; background:#fff; border-radius:16px; overflow:hidden;'>
+
+<!-- HEADER -->
+<tr>
+<td style='background:linear-gradient(135deg,#6366f1,#8b5cf6); padding:40px; text-align:center; color:white;'>
+    <h1 style='margin:0;'>🚀 Welcome to {teamName}</h1>
+</td>
+</tr>
+
+<!-- BODY -->
+<tr>
+<td style='padding:40px;'>
+
+<h2 style='color:#111827;'>Hello {fullName},</h2>
+
+<p style='color:#4b5563; font-size:16px;'>
+You have been invited to join <strong>{teamName}</strong>.
+To start using the system, please activate your account and set your password.
+</p>
+
+<!-- OTP BOX -->
+<div style='margin:30px 0; text-align:center; padding:25px; border:2px dashed #d1d5db; border-radius:12px;'>
+    <p style='margin:0; color:#6b7280;'>Activation Code</p>
+    <div style='font-size:42px; letter-spacing:6px; font-weight:bold; color:#4f46e5; margin-top:10px;'>
+        {otpCode}
+    </div>
+</div>
+
+<!-- EXPIRATION -->
+<p style='background:#fef3c7; padding:10px; border-left:4px solid #f59e0b; color:#92400e;'>
+⏰ This code expires in {expirationMinutes} minutes.
+</p>
+
+<!-- CTA STEPS -->
+<ol style='color:#374151; line-height:1.8; margin-top:20px;'>
+<li>Open the application</li>
+<li>Enter the invitation code</li>
+<li>Set your password</li>
+<li>Start using the system</li>
+</ol>
+
+<p style='color:#6b7280; margin-top:30px; font-size:13px;'>
+If you did not expect this invitation, you can ignore this email.
+</p>
+
+</td>
+</tr>
+
+<!-- FOOTER -->
+<tr>
+<td style='background:#f9fafb; text-align:center; padding:20px; font-size:12px; color:#9ca3af;'>
+© 2024 Your System
+</td>
+</tr>
+
+</table>
+
+</body>
+</html>";
+        }
+
     }
 }

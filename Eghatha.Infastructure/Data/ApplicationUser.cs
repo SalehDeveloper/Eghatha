@@ -25,12 +25,11 @@ namespace Eghatha.Infastructure.Data
 
             FirstName = firstName;
             LastName = lastName;
-
             Email = email;
             UserName = email; 
             PhoneNumber = phoneNumber;
             PhotoUrl= photoUrl;
-            IsActive = true;
+            IsActive = false;
         }
 
         public void Deactivate()

@@ -27,6 +27,55 @@ namespace Eghatha.Infastructure.Identity
             _appDbContext = appDbContext;
         }
 
+
+        public async Task<ErrorOr<Guid>> CreatUserAsync (string firstName , string lastName , string email ,string phoneNumber ,  string? password ,string photoUrl, UserCreationMode mode)
+        {
+            var existingUser = await _userManager.FindByEmailAsync(email );
+
+            if (existingUser != null)
+                return Error.Conflict("User_Exists", "User with this email already exists");
+
+          
+            var user = new ApplicationUser(firstName, lastName, email, phoneNumber, photoUrl);
+
+            IdentityResult result;
+
+         
+            switch (mode)
+            {
+                case UserCreationMode.Regular:
+                    {
+                        if (string.IsNullOrWhiteSpace(password))
+                            return Error.Validation("Password.Required", "Password is required for regular users");
+
+                        result = await _userManager.CreateAsync(user, password);
+                        break;
+                    }
+
+                case UserCreationMode.Invited:
+                    {
+                        
+                        result = await _userManager.CreateAsync(user);
+                        break;
+                    }
+
+                default:
+                    return Error.Validation("Invalid_Mode", "Invalid user creation mode");
+            }
+
+         
+            if (!result.Succeeded)
+            {
+                var errors = result.Errors.Select(e =>
+                    Error.Failure(e.Code, e.Description));
+
+                return errors.ToArray();
+            }
+
+            
+            return user.Id;
+
+        }
         public async Task<ErrorOr<AppUserDto>> AuthenticateAsync(string email, string password, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByEmailAsync(email);

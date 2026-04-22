@@ -83,10 +83,10 @@ namespace Eghatha.Domain.Teams.TeamMembers
             if (!TeamMemberStatus.List.Contains(status))
                 return TeamMemberErrors.InvalidStatus;
 
-            if (Status == TeamMemberStatus.OnMission && status == TeamMemberStatus.Active)
-                return TeamMemberErrors.CannotSetToActiveWhenInMission;
+       
+            if (!TeamMemberStatusTransitions.CanTransition(Status , status))
+                return TeamMemberErrors.InvalidStatusTransition(Status, status);
 
-            
             Status = status;
 
             return Result.Updated;

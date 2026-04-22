@@ -1,11 +1,18 @@
 using Eghatha.Api;
 using Eghatha.Application;
+using Eghatha.Application.Common.Interfaces;
+using Eghatha.Domain.Shared.ValueObjects;
+using Eghatha.Domain.Teams;
 using Eghatha.Infastructure;
 using Eghatha.Infastructure.Data;
+using Eghatha.Infastructure.RealTime;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using StackExchange.Redis;
+using Bogus;
+using Eghatha.Domain.Teams.Resources;
+using Eghatha.Domain.Teams.TeamMembers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +31,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins("http://localhost:5500")
+                          policy.WithOrigins("http://localhost:5250")
                                 .AllowAnyHeader()
                                 .AllowAnyMethod()
                                 .AllowCredentials();
@@ -52,6 +59,7 @@ builder.Services.AddOpenApi(options =>
 
 var app = builder.Build();
 
+
 app.UseHttpsRedirection();
 
 app.UseCors(MyAllowSpecificOrigins);
@@ -78,4 +86,6 @@ else
 
 app.UseCoreMiddlewares(config);
 app.MapControllers();
+app.MapHub<AdminHub>(AdminHub.HubUrl);
+
 app.Run();

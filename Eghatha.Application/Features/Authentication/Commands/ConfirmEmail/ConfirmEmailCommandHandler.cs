@@ -42,6 +42,7 @@ namespace Eghatha.Application.Features.Authentication.Commands.ConfirmEmail
             if (res.IsError) return res.Errors;  
           
             await _identityService.ConfirmEmail(user.Value.Email);
+            await _identityService.ActivateUser(user.Value.Id);
   
             await _otpService.RemoveAsync(OtpType.ConfirmEmail , request.Email);
 

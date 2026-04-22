@@ -46,10 +46,6 @@ namespace Eghatha.Infastructure.Data.Configurations
                 .HasForeignKey(tm => tm.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne<Team>()
-                .WithMany(t => t.Members)
-                .HasForeignKey("TeamId")
-                .OnDelete(DeleteBehavior.Cascade);
 
             // Indexes
 

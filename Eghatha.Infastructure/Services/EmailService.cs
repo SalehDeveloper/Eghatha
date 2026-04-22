@@ -74,6 +74,19 @@ namespace Eghatha.Infastructure.Services
             }
         }
 
+        public async Task SendTeamInvitationEmailAsync(string toEmail,string fullName,string teamName,string otpCode,int expirationMinutes)
+        {
+            var subject = "🎉 You've been invited to join a team";
+
+            var body = _templateBuilder.BuildTeamInvitationEmail(
+                fullName,
+                teamName,
+                otpCode,
+                expirationMinutes);
+
+            await SendEmailAsync(toEmail, subject, body);
+        }
+
         private string StripHtmlTags(string html)
         {
             if (string.IsNullOrEmpty(html)) return string.Empty;
