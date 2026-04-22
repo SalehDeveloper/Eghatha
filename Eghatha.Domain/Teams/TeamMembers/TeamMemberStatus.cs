@@ -19,4 +19,38 @@ namespace Eghatha.Domain.Teams.TeamMembers
         {
         }
     }
+
+    public static class TeamMemberStatusTransitions
+    {
+        private static readonly Dictionary<TeamMemberStatus, TeamMemberStatus[]> _map = new()
+        {
+            [TeamMemberStatus.Active] = new[]
+            {
+            TeamMemberStatus.OffDuty,
+            TeamMemberStatus.OnMission,
+            TeamMemberStatus.Inactive
+        },
+
+            [TeamMemberStatus.OffDuty] = new[]
+            {
+            TeamMemberStatus.Active,
+            TeamMemberStatus.OnMission,
+            TeamMemberStatus.Inactive
+        },
+
+            [TeamMemberStatus.OnMission] = new[]
+            {
+            TeamMemberStatus.OffDuty
+        },
+
+            [TeamMemberStatus.Inactive] = new[]
+            {
+            TeamMemberStatus.Active 
+        }
+        };
+
+        public static bool CanTransition(TeamMemberStatus from, TeamMemberStatus to)
+            => _map.TryGetValue(from, out var allowed)
+               && allowed.Contains(to);
+    }
 }

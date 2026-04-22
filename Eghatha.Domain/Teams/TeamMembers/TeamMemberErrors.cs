@@ -1,4 +1,5 @@
 ﻿using Ardalis.SmartEnum;
+using Eghatha.Domain.Disasters;
 using ErrorOr;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,10 @@ namespace Eghatha.Domain.Teams.TeamMembers
         public static Error InvalidStatus = Error.Validation(
            code: "TeamMemberErrors.Status.Invalid",
            description: "Team-Member status is invalid.");
+
+        public static Error InvalidStatusTransition(TeamMemberStatus current, TeamMemberStatus next) => Error.Conflict(
+   code: "TeamMemberErrors.InvalidStatusTransition",
+   description: $"Team-Member Invalid Status transition from '{current}' to '{next}'.");
 
         public TeamMemberErrors(string name, int value) : base(name, value)
         {
