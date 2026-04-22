@@ -9,8 +9,8 @@ namespace Eghatha.Application.Common.Services
     public interface IEmailTemplateBuilder
     {
         string BuildPasswordResetEmail(string otpCode, int expirationMinutes);
-
-
         string BuildEmailConfirmationTemplate(string otpCode, int expirationMinutes);
+
+        string BuildTeamInvitationEmail(string fullName,string teamName,string otpCode,int expirationMinutes);
     }
 }
