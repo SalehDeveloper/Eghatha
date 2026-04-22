@@ -28,5 +28,7 @@ namespace Eghatha.Application.Common.Authentication
         Task<ErrorOr<Success>> ActivateUser(Guid id);
 
         Task<PaginatedList<IdentityUser>> GetAccountsAsync(int page, int pageSize, string? searchTearm, string? role, bool? isActive, CancellationToken cancellationToken);
+
+        Task<ErrorOr<Guid>> CreatUserAsync(string firstName, string lastName, string email, string phoneNumber, string? password, string photoUrl, UserCreationMode mode);
     }
 }
