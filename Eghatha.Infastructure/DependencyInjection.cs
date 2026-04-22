@@ -7,9 +7,12 @@ using Eghatha.Domain.Abstractions;
 using Eghatha.Infastructure.Data;
 using Eghatha.Infastructure.Data.Interceptors;
 using Eghatha.Infastructure.Identity;
+using Eghatha.Infastructure.Identity.Policies;
+using Eghatha.Infastructure.RealTime;
 using Eghatha.Infastructure.Repositories;
 using Eghatha.Infastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -17,6 +20,7 @@ using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using StackExchange.Redis;
 using static Eghatha.Infastructure.Services.EmailService;
 
 
@@ -82,6 +86,13 @@ namespace Eghatha.Infastructure
                                  configuration.GetSection("OtpSettings"));
 
             services.Configure<EmailOptions>(configuration.GetSection("EmailConfiguration"));
+       
+
+            services.AddSingleton<IConnectionMultiplexer>(sp =>
+            {
+                
+                return ConnectionMultiplexer.Connect(configuration["Redis:Connection"]);
+            });
 
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IRefreshTokenRepository , RefreshTokenRepository>();
@@ -91,6 +102,9 @@ namespace Eghatha.Infastructure
             services.AddSingleton<IEmailTemplateBuilder, EmailTemplateBuilder>();
             services.AddScoped<IOtpService, OtpService>();
             services.AddScoped<IDashboardService, DashboardService>();
+            services.AddScoped<ITeamRepository, TeamRepository>();
+            services.AddScoped<IAdminNotifier , SignalRAdminNotifier>();
+            services.AddScoped<ITeamLocationService, TeamLocationService>();
 
 
         }
@@ -108,7 +122,14 @@ namespace Eghatha.Infastructure
             services.AddScoped<IJwtService, JwtService>();
 
             services.AddTransient<IIdentityService, IdentityService>();
-            services.AddScoped<ICookieService , CookieService>();   
+            services.AddScoped<ICookieService , CookieService>();
+            services.AddScoped<IAuthorizationHandler, MustBeTeamLeaderHandler>();
+
+            services.AddAuthorizationBuilder()
+                .AddPolicy("CanUpdateTeamLocation", policy =>
+                {
+                    policy.Requirements.Add(new MustBeTeamLeaderRequirment());
+                });
         }
 
     }
