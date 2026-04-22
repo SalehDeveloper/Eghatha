@@ -1,5 +1,6 @@
 ﻿using Eghatha.Domain.Teams;
 using Eghatha.Domain.Teams.Resources;
+using Eghatha.Domain.Teams.TeamMembers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -64,14 +65,22 @@ namespace Eghatha.Infastructure.Data.Configurations
                 .HasForeignKey(t => t.CreatedByAdminId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasMany(t => t.Members)
+           .WithOne()
+           .HasForeignKey("TeamId")
+           .OnDelete(DeleteBehavior.Cascade);
 
             builder.Navigation(t => t.Members)
-             .HasField("_members")
-              .UsePropertyAccessMode(PropertyAccessMode.Field);
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
+
 
             builder.Navigation(t => t.Resources)
                 .HasField("_resources")
                 .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+
+
+
             // Ignore computed properties
             builder.Ignore(t => t.IsReadyForMission);
             builder.Ignore(t => t.Leader);
