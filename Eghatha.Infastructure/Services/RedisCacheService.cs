@@ -8,12 +8,12 @@ namespace Eghatha.Infastructure.Services
     public class RedisCacheService : IRedisCacheService
     {
         private readonly IDatabase _db;
-        private readonly IConnectionMultiplexer _connectionMultiplexer;
+      
 
-        public RedisCacheService(IConfiguration config)
+        public RedisCacheService(IConnectionMultiplexer redis)
         {
-            _connectionMultiplexer = ConnectionMultiplexer.Connect(config["Redis:Connection"]);
-            _db = _connectionMultiplexer.GetDatabase();
+          
+            _db = redis.GetDatabase();
         }
 
         public async Task SetAsync(string key, string value, TimeSpan? expiry = null)
