@@ -21,5 +21,9 @@ namespace Eghatha.Application.Common.Errors
         public static readonly Error EmailAlreadyConfirmed = Error.Conflict(
            code: "Auth.EmailAlreadyConfirmed",
            description: "Email is already confirmed.");
+
+        public static readonly Error TeamNotFound = Error.NotFound(
+            code: "Team.NotFound",
+            description: "Team not found.");
     }
 }
