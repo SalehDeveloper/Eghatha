@@ -282,5 +282,175 @@ If you did not expect this invitation, you can ignore this email.
 </html>";
         }
 
+
+        public string BuildVolunteerApprovedEmail(string fullName)
+        {
+            return $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Account Approved</title>
+</head>
+<body style='margin: 0; padding: 0; font-family: Segoe UI, Arial, sans-serif; background-color: #f4f4f5;'>
+    <table align='center' border='0' cellpadding='0' cellspacing='0' width='100%' style='max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);'>
+        
+        <!-- Header -->
+        <tr>
+            <td style='background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); padding: 40px 30px; text-align: center;'>
+                <h1 style='color: #ffffff; margin: 0; font-size: 28px; font-weight: 600;'>
+                    🎉 Eghatha
+                </h1>
+                <p style='color: rgba(255,255,255,0.9); margin: 10px 0 0; font-size: 16px;'>
+                    Volunteer Account Approved
+                </p>
+            </td>
+        </tr>
+
+        <!-- Content -->
+        <tr>
+            <td style='padding: 40px 30px;'>
+                <h2 style='color: #1f2937; margin-bottom: 20px; font-size: 24px;'>
+                    Welcome, {fullName}! 👋
+                </h2>
+
+                <p style='color: #4b5563; font-size: 16px; line-height: 1.6;'>
+                    We’re happy to inform you that your volunteer application has been 
+                    <strong style='color: #16a34a;'>approved</strong> by our team.
+                </p>
+
+                <!-- Highlight Box -->
+                <div style='background-color: #ecfdf5; border-left: 4px solid #22c55e; padding: 20px; border-radius: 8px; margin: 25px 0;'>
+                    <p style='margin: 0; color: #065f46; font-size: 15px;'>
+                        ✅ Your account is now fully activated.<br/>
+                        ✅ You can log in using your email and password.<br/>
+                        ✅ You can start exploring and accepting missions.
+                    </p>
+                </div>
+
+                <!-- Instructions -->
+                <div style='margin-top: 30px;'>
+                    <p style='color: #4b5563; font-size: 14px;'>
+                        <strong>What’s next?</strong>
+                    </p>
+                    <ol style='color: #4b5563; font-size: 14px; line-height: 1.8; padding-left: 20px;'>
+                        <li>Log in to your Eghatha account</li>
+                        <li>Complete your profile (if needed)</li>
+                        <li>Browse available missions</li>
+                        <li>Start helping others 🚀</li>
+                    </ol>
+                </div>
+
+                <!-- CTA -->
+                <div style='text-align: center; margin: 30px 0;'>
+                    <a href='#' style='background-color: #4f46e5; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;'>
+                        Login to Your Account
+                    </a>
+                </div>
+
+                <!-- Note -->
+                <p style='color: #6b7280; font-size: 13px; margin-top: 20px;'>
+                    If you did not request this account, please contact our support team immediately.
+                </p>
+            </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+            <td style='background-color: #f9fafb; padding: 30px; text-align: center; border-top: 1px solid #e5e7eb;'>
+                <p style='margin: 0 0 10px; color: #6b7280; font-size: 12px;'>
+                    This is an automated message, please do not reply.
+                </p>
+                <p style='margin: 0; color: #9ca3af; font-size: 12px;'>
+                    &copy; 2024 Eghatha. All rights reserved.
+                </p>
+            </td>
+        </tr>
+
+    </table>
+</body>
+</html>";
+        }
+
+        public string BuildVolunteerRejectedEmail(string fullName, string? reason)
+        {
+            var reasonHtml = string.IsNullOrWhiteSpace(reason)
+                ? ""
+                : $@"
+        <div style='background-color: #fef2f2; border-left: 4px solid #ef4444; padding: 15px 20px; border-radius: 8px; margin: 20px 0;'>
+            <p style='margin: 0; color: #7f1d1d; font-size: 14px;'>
+                <strong>Reason:</strong> {reason}
+            </p>
+        </div>";
+
+            return $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Application Update</title>
+</head>
+
+<body style='margin:0; padding:0; font-family: Segoe UI, Arial, sans-serif; background-color:#f4f4f5;'>
+
+<table align='center' width='100%' style='max-width:600px; margin:auto; background:#ffffff; border-radius:16px; overflow:hidden; box-shadow:0 4px 6px rgba(0,0,0,0.1);'>
+
+    <!-- Header -->
+    <tr>
+        <td style='background: linear-gradient(135deg, #ef4444, #dc2626); padding:40px; text-align:center;'>
+            <h1 style='color:#fff; margin:0;'>Eghatha</h1>
+            <p style='color:rgba(255,255,255,0.85); margin-top:10px;'>
+                Volunteer Application Update
+            </p>
+        </td>
+    </tr>
+
+    <!-- Body -->
+    <tr>
+        <td style='padding:40px;'>
+
+            <h2 style='color:#1f2937;'>Hello {fullName},</h2>
+
+            <p style='color:#4b5563; font-size:15px; line-height:1.6;'>
+                Thank you for applying to become a volunteer with Eghatha.
+            </p>
+
+            <p style='color:#4b5563; font-size:15px; line-height:1.6;'>
+                After careful review, we regret to inform you that your application was 
+                <strong style='color:#dc2626;'>not approved</strong> at this time.
+            </p>
+
+            {reasonHtml}
+
+            <div style='background:#f9fafb; padding:15px; border-radius:8px; margin-top:20px;'>
+                <p style='margin:0; color:#374151; font-size:14px;'>
+                    You are welcome to improve your profile and apply again in the future.
+                </p>
+            </div>
+
+            <p style='color:#6b7280; font-size:13px; margin-top:20px;'>
+                If you believe this was a mistake, please contact our support team.
+            </p>
+
+        </td>
+    </tr>
+
+    <!-- Footer -->
+    <tr>
+        <td style='background:#f9fafb; padding:20px; text-align:center; border-top:1px solid #e5e7eb;'>
+            <p style='font-size:12px; color:#9ca3af; margin:0;'>
+                &copy; 2024 Eghatha. All rights reserved.
+            </p>
+        </td>
+    </tr>
+
+</table>
+
+</body>
+</html>";
+        }
+
     }
 }

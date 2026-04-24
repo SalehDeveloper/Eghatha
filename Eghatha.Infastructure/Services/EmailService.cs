@@ -87,6 +87,24 @@ namespace Eghatha.Infastructure.Services
             await SendEmailAsync(toEmail, subject, body);
         }
 
+        public async Task SendVolunteerApprovedEmailAsync(string toEmail, string fullName)
+        {
+            var subject = "🎉 Your Eghatha Volunteer Account Has Been Approved";
+            var body = _templateBuilder.BuildVolunteerApprovedEmail(fullName);
+
+            await SendEmailAsync(toEmail, subject, body);
+        }
+
+        public async Task SendVolunteerRejectedEmailAsync(
+    string toEmail,
+    string fullName,
+    string? reason)
+        {
+            var subject = "❌ Your Eghatha Volunteer Application Status";
+            var body = _templateBuilder.BuildVolunteerRejectedEmail(fullName, reason);
+
+            await SendEmailAsync(toEmail, subject, body);
+        }
         private string StripHtmlTags(string html)
         {
             if (string.IsNullOrEmpty(html)) return string.Empty;

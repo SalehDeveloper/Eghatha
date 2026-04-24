@@ -21,6 +21,8 @@ namespace Eghatha.Domain.VolunteerRegisterations
 
         public Guid? ReviewedByAdminId { get; private set; }
 
+        public string? RejectionReason { get; private set; }
+
         private VolunteerRegisteration()
         {
 
@@ -40,7 +42,7 @@ namespace Eghatha.Domain.VolunteerRegisterations
         }
 
 
-        public ErrorOr<VolunteerRegisteration> Create(Guid volunteerId, DateTimeOffset requestedAt)
+        public static  ErrorOr<VolunteerRegisteration> Create(Guid volunteerId, DateTimeOffset requestedAt)
         {
             if (volunteerId == Guid.Empty)
             {
@@ -63,7 +65,7 @@ namespace Eghatha.Domain.VolunteerRegisterations
             return Result.Updated;
         }
 
-        public ErrorOr<Updated> Reject(DateTimeOffset reviewedAt, Guid reviewedById)
+        public ErrorOr<Updated> Reject(DateTimeOffset reviewedAt, Guid reviewedById , string reason)
         {
             if (Status != RegisterationStatus.Pending)
                 return VolunteerRegisterationErrors.AlreadyProcessed;
@@ -71,6 +73,7 @@ namespace Eghatha.Domain.VolunteerRegisterations
             Status = RegisterationStatus.Rejected;
             ReviewedAt = reviewedAt;
             ReviewedByAdminId = reviewedById;
+            RejectionReason = reason;
 
 
             return Result.Updated;

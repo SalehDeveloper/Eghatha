@@ -12,5 +12,9 @@ namespace Eghatha.Application.Common.Services
         string BuildEmailConfirmationTemplate(string otpCode, int expirationMinutes);
 
         string BuildTeamInvitationEmail(string fullName,string teamName,string otpCode,int expirationMinutes);
+
+        string BuildVolunteerApprovedEmail(string fullName);
+
+        string BuildVolunteerRejectedEmail(string fullName, string? reason);
     }
 }

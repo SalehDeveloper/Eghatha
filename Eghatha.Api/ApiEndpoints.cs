@@ -83,5 +83,17 @@ namespace Eghatha.Api
 
 
         }
+
+        public static class VolunteerRegisterations
+        {
+            public const string Base = $"{apiBase}/volunteer-registerations";
+
+            public const string GetAll = $"{Base}";
+
+            public const string Approve = $"{Base}/{{registerationid:guid}}/approve";
+            public const string Reject = $"{Base}/{{registerationid:guid}}/reject";
+
+
+        }
     }
 }

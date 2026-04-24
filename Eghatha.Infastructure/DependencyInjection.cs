@@ -105,7 +105,8 @@ namespace Eghatha.Infastructure
             services.AddScoped<ITeamRepository, TeamRepository>();
             services.AddScoped<IAdminNotifier , SignalRAdminNotifier>();
             services.AddScoped<ITeamLocationService, TeamLocationService>();
-
+            services.AddScoped<IVolunteerRegisterationRepository, VolunteerRegisterationRepository>();
+            services.AddScoped<IVolunteerRepository, VolunteerRepository>();
 
         }
 
