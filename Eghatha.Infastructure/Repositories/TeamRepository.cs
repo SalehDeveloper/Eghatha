@@ -1,10 +1,13 @@
 ﻿using Eghatha.Application.Common.Interfaces;
 using Eghatha.Application.Common.Models;
 using Eghatha.Application.Features.Teams.Dtos;
+using Eghatha.Application.Features.Volunteers.Dtos;
 using Eghatha.Domain.Identity;
 using Eghatha.Domain.Teams;
 using Eghatha.Domain.Teams.Resources;
 using Eghatha.Domain.Teams.TeamMembers;
+using Eghatha.Domain.Volunteers;
+using Eghatha.Domain.Volunteers.Equipments;
 using Eghatha.Infastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -84,6 +87,13 @@ namespace Eghatha.Infastructure.Repositories
 
                 query = query.Where(t => EF.Functions.Like(t.Province, $"%{pr}%"));
               
+            }
+            if (!string.IsNullOrWhiteSpace(city))
+            {
+                var ci = city.Trim();
+
+                query = query.Where(t => EF.Functions.Like(t.City, $"%{ci}%"));
+
             }
 
             var totalCount = await query.CountAsync(cancellationToken);
@@ -349,5 +359,10 @@ namespace Eghatha.Infastructure.Repositories
                 Items = resources
             };
         }
+
+
+
+   
+
     }
 }
