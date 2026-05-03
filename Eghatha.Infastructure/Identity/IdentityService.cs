@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,12 +29,16 @@ namespace Eghatha.Infastructure.Identity
         }
 
 
+        public async Task<ErrorOr<Success>> AddUserToRoleAsync (Guid userId ,  Role role)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            var res = await _userManager.AddToRoleAsync( user , role.ToString());
+
+            return Result.Success;
+        }
         public async Task<ErrorOr<Guid>> CreatUserAsync (string firstName , string lastName , string email ,string phoneNumber ,  string? password ,string photoUrl, UserCreationMode mode)
         {
-            var existingUser = await _userManager.FindByEmailAsync(email );
-
-            if (existingUser != null)
-                return Error.Conflict("User_Exists", "User with this email already exists");
+           
 
           
             var user = new ApplicationUser(firstName, lastName, email, phoneNumber, photoUrl);
@@ -49,6 +54,7 @@ namespace Eghatha.Infastructure.Identity
                             return Error.Validation("Password.Required", "Password is required for regular users");
 
                         result = await _userManager.CreateAsync(user, password);
+                     
                         break;
                     }
 
@@ -56,7 +62,9 @@ namespace Eghatha.Infastructure.Identity
                     {
                         
                         result = await _userManager.CreateAsync(user);
-                        break;
+                        user.EmailConfirmed = true;
+                        user.Activate();
+                       break;
                     }
 
                 default:
@@ -267,6 +275,15 @@ namespace Eghatha.Infastructure.Identity
                 TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize),
                 Items = items
             };
+        }
+   
+        public async Task<bool> UserExistsAsync(string email , CancellationToken cancellationToken )
+        {
+            var user = await _appDbContext.Users.FirstOrDefaultAsync(u => u.Email == email , cancellationToken);
+
+            if (user == null) 
+                return false;
+            return true;
         }
     }
 }
