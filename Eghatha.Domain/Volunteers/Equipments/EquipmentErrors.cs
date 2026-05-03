@@ -38,6 +38,14 @@ namespace Eghatha.Domain.Volunteers.Equipments
         public static readonly Error NotFound = Error.NotFound(
             code: "Equipment.NotFound",
             description: "equipment not found");
-        
+
+        public static readonly Error NotEnoughEquipments = Error.Conflict(
+        code: "Equipment.NotEnough",
+        description: "Not enough equipment available to perform the operation."
+
+
+    );
+
+
     }
 }
