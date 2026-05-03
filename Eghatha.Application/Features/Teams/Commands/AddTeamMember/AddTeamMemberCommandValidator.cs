@@ -45,9 +45,16 @@ namespace Eghatha.Application.Features.Teams.Commands.AddTeamMember
                 .WithMessage("Job title is required.")
                 .MaximumLength(100);
 
-            RuleFor(x => x.PhotoUrl).NotEmpty();
-            
-               
+            RuleFor(x => x.photo)
+              .NotNull().WithMessage("Photo is required")
+              .Must(file => file.Length > 0)
+              .WithMessage("Photo cannot be empty")
+              .Must(file => file.ContentType.StartsWith("image/"))
+              .WithMessage("Photo must be an image")
+              .Must(file => file.Length <= 5 * 1024 * 1024) 
+              .WithMessage("Photo size must not exceed 5MB");
+
+
         }
     }
 }
