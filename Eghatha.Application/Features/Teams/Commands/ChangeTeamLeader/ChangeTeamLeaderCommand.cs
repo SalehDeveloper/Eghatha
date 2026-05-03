@@ -9,6 +9,4 @@ using System.Threading.Tasks;
 namespace Eghatha.Application.Features.Teams.Commands.ChangeTeamLeader
 {
     public record ChangeTeamLeaderCommand(Guid TeamId, Guid MemberId) : IRequest<ErrorOr<Updated>>;
-    
-    
 }
