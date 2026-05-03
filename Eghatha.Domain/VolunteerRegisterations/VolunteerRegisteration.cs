@@ -1,5 +1,6 @@
 ﻿using Eghatha.Domain.Abstractions;
 using Eghatha.Domain.Shared.Errors;
+using Eghatha.Domain.VolunteerRegisterations.Events;
 using Eghatha.Domain.Volunteers;
 using ErrorOr;
 using System;
@@ -49,7 +50,11 @@ namespace Eghatha.Domain.VolunteerRegisterations
                 return DomainErrors.IdMustBeProvided(nameof(Volunteer));
             }
 
-            return new VolunteerRegisteration(Guid.NewGuid(), volunteerId, requestedAt);
+            var registeration = new VolunteerRegisteration(Guid.NewGuid(), volunteerId, requestedAt);
+
+            registeration.AddDomainEvent(new VolunteerRegisterationCreated(registeration.Id, registeration.VolunteerId, requestedAt));
+
+            return registeration;
         }
 
 
@@ -62,6 +67,7 @@ namespace Eghatha.Domain.VolunteerRegisterations
             ReviewedAt = reviewedAt;
             ReviewedByAdminId = reviewedById;
 
+            AddDomainEvent(new VolunteerRegisterationApproved(VolunteerId));
             return Result.Updated;
         }
 
@@ -75,7 +81,7 @@ namespace Eghatha.Domain.VolunteerRegisterations
             ReviewedByAdminId = reviewedById;
             RejectionReason = reason;
 
-
+            AddDomainEvent(new VolunteerRegisterationRejected(VolunteerId, reason));
             return Result.Updated;
 
         }
