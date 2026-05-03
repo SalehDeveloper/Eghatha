@@ -3,6 +3,7 @@ using Eghatha.Application.Features.Teams.Queries.GetTeams;
 using Eghatha.Application.Features.VolunteerRegisterations.Commands.ApproveRegisteration;
 using Eghatha.Application.Features.VolunteerRegisterations.Commands.RejectRegisteration;
 using Eghatha.Application.Features.VolunteerRegisterations.Queries.GetAll;
+using Eghatha.Application.Features.VolunteerRegisterations.Queries.GetById;
 using Eghatha.Contract.Shared;
 using Eghatha.Contract.Teams.Requests;
 using Eghatha.Contract.Teams.Responses;
@@ -82,8 +83,8 @@ namespace Eghatha.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         [EndpointSummary("Retrieves volunteer-registerations.")]
         [EndpointDescription("Returns a paginated list of volunteer-registerations with optional filtering by status, search term.")]
-        [EndpointName("GetRegisteration")]
-        public async Task<IActionResult> GetRegisteration([FromQuery] GetVolunteerRegisteartionsFilter filter, [FromQuery] PagedRequest pagedRequest, CancellationToken cancellationToken)
+        [EndpointName("GetRegisterations")]
+        public async Task<IActionResult> GetRegisterations([FromQuery] GetVolunteerRegisteartionsFilter filter, [FromQuery] PagedRequest pagedRequest, CancellationToken cancellationToken)
         {
             RegisterationStatus? status = null;
 
@@ -107,6 +108,28 @@ namespace Eghatha.Api.Controllers
         }
 
 
+        // [Authorize(Roles = ApplicationRole.Admin)]
+        [HttpGet(ApiEndpoints.VolunteerRegisterations.GetById)]
+        [ProducesResponseType(typeof(VolunteerRegisterationResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        [EndpointSummary("Retrieves a volunteer-registeration by id.")]
+        [EndpointDescription("Returns a volunteer-registeration")]
+        [EndpointName("GetRegisterationById")]
+        public async Task<IActionResult> GetRegisterationById([FromRoute] Guid registerationid  , CancellationToken cancellationToken )
+        {
+            var query = new GetVolunteerRegisterationQueryById(registerationid);
+
+            var res = await _sender.Send(query, cancellationToken);
+
+            return res.Match(
+                v => base.Ok(v.ToResponse()),
+                Problem);
+        }
 
 
     }
