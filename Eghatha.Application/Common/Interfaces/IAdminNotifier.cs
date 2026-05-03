@@ -9,5 +9,8 @@ namespace Eghatha.Application.Common.Interfaces
     public interface IAdminNotifier
     {
         Task NotifyLiveTeamLocationUpdated(Guid teamId , double latitude , double longitude , CancellationToken cancellationToken);
+
+        Task NotifyNewVolunteerRegistered(Guid referenceId, string message,string url, DateTimeOffset requestedAt , CancellationToken cancellationToken );
+
     }
 }
