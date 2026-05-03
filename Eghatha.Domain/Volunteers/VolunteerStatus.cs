@@ -12,6 +12,8 @@ namespace Eghatha.Domain.Volunteers
         public static readonly VolunteerStatus Available = new VolunteerStatus(nameof(Available), 1);
         public static readonly VolunteerStatus UnAvailable = new VolunteerStatus(nameof(UnAvailable), 2);
         public static readonly VolunteerStatus Busy = new VolunteerStatus(nameof(Busy), 3);
+        public static readonly VolunteerStatus UnderReview = new VolunteerStatus(nameof(UnderReview), 4);
+
         public VolunteerStatus(string name, int value) 
             : base(name, value)
         {
