@@ -51,14 +51,15 @@ namespace Eghatha.Api.Controllers
             if (!TeamSpeciality.TryFromName(request.Speciality, true, out var speciality))
                 return Problem(TeamErrors.InvalidSpeciality);
 
-            var command = new CreateTeamCommand(request.Name, speciality, request.Province, request.City, request.Latitude, request.Longitude);
+            var command = new CreateTeamCommand(request.Name, speciality,  request.Latitude, request.Longitude);
 
             var result = await _sender.Send(command, cancellationToken);
 
             return result.Match(
                 v => base.CreatedAtAction(
                     nameof(GetById),
-                    new { id = v} 
+                    new { teamid = v} ,
+                    null
                    ),
                 Problem);
 
@@ -188,7 +189,7 @@ namespace Eghatha.Api.Controllers
 
 
 
-        // [Authorize(Roles = ApplicationRole.Admin)]
+         [Authorize(Roles = ApplicationRole.Admin)]
         [HttpPost(ApiEndpoints.Teams.AddMemeber)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -202,7 +203,7 @@ namespace Eghatha.Api.Controllers
         [EndpointName("AddTeamMember")]
         public async Task<IActionResult> AddTeamMember([FromRoute] Guid teamid, [FromBody] AddTeamMemberRequest request, CancellationToken cancellationToken)
         {
-            var command = new AddTeamMemberCommand(teamid, request.FirstName, request.LastName, request.Email, request.PhoneNumber, request.PhotoUrl, request.JobTitle, request.IsLeader);
+            var command = new AddTeamMemberCommand(teamid, request.FirstName, request.LastName, request.Email, request.PhoneNumber, request.Photo, request.JobTitle, request.IsLeader);
 
 
             var result = await _sender.Send(command, cancellationToken);
