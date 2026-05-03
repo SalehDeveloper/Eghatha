@@ -89,9 +89,35 @@ namespace Eghatha.Api
             public const string Base = $"{apiBase}/volunteer-registerations";
 
             public const string GetAll = $"{Base}";
-
+            public const string GetById = $"{Base}/{{registerationid:guid}}";
             public const string Approve = $"{Base}/{{registerationid:guid}}/approve";
             public const string Reject = $"{Base}/{{registerationid:guid}}/reject";
+
+
+        }
+
+        public static class Volunteers
+        {
+            public const string Base = $"{apiBase}/volunteers";
+
+            public const string Create = $"{Base}";
+
+            public const string GetAll = $"{Base}";
+
+            public const string GetById = $"{Base}/{{volunteerid:guid}}";
+            public const string volunteerBusy = $"{Base}/{{volunteerid:guid}}/busy";
+            public const string volunteerAvailable = $"{Base}/{{volunteerid:guid}}/available";
+            public const string volunteerUnAvailable = $"{Base}/{{volunteerid:guid}}/unavailable";
+            public const string UpdateLocation = $"{Base}/{{volunteerid:guid}}/location";
+            public const string IncreaseEquipmentQuantity = $"{Base}/{{volunteerid:guid}}/equipments/{{equipmentid:guid}}/increase";
+            public const string DecreaseEquipmentQuantity = $"{Base}/{{volunteerid:guid}}/equipments/{{equipmentid:guid}}/decrease";
+            public const string UpdateEquipment = $"{Base}/{{volunteerid:guid}}/equipments/{{equipmentid:guid}}";
+            public const string EquipmentValid = $"{Base}/{{volunteerid:guid}}/equipments/{{equipmentid:guid}}/valid";
+            public const string EquipmentInValid = $"{Base}/{{volunteerid:guid}}/equipments/{{equipmentid:guid}}/invalid";
+            public const string RemoveEquipment = $"{Base}/{{volunteerid:guid}}/equipments/{{equipmentid:guid}}";
+
+            public const string AddEquipment = $"{Base}/{{volunteerid:guid}}/equipments";
+            public const string GetVolunteerEquipments = $"{Base}/{{volunteerid:guid}}/equipments";
 
 
         }

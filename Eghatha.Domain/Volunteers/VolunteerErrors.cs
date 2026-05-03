@@ -47,5 +47,13 @@ namespace Eghatha.Domain.Volunteers
             code: "Volunteer.ScoreMustBeGreaterThanZero",
             description: "Volunteer score should be greater than zero");
 
+        public static Error CityRequired = Error.Validation(
+          code: "Volunteer.City.Required",
+          description: "Team city is required.");
+
+        public static Error ProvinceRequired = Error.Validation(
+            code: "Volunteer.Province.Required",
+            description: "Volunteer province is required.");
+
     }
 }

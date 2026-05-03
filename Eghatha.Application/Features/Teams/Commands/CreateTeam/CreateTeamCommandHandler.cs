@@ -1,4 +1,5 @@
 ﻿using Eghatha.Application.Common.Interfaces;
+using Eghatha.Application.Common.Services;
 using Eghatha.Domain.Abstractions;
 using Eghatha.Domain.Shared.ValueObjects;
 using Eghatha.Domain.Teams;
@@ -19,13 +20,16 @@ namespace Eghatha.Application.Features.Teams.Commands.CreateTeam
         private readonly ITeamRepository _teamRepository;
         private readonly IUser _user;
         private readonly HybridCache _hybridCache;
+        private readonly IGeocodingService _geocodingService;
 
-        public CreateTeamCommandHandler(IUnitOfWork unitOfWork, ITeamRepository teamRepository, IUser user, HybridCache hybridCache)
+
+        public CreateTeamCommandHandler(IUnitOfWork unitOfWork, ITeamRepository teamRepository, IUser user, HybridCache hybridCache, IGeocodingService geocodingService)
         {
             _unitOfWork = unitOfWork;
             _teamRepository = teamRepository;
             _user = user;
             _hybridCache = hybridCache;
+            _geocodingService = geocodingService;
         }
 
         public async Task<ErrorOr<Guid>> Handle(CreateTeamCommand request, CancellationToken cancellationToken)
@@ -34,17 +38,20 @@ namespace Eghatha.Application.Features.Teams.Commands.CreateTeam
 
             if (location.IsError) return location.Errors;
 
-            var currentUserId = _user.Id;
+          //  var currentUserId = _user.Id;
 
-            var team = Team.Create(Guid.NewGuid(), request.Name, request.Speciality, request.Province, request.City, location.Value, currentUserId.Value);
+            var LocationResult = await _geocodingService.ResolveAsync(request.Latitude, request.Longitude, cancellationToken);
 
+            //var team = Team.Create(Guid.NewGuid(), request.Name, request.Speciality, LocationResult.Province, LocationResult.City, location.Value, currentUserId.Value);
+
+            var team = Team.Create(Guid.NewGuid(), request.Name, request.Speciality, LocationResult.Province, LocationResult.City, location.Value, Guid.Parse("9668180C-06CB-43DD-8CFA-2EF9D617F47E"));
             if (team.IsError) return team.Errors;   
 
             await _teamRepository.AddAsync(team.Value);
 
             await _unitOfWork.CompleteAsync(cancellationToken);
 
-            await _hybridCache.RemoveByTagAsync("teams");
+            await _hybridCache.RemoveByTagAsync("teams" , cancellationToken);
 
             return team.Value.Id;
         }

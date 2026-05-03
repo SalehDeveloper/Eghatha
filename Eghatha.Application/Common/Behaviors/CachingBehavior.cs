@@ -24,50 +24,41 @@ public class CachingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         if (request is not ICachedQuery cachedRequest)
+        {
             return await next(cancellationToken);
+        }
 
-        var cacheKey = cachedRequest.CachKey;
+        _logger.LogInformation("Checking cache for {RequestName}", typeof(TRequest).Name);
 
-        var options = new HybridCacheEntryOptions
-        {
-            Expiration = cachedRequest.Expiration
-        };
-
-        try
-        {
-            var response = await _cache.GetOrCreateAsync<TResponse>(
-                cacheKey,
-                async ct =>
-                {
-                    _logger.LogDebug("Cache MISS for key: {CacheKey}", cacheKey);
-
-                    var result = await next(ct);
-
-                    return result;
-                },
-                options,
-                cachedRequest.Tags,
-                cancellationToken
-            );
-
-            _logger.LogDebug("Cache HIT for key: {CacheKey}", cacheKey);
-
-            if (response is IErrorOr errorOr && errorOr.IsError)
+        var result = await _cache.GetOrCreateAsync<TResponse>(
+            cachedRequest.CachKey,
+            _ => new ValueTask<TResponse>((TResponse)(object)null!),
+            new HybridCacheEntryOptions
             {
-                _logger.LogWarning("Cached response contains error. Removing cache key: {CacheKey}", cacheKey);
+                Flags = HybridCacheEntryFlags.DisableUnderlyingData
+            },
+            cancellationToken: cancellationToken);
 
-                await _cache.RemoveAsync(cacheKey, cancellationToken);
-            }
-
-            return response;
-        }
-        catch (Exception ex)
+        if (result is null)
         {
-            _logger.LogError(ex, "Caching failed for key: {CacheKey}", cacheKey);
+            result = await next(cancellationToken);
 
+           
+                _logger.LogInformation("Caching result for {RequestName}", typeof(TRequest).Name);
+
+                await _cache.SetAsync(
+                    cachedRequest.CachKey,
+                    result,
+                    new HybridCacheEntryOptions
+                    {
+                        Expiration = cachedRequest.Expiration
+                    },
+                    cachedRequest.Tags,
+                    cancellationToken);
             
-            return await next(cancellationToken);
         }
+
+        return result;
     }
 }
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Eghatha.Contract.Teams.Requests
 {
-    public record CreateTeamRequest(string Name, string Speciality, string Province, string City, double Latitude, double Longitude);
+    public record CreateTeamRequest(string Name, string Speciality,  double Latitude, double Longitude);
     
     
 }

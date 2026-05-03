@@ -10,6 +10,4 @@ using System.Threading.Tasks;
 namespace Eghatha.Application.Features.Teams.Commands.DeActivateTeamMember
 {
     public record UpdateTeamMemberStatusCommand(Guid TeamId, Guid MemeberId , TeamMemberStatus Status) : IRequest<ErrorOr<Updated>>;
-    
-    
 }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Eghatha.Application.Features.Teams.Commands.CreateTeam
 {
-    public record CreateTeamCommand(string Name, TeamSpeciality Speciality, string Province, string City, double Latitude , double Longitude) : IRequest<ErrorOr<Guid>>;
+    public record CreateTeamCommand(string Name, TeamSpeciality Speciality,  double Latitude , double Longitude) : IRequest<ErrorOr<Guid>>;
     
     
 }

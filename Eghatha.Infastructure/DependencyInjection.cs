@@ -11,6 +11,7 @@ using Eghatha.Infastructure.Identity.Policies;
 using Eghatha.Infastructure.RealTime;
 using Eghatha.Infastructure.Repositories;
 using Eghatha.Infastructure.Services;
+using Eghatha.Infastructure.Storage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -86,7 +87,7 @@ namespace Eghatha.Infastructure
                                  configuration.GetSection("OtpSettings"));
 
             services.Configure<EmailOptions>(configuration.GetSection("EmailConfiguration"));
-       
+            services.Configure<CloudinaryOptions>(configuration.GetSection("Cloudinary"));
 
             services.AddSingleton<IConnectionMultiplexer>(sp =>
             {
@@ -107,7 +108,19 @@ namespace Eghatha.Infastructure
             services.AddScoped<ITeamLocationService, TeamLocationService>();
             services.AddScoped<IVolunteerRegisterationRepository, VolunteerRegisterationRepository>();
             services.AddScoped<IVolunteerRepository, VolunteerRepository>();
+            services.AddScoped<ICloudinaryService, CloudinaryService>();
 
+
+            services.AddHttpClient<IGeocodingService, OpenStreetMapService>(client =>
+            {
+                client.BaseAddress = new Uri("https://nominatim.openstreetmap.org/");
+
+                client.DefaultRequestHeaders.UserAgent.ParseAdd(
+                    "VolunteerSystem/1.0 (ahmadsalehdev.22@gmail.com)"
+                );
+
+                client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+            });
         }
 
 

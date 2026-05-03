@@ -25,5 +25,10 @@ namespace Eghatha.Infastructure.RealTime
          
 
         }
+
+        public async Task NotifyNewVolunteerRegistered(Guid referenceId, string message, string url, DateTimeOffset requestedAt , CancellationToken cancellationToken )
+        {
+           await _hub.Clients.Group("Admins").NewVolunteerRegisterd(referenceId , message , url, requestedAt);
+        }
     }
 }

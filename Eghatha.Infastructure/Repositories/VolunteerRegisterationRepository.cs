@@ -1,10 +1,12 @@
-﻿using Eghatha.Application.Common.Interfaces;
+﻿using Eghatha.Application.Common.Errors;
+using Eghatha.Application.Common.Interfaces;
 using Eghatha.Application.Common.Models;
 using Eghatha.Application.Features.VolunteerRegisterations.Dtos;
 using Eghatha.Domain.Shared.ValueObjects;
 using Eghatha.Domain.VolunteerRegisterations;
 using Eghatha.Domain.Volunteers;
 using Eghatha.Infastructure.Data;
+using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -87,6 +89,38 @@ namespace Eghatha.Infastructure.Repositories
                 TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize),
                 Items = items
             };
+        }
+
+
+
+        public async Task<VolunteerRegisterationDto?> GetRegisterationByIdAsync(Guid registerationId , CancellationToken cancellationToken )
+        {
+            var query =
+        from reg in _context.Set<VolunteerRegisteration>().AsNoTracking()
+        join vol in _context.Set<Volunteer>() on reg.VolunteerId equals vol.Id
+        join user in _context.Set<ApplicationUser>() on vol.UserId equals user.Id
+        where reg.Id == registerationId
+        select new VolunteerRegisterationDto(
+            reg.Id,
+            vol.Id,
+            user.FirstName + " " + user.LastName,
+            user.Email,
+            user.PhoneNumber,
+            user.PhotoUrl,
+            vol.Location.Latitude,
+            vol.Location.Longitude,
+            vol.YearsOfExperience,
+            vol.Speciality,
+            vol.Cv,
+            reg.Status,
+            reg.RequestedAt,
+            reg.ReviewedAt,
+            reg.RejectionReason
+        );
+
+         return   await query.FirstOrDefaultAsync(cancellationToken);
+
+         
         }
     }
 }

@@ -39,10 +39,17 @@ namespace Eghatha.Application.Features.Authentication.Commands.ConfirmEmail
 
             var res = await _otpService.ValidateAsync(OtpType.ConfirmEmail, request.Email , request.Otp );
 
-            if (res.IsError) return res.Errors;  
-          
-            await _identityService.ConfirmEmail(user.Value.Email);
-            await _identityService.ActivateUser(user.Value.Id);
+            if (res.IsError) return res.Errors;
+
+            if (user.Value.Roles.Any(r => r == "Volunteer"))
+            {
+                await _identityService.ConfirmEmail(user.Value.Email);
+            }
+            else
+            {
+                await _identityService.ConfirmEmail(user.Value.Email);
+                await _identityService.ActivateUser(user.Value.Id);
+            }   
   
             await _otpService.RemoveAsync(OtpType.ConfirmEmail , request.Email);
 

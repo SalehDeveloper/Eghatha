@@ -17,11 +17,7 @@ namespace Eghatha.Application.Features.Teams.Commands.CreateTeam
 
           
 
-            RuleFor(x => x.Province)
-                .NotEmpty();
-
-            RuleFor(x => x.City)
-                .NotEmpty();
+        
 
             RuleFor(x => x.Latitude)
                 .InclusiveBetween(-90, 90);

@@ -68,7 +68,7 @@ namespace Eghatha.Domain.Volunteers.Equipments
             if (category is not null && !EquipmentCategory.TryFromName(category.Name, out _))
                 return EquipmentErrors.UnSupportedCategory;
 
-            if (status is not null && !VolunteerStatus.TryFromName(status.Name, out _))
+            if (status is not null && !EquipmentStatus.TryFromName(status.Name, out _))
                 return EquipmentErrors.InvalidStatus;
 
             if (quantity is not null && quantity <= 0)
@@ -83,13 +83,24 @@ namespace Eghatha.Domain.Volunteers.Equipments
         }
 
 
-        public ErrorOr<Updated> ChangeQuantity(int quantity)
+        public ErrorOr<Updated> IncreaseQuantity(int amount)
         {
-            if (quantity <= 0)
+            if (amount <= 0)
                 return EquipmentErrors.QuantityShouldBeGreaterThanZero;
 
-            Quantity = quantity;
+            Quantity += amount;
+            return Result.Updated;
+        }
 
+        public ErrorOr<Updated> DecreaseQuantity(int amount)
+        {
+            if (amount <= 0)
+                return EquipmentErrors.QuantityShouldBeGreaterThanZero;
+
+            if (Quantity < amount)
+                return EquipmentErrors.NotEnoughEquipments;
+
+            Quantity -= amount;
             return Result.Updated;
         }
 

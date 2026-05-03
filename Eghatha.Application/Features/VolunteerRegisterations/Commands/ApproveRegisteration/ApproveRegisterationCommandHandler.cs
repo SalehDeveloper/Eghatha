@@ -2,6 +2,7 @@
 using Eghatha.Application.Common.Errors;
 using Eghatha.Application.Common.Interfaces;
 using Eghatha.Domain.Abstractions;
+using Eghatha.Domain.Volunteers;
 using ErrorOr;
 using MediatR;
 using Microsoft.Extensions.Caching.Hybrid;
@@ -53,6 +54,7 @@ namespace Eghatha.Application.Features.VolunteerRegisterations.Commands.ApproveR
 
            if (activationResult.IsError) return activationResult.Errors;
 
+            volunteer.UpdateStatus(VolunteerStatus.Available);
            await _unitOfWork.CompleteAsync(cancellationToken);
 
             await _hybridCache.RemoveByTagAsync("volunteer-registrations");

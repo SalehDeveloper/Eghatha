@@ -2,6 +2,7 @@
 using Eghatha.Application.Features.VolunteerRegisterations.Dtos;
 using Eghatha.Domain.Abstractions;
 using Eghatha.Domain.VolunteerRegisterations;
+using ErrorOr;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +16,7 @@ namespace Eghatha.Application.Common.Interfaces
 
         Task<PaginatedList<VolunteerRegisterationDto>> GetRegisterationsAsync(int page, int pageSize, string? SearchTerm,
             RegisterationStatus? Status, CancellationToken cancellationToken);
+
+        Task<VolunteerRegisterationDto?> GetRegisterationByIdAsync(Guid registerationId, CancellationToken cancellationToken);
     }
 }
