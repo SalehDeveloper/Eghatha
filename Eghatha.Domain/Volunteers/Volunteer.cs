@@ -1,7 +1,9 @@
 ﻿using Eghatha.Domain.Abstractions;
 using Eghatha.Domain.Shared.Errors;
 using Eghatha.Domain.Shared.ValueObjects;
+using Eghatha.Domain.Teams;
 using Eghatha.Domain.Volunteers.Equipments;
+using Eghatha.Domain.Volunteers.Events;
 using ErrorOr;
 using Microsoft.AspNetCore.Http;
 
@@ -18,6 +20,10 @@ namespace Eghatha.Domain.Volunteers
 
         public GeoLocation Location { get; private set; }
 
+        public string Province { get; private set; }
+
+        public string City { get; private set; }
+
         public int YearsOfExperience { get; private set; }
         public string? Cv { get; private set; }
 
@@ -29,7 +35,7 @@ namespace Eghatha.Domain.Volunteers
 
         public IEnumerable<Equipment> Equipments => _equipments.AsReadOnly();
 
-        private readonly List<Equipment> _equipments = [];
+        private readonly List<Equipment> _equipments = new();
         private Volunteer()
         {
 
@@ -41,19 +47,22 @@ namespace Eghatha.Domain.Volunteers
             VolunteerStatus status,
             VolunteerSpeciality speciality,
             GeoLocation location,
+            string province,
+            string city,
             int yearsOfExperience,
-            string cv,
-            List<Equipment> equipments) : base(id)
+            string cv) : base(id)
         {
             UserId = userId;
             Status = status;
             Speciality = speciality;
             Location = location;
+            City= city; 
+            Province= province; 
             YearsOfExperience = yearsOfExperience;
             Cv = cv;
             TotalMissions = 0;
             TotalScore = 0;
-            _equipments = equipments;
+         
 
         }
 
@@ -62,10 +71,12 @@ namespace Eghatha.Domain.Volunteers
             VolunteerStatus status,
             VolunteerSpeciality speciality,
             GeoLocation location,
+            string province,
+            string city , 
             int yearsOfExperience,
-            string cv,
-            List<Equipment> equipments
-            )
+            string cv)
+          
+            
         {
             if (id == Guid.Empty)
                 return DomainErrors.IdMustBeProvided(nameof(Volunteer));
@@ -87,23 +98,30 @@ namespace Eghatha.Domain.Volunteers
             if (location is null)
                 return VolunteerErrors.LocationRequired;
 
-            var geoLocation = GeoLocation.Create(location.Latitude, location.Longitude);
+            if (string.IsNullOrWhiteSpace(province))
+                return VolunteerErrors.ProvinceRequired;
 
-            if (geoLocation.IsError) return geoLocation.Errors;
+            if (string.IsNullOrWhiteSpace(city))
+                return VolunteerErrors.CityRequired;
 
             if (yearsOfExperience < 0)
                 return VolunteerErrors.ExperienceMustBeGreaterThanZero;
 
-            return new Volunteer(
+
+            var volunteer =  new  Volunteer(
                 id,
                 userId,
                 status,
                 speciality,
-                geoLocation.Value,
+                location,
+                province,
+                city,
                 yearsOfExperience,
-                cv,
-                equipments
-                );
+                cv);
+
+            volunteer.AddDomainEvent(new VolunteerCreated(volunteer.Id, volunteer.UserId));
+
+            return volunteer;
         }
 
 
@@ -127,14 +145,15 @@ namespace Eghatha.Domain.Volunteers
             return Result.Updated;
         }
 
-        public ErrorOr<Updated> UpdateLocation(GeoLocation location)
+        public ErrorOr<Updated> UpdateLocation(GeoLocation location, string province, string city)
         {
             if (location is null)
                 return VolunteerErrors.LocationRequired;
 
-            var geoLocation = GeoLocation.Create(location.Latitude, location.Longitude);
-            if (geoLocation.IsError) return geoLocation.Errors;
-            Location = geoLocation.Value;
+           
+            Location = location;
+            City = city;
+            Province= province;
             return Result.Updated;
         }
 
@@ -154,53 +173,60 @@ namespace Eghatha.Domain.Volunteers
             return Result.Updated;
         }
 
-        public ErrorOr<Updated> AssignEquipments(IEnumerable<(string name, EquipmentCategory category, int quantity)> equipments)
+        public ErrorOr<Equipment> AddEquipment(string name, EquipmentCategory category, int quantity)
         {
-            foreach (var equipment in equipments)
+            var existing = _equipments.FirstOrDefault(e =>
+                e.Name.Equals(name, StringComparison.OrdinalIgnoreCase) &&
+                e.Category == category);
+
+            if (existing is not null)
             {
-                if (_equipments.Any(e => e.Name.Equals(equipment.name, StringComparison.OrdinalIgnoreCase) && e.Category == equipment.category))
-                    continue;
-
-                var newEquipment = Equipment.Create(
-                    Guid.NewGuid(),
-                    equipment.name,
-                    equipment.category,
-                    equipment.quantity
-                    );
-
-                if (newEquipment.IsError)
-                    return newEquipment.Errors;
-
-                _equipments.Add(newEquipment.Value);
-
-
+                var res = existing.IncreaseQuantity(quantity);
+                if (res.IsError)
+                    return res.Errors;
+                return existing;
             }
+
+            var equipment = Equipment.Create(Guid.NewGuid(), name, category, quantity);
+
+            if (equipment.IsError)
+                return equipment.Errors;
+
+            _equipments.Add(equipment.Value);
+
+           
+
+            return equipment.Value;
+        }
+
+        public ErrorOr<Updated> UpdateEquipment(
+        Guid equipmentId,
+        string? name,
+        EquipmentCategory? category,
+        EquipmentStatus? status,
+        int? quantity)
+        {
+            if (equipmentId == Guid.Empty)
+                return DomainErrors.IdMustBeProvided(nameof(Equipment));
+
+            var equipment = _equipments.FirstOrDefault(e => e.Id == equipmentId);
+
+            if (equipment is null)
+                return EquipmentErrors.NotFound;
+
+            var result = equipment.Update(
+                name,
+                category,
+                status,
+                quantity
+            );
+
+            if (result.IsError)
+                return result.Errors;
 
             return Result.Updated;
         }
 
-        public ErrorOr<Updated> UpdateEquipments(IEnumerable<(Guid id, string name, EquipmentCategory category, EquipmentStatus status, int quantity)> equipments)
-        {
-            foreach (var equipment in equipments)
-            {
-                var existing = _equipments.FirstOrDefault(e => e.Id == equipment.id);
-
-                if (existing is null)
-                    continue;
-
-                var result = existing.Update(
-                     equipment.name,
-                     equipment.category,
-                     equipment.status,
-                     equipment.quantity
-                    );
-
-                if (result.IsError)
-                    return result.Errors;
-            }
-
-            return Result.Updated;
-        }
 
         public ErrorOr<Deleted> RemoveEquipment(Guid equipmentId)
         {
@@ -219,18 +245,25 @@ namespace Eghatha.Domain.Volunteers
 
         }
 
-        public ErrorOr<Updated> ChangeEquipmentQuantity(Guid equipmentId, int quantity)
+
+        public ErrorOr<Updated> IncreaseEquipmentQuantity(Guid equipmentId, int quantity)
         {
             var equipment = _equipments.FirstOrDefault(e => e.Id == equipmentId);
 
             if (equipment is null)
                 return EquipmentErrors.NotFound;
 
-            var result = equipment.ChangeQuantity(quantity);
+            return equipment.IncreaseQuantity(quantity);
+        }
 
+        public ErrorOr<Updated> DecreaseEquipmentQuantity(Guid equipmentId, int quantity)
+        {
+            var equipment = _equipments.FirstOrDefault(e => e.Id == equipmentId);
 
-            return result == Result.Updated ? result : result.Errors;
+            if (equipment is null)
+                return EquipmentErrors.NotFound;
 
+            return equipment.DecreaseQuantity(quantity);
         }
 
         public ErrorOr<Updated> UpdateEquipmentStatus(Guid equipmentId, EquipmentStatus status)
