@@ -39,6 +39,7 @@ namespace Eghatha.Application.Features.Teams.Commands.UpdateTeamStatus
                 return result.Errors;
 
             await _unitOfWork.CompleteAsync(cancellationToken);
+
             await _hybridCache.RemoveByTagAsync("teams");
             return Result.Updated;
         }
