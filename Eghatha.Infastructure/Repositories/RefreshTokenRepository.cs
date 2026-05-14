@@ -17,14 +17,14 @@ namespace Eghatha.Infastructure.Repositories
         }
         public async Task<RefreshToken?> GetByTokenAsync(string token, CancellationToken cancellationToken)
         {
-            return await _context.Set<RefreshToken>().FirstOrDefaultAsync(r => r.Token == token , cancellationToken);
+            return await _context.Set<RefreshToken>().FirstOrDefaultAsync(r => r.Token == token, cancellationToken);
         }
 
         public async Task<int> RevokeAllByUserId(Guid userId, CancellationToken cancellationToken)
         {
-           var tokens = await  _context.Set<RefreshToken>().Where(r => r.UserId == userId && !r.IsRevoked).ToListAsync(cancellationToken);
+            var tokens = await _context.Set<RefreshToken>().Where(r => r.UserId == userId && !r.IsRevoked).ToListAsync(cancellationToken);
 
-            foreach(var token in tokens)
+            foreach (var token in tokens)
             {
                 token.Revoke();
             }

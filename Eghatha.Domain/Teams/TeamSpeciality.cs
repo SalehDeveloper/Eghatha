@@ -15,6 +15,15 @@ namespace Eghatha.Domain.Teams
         public static readonly TeamSpeciality LogisticsTeam = new(nameof(LogisticsTeam), 4);
         public static readonly TeamSpeciality EngineeringTeam = new(nameof(EngineeringTeam), 5);
         public static readonly TeamSpeciality CommunicationsTeam = new(nameof(CommunicationsTeam), 6);
+        public static readonly TeamSpeciality WaterRescueTeam = new(nameof(WaterRescueTeam), 7);
+        public static readonly TeamSpeciality MountainRescueTeam =new(nameof(MountainRescueTeam), 8);
+        public static readonly TeamSpeciality HazardousMaterialsTeam =   new(nameof(HazardousMaterialsTeam), 9);
+        public static readonly TeamSpeciality HeavyRescueTeam =new(nameof(HeavyRescueTeam), 10);
+        public static readonly TeamSpeciality EvacuationTeam =new(nameof(EvacuationTeam), 11);
+        public static readonly TeamSpeciality ShelterSupportTeam =new(nameof(ShelterSupportTeam), 12);
+        public static readonly TeamSpeciality RapidResponseTeam =new(nameof(RapidResponseTeam), 13);
+        public static readonly TeamSpeciality GeneralSupportTeam = new(nameof(GeneralSupportTeam), 14);
+
 
         public TeamSpeciality(string name, int value) : base(name, value)
         {

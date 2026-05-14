@@ -107,5 +107,18 @@ namespace Eghatha.Domain.Disasters
           code: "DisasterErrors.Team.NotFound",
           description: "team is not assinged to this disaster");
 
+        public static Error InvalidType = Error.Validation(
+        code: "DisasterErrors.Type.Invalid",
+        description: "disaster type is invalid.");
+
+        public static Error ProvinceRequired = Error.Validation(
+            code: "DisasterErrors.ProvinceRequired",
+            description: "province is required");
+
+        public static Error CityRequired = Error.Validation(
+          code: "DisasterErrors.CityRequired",
+          description: "city is required");
+
+
     }
 }

@@ -15,15 +15,10 @@ namespace Eghatha.Application.Common.Interfaces
     public interface ITeamRepository : IBaseRepository<Team>
     {
         Task<Team?> GetTeamForAUserAsync(Guid userId, CancellationToken cancellationToken);
-
         Task<Team?> GetTeamByIdWithMembersAsync(Guid id, CancellationToken cancellationToken);
-
-       Task AddTeamMemberAsync(TeamMember member, CancellationToken cancellationToken);
-
+        Task AddTeamMemberAsync(TeamMember member, CancellationToken cancellationToken);
         Task<Team?> GetTeamByIdWithResourcesAsync(Guid id, CancellationToken cancellationToken);
-
         Task AddTeamResourceAsync(Resource resource, CancellationToken cancellationToken);
-
         Task<PaginatedList<TeamDto>> GetTeamsAsync(
            int page,
            int pageSize,
@@ -33,25 +28,13 @@ namespace Eghatha.Application.Common.Interfaces
            string? province,
            string? city,
            CancellationToken cancellationToken);
+        Task<TeamDto?> GetTeamOverviewAsync( Guid teamId, CancellationToken cancellationToken);
+        Task<PaginatedList<TeamMemberDto>> GetTeamMembersAsync( Guid teamId,int page,int pageSize,string? searchTerm,TeamMemberStatus? status,CancellationToken cancellationToken);
+        Task<PaginatedList<TeamResourceDto>> GetTeamResourcesAsync( Guid teamId,int page,int pageSize,ResourceType? type,CancellationToken cancellationToken);
+        Task<IReadOnlyList<Team>> GetAvailableTeamsAsync(IReadOnlyList<TeamSpeciality> specialities, CancellationToken cancellationToken);
+        Task<List<Team>> GetTeamsByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken);
 
-        Task<TeamDto?> GetTeamOverviewAsync(
-    Guid teamId,
-    CancellationToken cancellationToken);
-
-        Task<PaginatedList<TeamMemberDto>> GetTeamMembersAsync(
-    Guid teamId,
-    int page,
-    int pageSize,
-    string? searchTerm,
-    TeamMemberStatus? status,
-    CancellationToken cancellationToken);
-
-        Task<PaginatedList<TeamResourceDto>> GetTeamResourcesAsync(
-   Guid teamId,
-   int page,
-   int pageSize,
-   ResourceType? type,
-   CancellationToken cancellationToken);
+        Task<Guid?> GetTeamLeaderByUserId(Guid userId, CancellationToken cancellationToken);
 
 
     }

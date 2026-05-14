@@ -13,7 +13,8 @@ namespace Eghatha.Domain.Teams
         public static readonly TeamStatus Active = new(nameof(Active), 1);
         public static readonly TeamStatus Inactive = new(nameof(Inactive), 2);
         public static readonly TeamStatus OnMission = new(nameof(OnMission), 3);
-        public static readonly TeamStatus OffDuty = new(nameof(OffDuty), 4);
+        public static readonly TeamStatus Returning = new(nameof(Returning), 4);
+        public static readonly TeamStatus OffDuty = new(nameof(OffDuty), 5);
         public TeamStatus(string name, int value) : base(name, value)
         {
         }
@@ -39,7 +40,8 @@ namespace Eghatha.Domain.Teams
 
             [TeamStatus.OnMission] = new[]
             {
-            TeamStatus.OffDuty
+            TeamStatus.OffDuty,
+            TeamStatus.Returning,
         },
 
             [TeamStatus.Inactive] = new[]

@@ -8,7 +8,7 @@ using Eghatha.Infastructure.Data;
 using Eghatha.Infastructure.Data.Interceptors;
 using Eghatha.Infastructure.Identity;
 using Eghatha.Infastructure.Identity.Policies;
-using Eghatha.Infastructure.RealTime;
+using Eghatha.Infastructure.RealTime.Admin;
 using Eghatha.Infastructure.Repositories;
 using Eghatha.Infastructure.Services;
 using Eghatha.Infastructure.Storage;
@@ -88,6 +88,9 @@ namespace Eghatha.Infastructure
 
             services.Configure<EmailOptions>(configuration.GetSection("EmailConfiguration"));
             services.Configure<CloudinaryOptions>(configuration.GetSection("Cloudinary"));
+         
+            services.Configure<OpenRouteServiceSettings>(
+                configuration.GetSection(OpenRouteServiceSettings.SectionName));
 
             services.AddSingleton<IConnectionMultiplexer>(sp =>
             {
@@ -104,11 +107,19 @@ namespace Eghatha.Infastructure
             services.AddScoped<IOtpService, OtpService>();
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<ITeamRepository, TeamRepository>();
+            services.AddScoped<IDisasterRepository, DisasterRepository>();
             services.AddScoped<IAdminNotifier , SignalRAdminNotifier>();
             services.AddScoped<ITeamLocationService, TeamLocationService>();
             services.AddScoped<IVolunteerRegisterationRepository, VolunteerRegisterationRepository>();
             services.AddScoped<IVolunteerRepository, VolunteerRepository>();
             services.AddScoped<ICloudinaryService, CloudinaryService>();
+            services.AddScoped<ITeamOperationalLocationProvider, TeamOperationalLocationProvider>();
+            services.AddScoped<ITeamRecommendationService, TeamRecommendationService>();
+            services.AddScoped<IVolunteerRecommendationService, VolunteerRecommendationService>();
+            services.AddScoped<IVolunteerScoringService, VolunteerScoringService>();
+            services.AddScoped<ITeamScoringService , TeamScoringService>();
+
+
 
 
             services.AddHttpClient<IGeocodingService, OpenStreetMapService>(client =>
@@ -121,6 +132,22 @@ namespace Eghatha.Infastructure
 
                 client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
             });
+
+            services.AddHttpClient<IRoutingService, OpenRouteServiceRoutingService>(
+(serviceProvider, client) =>
+{
+    var settings = serviceProvider
+        .GetRequiredService<IOptions<OpenRouteServiceSettings>>()
+        .Value;
+
+    client.BaseAddress = new Uri("https://api.openrouteservice.org/");
+
+    client.DefaultRequestHeaders.TryAddWithoutValidation(
+        "Authorization",
+        settings.ApiKey);
+
+    client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+});
         }
 
 

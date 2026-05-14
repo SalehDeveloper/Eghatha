@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Eghatha.Infastructure.RealTime
+namespace Eghatha.Infastructure.RealTime.Admin
 {
     public class AdminHub : Hub<IAdminTrackingClient>
     {

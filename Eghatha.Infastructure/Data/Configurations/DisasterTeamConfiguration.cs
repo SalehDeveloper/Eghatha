@@ -22,7 +22,7 @@ namespace Eghatha.Infastructure.Data.Configurations
            
 
             builder.HasOne<Disaster>()
-                .WithMany()
+                .WithMany(x=> x.Teams)
                 .HasForeignKey(dt => dt.DisasterId)
                 .OnDelete(DeleteBehavior.Cascade);
 
