@@ -30,5 +30,9 @@ namespace Eghatha.Application.Common.Interfaces
         Task AddEquipmentAsync(Equipment equipment, CancellationToken cancellationToken);
 
         Task<PaginatedList<VolunteerEquipmentDto>> GetVolunteerEquipmentsAsync(Guid volunteerId, int page, int pageSize, EquipmentCategory? category, CancellationToken cancellationToken);
+
+        Task<IReadOnlyList<Volunteer>> GetAvailableBySpecialitiesAsync(IReadOnlyList<VolunteerSpeciality> specialities, CancellationToken cancellationToken);
+        Task<List<VolunteerDto>> GetVolunteersDetailsByIdsAsync(List<Guid> ids, CancellationToken cancellationToken);
     }
+
 }

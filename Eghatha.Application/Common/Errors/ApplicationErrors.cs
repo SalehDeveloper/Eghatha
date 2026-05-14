@@ -25,6 +25,9 @@ namespace Eghatha.Application.Common.Errors
         public static readonly Error TeamNotFound = Error.NotFound(
             code: "Team.NotFound",
             description: "Team not found.");
+        public static readonly Error DisasterNotFound = Error.NotFound(
+         code: "Disaster.NotFound",
+         description: "Disaster not found.");
 
 
         public static readonly Error VolunteerNotFound = Error.NotFound(

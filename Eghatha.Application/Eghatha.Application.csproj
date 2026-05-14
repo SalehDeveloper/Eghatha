@@ -19,4 +19,8 @@
     <ProjectReference Include="..\Eghatha.Domain\Eghatha.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Disasters\Queries\" />
+  </ItemGroup>
+
 </Project>

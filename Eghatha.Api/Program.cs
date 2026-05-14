@@ -11,7 +11,8 @@ using Eghatha.Domain.Volunteers;
 using Eghatha.Domain.Volunteers.Equipments;
 using Eghatha.Infastructure;
 using Eghatha.Infastructure.Data;
-using Eghatha.Infastructure.RealTime;
+using Eghatha.Infastructure.RealTime.Admin;
+using Eghatha.Infastructure.RealTime.Team;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -91,6 +92,7 @@ else
 app.UseCoreMiddlewares(config);
 app.MapControllers();
 app.MapHub<AdminHub>(AdminHub.HubUrl);
+app.MapHub<TeamHub>(TeamHub.HubUrl);
 
 
 
@@ -102,7 +104,7 @@ app.MapHub<AdminHub>(AdminHub.HubUrl);
 //    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
 
 //    // 🔁 Prevent duplicate seeding
-  
+
 
 //    var random = new Random();
 

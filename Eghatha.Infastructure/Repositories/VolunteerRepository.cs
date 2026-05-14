@@ -174,7 +174,6 @@ namespace Eghatha.Infastructure.Repositories
            await _context.Set<Equipment>().AddAsync(equipment, cancellationToken);
         }
 
-
         public async Task<PaginatedList<VolunteerEquipmentDto>> GetVolunteerEquipmentsAsync(Guid volunteerId,int page,int pageSize,EquipmentCategory? category,CancellationToken cancellationToken)
         {
             var query = _context.Set<Volunteer>()
@@ -209,6 +208,50 @@ namespace Eghatha.Infastructure.Repositories
                 TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize),
                 Items = equipments
             };
+        }
+
+        public async Task<IReadOnlyList<Volunteer>> GetAvailableBySpecialitiesAsync(IReadOnlyList<VolunteerSpeciality> specialities,CancellationToken cancellationToken)
+        {
+
+            return await _context.Set<Volunteer>()
+                .Include(x => x.Equipments)
+                .Where(v =>
+
+                    specialities.Contains(v.Speciality)
+
+                    && v.Status == VolunteerStatus.Available
+
+                    && v.Equipments.Any(e =>
+                        !e.IsDeleted &&
+                        e.Status == EquipmentStatus.Valid &&
+                        e.Quantity > 0)
+                )
+                .OrderByDescending(v =>
+                    v.TotalMissions == 0
+                        ? 0
+                        : (double)v.TotalScore / v.TotalMissions)
+                .ThenByDescending(v => v.YearsOfExperience)
+                .ToListAsync(cancellationToken);
+        }
+
+        public async Task<List<VolunteerDto>> GetVolunteersDetailsByIdsAsync(List<Guid> ids , CancellationToken cancellationToken )
+        {
+            var query = from vol in _context.Set<Volunteer>().AsNoTracking()
+                        join user in _context.Set<ApplicationUser>() on vol.UserId equals user.Id
+                        where ids.Contains(vol.Id)
+                        select new VolunteerDto(
+                        vol.Id,
+                        $"{user.FirstName} {user.LastName}",
+                        user.Email,
+                        user.PhoneNumber,
+                        vol.Status,
+                        vol.Speciality,
+                        vol.Province,
+                        vol.City,
+                        vol.YearsOfExperience,
+                        vol.AverageScore);
+
+            return await query.ToListAsync();
         }
     }
 }

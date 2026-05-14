@@ -25,6 +25,10 @@ namespace Eghatha.Infastructure.Repositories
         }
 
 
+        public async Task<List<Team>> GetTeamsByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken)
+        {
+            return await _context.Set<Team>().Where(t => ids.Contains(t.Id)).ToListAsync(cancellationToken);
+        }
         public async Task<Team?> GetTeamForAUserAsync(Guid userId, CancellationToken cancellationToken)
         {
             return await _context.Set<Team>().Include(t => t.Members).FirstOrDefaultAsync(t => t.Members.Any(tm => tm.UserId == userId), cancellationToken);
@@ -52,16 +56,7 @@ namespace Eghatha.Infastructure.Repositories
             await _context.Set<Resource>().AddAsync(resource, cancellationToken);
         }
 
-
-        public async Task<PaginatedList<TeamDto>> GetTeamsAsync(
-            int page,
-            int pageSize,
-            string? searchTerm,
-            TeamStatus? status,
-            TeamSpeciality? speciality,
-            string? province,
-            string? city , 
-            CancellationToken cancellationToken )
+        public async Task<PaginatedList<TeamDto>> GetTeamsAsync(int page,int pageSize,string? searchTerm,TeamStatus? status,TeamSpeciality? speciality,string? province,string? city , CancellationToken cancellationToken )
         {
             var query = _context.Set<Team>().Include(t=>t.Members).AsNoTracking().AsQueryable();
 
@@ -183,13 +178,7 @@ namespace Eghatha.Infastructure.Repositories
 
 
         }
-
-
-
-
-        public async Task<TeamDto?> GetTeamOverviewAsync(
-    Guid teamId,
-    CancellationToken cancellationToken)
+        public async Task<TeamDto?> GetTeamOverviewAsync(Guid teamId, CancellationToken cancellationToken)
         {
             var team = await _context.Set<Team>()
                 .AsNoTracking()
@@ -249,15 +238,7 @@ namespace Eghatha.Infastructure.Repositories
                 isReady
             );
         }
-
-
-        public async Task<PaginatedList<TeamMemberDto>> GetTeamMembersAsync(
-    Guid teamId,
-    int page,
-    int pageSize,
-    string? searchTerm,
-    TeamMemberStatus? status,
-    CancellationToken cancellationToken)
+        public async Task<PaginatedList<TeamMemberDto>> GetTeamMembersAsync(Guid teamId,int page,int pageSize,string? searchTerm, TeamMemberStatus? status,CancellationToken cancellationToken)
         {
             var query = _context.Set<TeamMember>()
              .AsNoTracking()
@@ -319,15 +300,7 @@ namespace Eghatha.Infastructure.Repositories
                 Items = items
             };
         }
-
-
-
-        public async Task<PaginatedList<TeamResourceDto>> GetTeamResourcesAsync(
-    Guid teamId,
-    int page,
-    int pageSize,
-    ResourceType? type,
-    CancellationToken cancellationToken)
+        public async Task<PaginatedList<TeamResourceDto>> GetTeamResourcesAsync( Guid teamId,int page,int pageSize,ResourceType? type,CancellationToken cancellationToken)
         {
             var query = _context.Set<Resource>()
               .AsNoTracking()
@@ -359,10 +332,28 @@ namespace Eghatha.Infastructure.Repositories
                 Items = resources
             };
         }
+        public async Task<IReadOnlyList<Team>> GetAvailableTeamsAsync(IReadOnlyList<TeamSpeciality> specialities,CancellationToken cancellationToken)
+        {
+
+            return await _context.Set<Team>()
+                   .Include(x => x.Members)
+                   .Where(x =>
+                       specialities.Contains(x.Speciality)
+                       && (x.Status == TeamStatus.Active || x.Status == TeamStatus.Returning)
+                       && x.Members.Any(m => m.Status == TeamMemberStatus.Active)
+                   )
+                   .ToListAsync(cancellationToken);
+        }
+
+        public async Task<Guid?> GetTeamLeaderByUserId(Guid userId , CancellationToken cancellationToken )
+        {
+            return await _context.Set<TeamMember>()
+                .Where(x => x.UserId == userId && x.IsLeader)
+                .Select(x => x.Id)
+                .FirstOrDefaultAsync(cancellationToken);
+        }
 
 
-
-   
 
     }
 }

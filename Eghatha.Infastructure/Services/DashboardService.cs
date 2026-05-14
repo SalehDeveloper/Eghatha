@@ -51,4 +51,6 @@ namespace Eghatha.Infastructure.Services
                 TotalAdmins: totalAdmins);
         }
     }
+
 }
+

@@ -12,7 +12,9 @@ namespace Eghatha.Domain.Disaster
 
         public double Longitude { get; set;}
 
+        public string Province { get; set; } 
 
+        public string City { get; set; }
         public DisasterType Type { get; set;}
 
         public string? CustomeDescription { get; set;}  
@@ -20,12 +22,14 @@ namespace Eghatha.Domain.Disaster
         public DateTimeOffset OccuredAt { get; set;}    
 
           
-          public DisasterCreated( Guid id , double latitude , double longitude , DisasterType type , string? customeDescription , DateTimeOffset occuredAt)
+          public DisasterCreated( Guid id , double latitude , double longitude ,string province , string city,  DisasterType type , string? customeDescription , DateTimeOffset occuredAt)
           {
             Id = id;
             Latitude = latitude;
             Longitude = longitude;
             Type = type;
+            Province = province;
+            City = city;    
             CustomeDescription = customeDescription;
             OccuredAt = occuredAt;  
           }

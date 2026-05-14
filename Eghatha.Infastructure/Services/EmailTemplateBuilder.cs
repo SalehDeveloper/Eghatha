@@ -1,4 +1,5 @@
 ﻿using Eghatha.Application.Common.Services;
+using Eghatha.Domain.Disasters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -204,11 +205,7 @@ namespace Eghatha.Infastructure.Services
         }
 
 
-        public string BuildTeamInvitationEmail(
-    string fullName,
-    string teamName,
-    string otpCode,
-    int expirationMinutes)
+        public string BuildTeamInvitationEmail(string fullName,string teamName,string otpCode,int expirationMinutes)
         {
             return $@"
 <!DOCTYPE html>
@@ -447,6 +444,256 @@ If you did not expect this invitation, you can ignore this email.
     </tr>
 
 </table>
+
+</body>
+</html>";
+        }
+
+        public string BuildDisasterAssignmentEmail(  string volunteerName,double latitude , double longitude ,string title , string type , string city , string province , DateTimeOffset startTime ,string description )
+        {
+            var syriaTimeZone =TimeZoneInfo.FindSystemTimeZoneById("Asia/Damascus");
+
+            var localStartTime =TimeZoneInfo.ConvertTime(startTime,syriaTimeZone);
+
+            var googleMapsUrl =
+                $"https://www.google.com/maps?q={latitude},{longitude}";
+
+
+            return $@"
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Disaster Assignment</title>
+</head>
+
+<body style='
+    margin:0;
+    padding:0;
+    background-color:#f3f4f6;
+    font-family:Segoe UI, Arial, sans-serif;'>
+
+    <table align='center'
+           width='100%'
+           cellpadding='0'
+           cellspacing='0'
+           style='max-width:700px;
+                  margin:30px auto;
+                  background-color:#ffffff;
+                  border-radius:18px;
+                  overflow:hidden;
+                  box-shadow:0 4px 12px rgba(0,0,0,0.1);'>
+
+        <!-- Header -->
+        <tr>
+            <td style='
+                background:linear-gradient(135deg,#dc2626 0%,#ef4444 100%);
+                padding:40px 30px;
+                text-align:center;'>
+
+                <h1 style='
+                    color:#ffffff;
+                    margin:0;
+                    font-size:32px;
+                    font-weight:bold;'>
+                    🚨 Eghatha
+                </h1>
+
+                <p style='
+                    color:rgba(255,255,255,0.9);
+                    margin-top:12px;
+                    font-size:18px;'>
+                    You Have Been Assigned to a New Emergency
+                </p>
+            </td>
+        </tr>
+
+        <!-- Body -->
+        <tr>
+            <td style='padding:40px 35px;'>
+
+                <h2 style='
+                    color:#111827;
+                    margin-bottom:20px;
+                    font-size:24px;'>
+                    Hello {volunteerName} 👋
+                </h2>
+
+                <p style='
+                    color:#4b5563;
+                    font-size:16px;
+                    line-height:1.9;
+                    margin-bottom:30px;'>
+
+                    You have been selected to assist in responding to the following disaster.
+                    Please head to the location as soon as possible and follow all instructions from the management team.
+                </p>
+
+                <!-- Disaster Card -->
+                <div style='
+                    background-color:#f9fafb;
+                    border:1px solid #e5e7eb;
+                    border-radius:14px;
+                    padding:25px;
+                    margin-bottom:30px;'>
+
+                    <h3 style='
+                        margin-top:0;
+                        color:#dc2626;
+                        font-size:22px;'>
+                        {title}
+                    </h3>
+
+                    <table width='100%' style='border-collapse:collapse;'>
+
+                        <tr>
+                            <td style='padding:10px 0;color:#6b7280;font-weight:bold; width:180px;'>
+                                Disaster Type:
+                            </td>
+
+                            <td style='padding:10px 0;color:#111827;'>
+                                {type}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td style='padding:10px 0;color:#6b7280;font-weight:bold;'>
+                                City:
+                            </td>
+
+                            <td style='padding:10px 0;color:#111827;'>
+                                {city}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td style='padding:10px 0;color:#6b7280;font-weight:bold;'>
+                                Province:
+                            </td>
+
+                            <td style='padding:10px 0;color:#111827;'>
+                                {province}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td style='padding:10px 0;color:#6b7280;font-weight:bold;'>
+                                Start Time:
+                            </td>
+
+                            <td style='padding:10px 0;color:#111827;'>
+                               {localStartTime:dddd, MMM dd yyyy - hh:mm tt}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td style='padding:10px 0;color:#6b7280;font-weight:bold; vertical-align:top;'>
+                                Description:
+                            </td>
+
+                            <td style='padding:10px 0;color:#111827; line-height:1.8;'>
+                                {description}
+                            </td>
+                        </tr>
+
+                    </table>
+                </div>
+
+                <!-- Location Section -->
+                <div style='
+                    background-color:#eff6ff;
+                    border-left:5px solid #2563eb;
+                    padding:25px;
+                    border-radius:12px;
+                    margin-bottom:35px;'>
+
+                    <h3 style='
+                        margin-top:0;
+                        color:#1d4ed8;
+                        font-size:20px;'>
+                        📍 Disaster Location
+                    </h3>
+
+                    <p style='
+                        color:#374151;
+                        line-height:1.8;
+                        margin-bottom:20px;'>
+
+                        Click the button below to open the disaster location directly in Google Maps and navigate easily to the incident area.
+                    </p>
+
+                    <div style='text-align:center;'>
+
+                        <a href='{googleMapsUrl}'
+                           target='_blank'
+                           style='
+                                display:inline-block;
+                                background-color:#2563eb;
+                                color:#ffffff;
+                                text-decoration:none;
+                                padding:16px 28px;
+                                border-radius:12px;
+                                font-size:16px;
+                                font-weight:bold;'>
+
+                            📍 Open Location in Google Maps
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <!-- Important Note -->
+                <div style='
+                    background-color:#fef2f2;
+                    border-left:5px solid #dc2626;
+                    padding:20px;
+                    border-radius:12px;'>
+
+                    <p style='
+                        margin:0;
+                        color:#991b1b;
+                        line-height:1.8;
+                        font-size:15px;'>
+
+                        ⚠️ Please proceed to the location only if you are able to participate safely,
+                        and make sure to follow all safety instructions issued by the rescue and management teams.
+                    </p>
+
+                </div>
+
+            </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+            <td style='
+                background-color:#f9fafb;
+                padding:30px;
+                text-align:center;
+                border-top:1px solid #e5e7eb;'>
+
+                <p style='
+                    margin:0 0 10px;
+                    color:#6b7280;
+                    font-size:13px;'>
+
+                    This is an automated message sent by the Eghatha Disaster Management System.
+                </p>
+
+                <p style='
+                    margin:0;
+                    color:#9ca3af;
+                    font-size:12px;'>
+
+                    © 2026 Eghatha. All rights reserved.
+                </p>
+
+            </td>
+        </tr>
+
+    </table>
 
 </body>
 </html>";

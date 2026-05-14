@@ -3,6 +3,7 @@ using Eghatha.Domain.Disaster;
 using Eghatha.Domain.Disasters.AffectedPersons;
 using Eghatha.Domain.Disasters.DisasterResources;
 using Eghatha.Domain.Disasters.DisasterVolunteers;
+using Eghatha.Domain.Disasters.Events;
 using Eghatha.Domain.Disasters.Reports;
 using Eghatha.Domain.Shared.Errors;
 using Eghatha.Domain.Shared.ValueObjects;
@@ -18,6 +19,10 @@ namespace Eghatha.Domain.Disasters
         public string Description { get; private set; }
 
         public GeoLocation Location { get; private set; }
+
+        public string Province { get; private set; }
+
+        public string City { get; private set; }
 
         public DateTimeOffset StartTime { get; private set; }
 
@@ -41,8 +46,8 @@ namespace Eghatha.Domain.Disasters
         private readonly List<AffectedPerson> _affectedPeople = new();
         public IReadOnlyList<AffectedPerson> AffectedPeople => _affectedPeople.AsReadOnly();
 
-        private readonly List<Guid> _teamIds = new();
-        public IReadOnlyList<Guid> TeamIds => _teamIds.AsReadOnly();
+        private readonly List<DisasterTeam> _teams = new();
+        public IReadOnlyList<DisasterTeam> Teams => _teams.AsReadOnly();
 
         public Report? Report { get; private set; }
 
@@ -58,6 +63,8 @@ namespace Eghatha.Domain.Disasters
             string title,
             string description,
             GeoLocation location,
+            string province,
+            string city,
             DateTimeOffset startTime,
             ReporterInfo reporter,
             string? customeTypeDescription)
@@ -66,6 +73,8 @@ namespace Eghatha.Domain.Disasters
             Title = title;
             Description = description;
             Location = location;
+            Province = province;
+            City = city;
             StartTime = startTime;
             Reporter = reporter;
             Type = type;
@@ -80,6 +89,8 @@ namespace Eghatha.Domain.Disasters
             string title,
             string description,
             GeoLocation location,
+            string province,
+            string city,
             DateTimeOffset startTime,
             ReporterInfo reporter,
             string? customeTypeDescription)
@@ -92,6 +103,13 @@ namespace Eghatha.Domain.Disasters
 
             if (string.IsNullOrWhiteSpace(description))
                 return DisasterErrors.DescriptionRequired;
+
+            if (string.IsNullOrWhiteSpace(province))
+                return DisasterErrors.ProvinceRequired;
+
+            if (string.IsNullOrWhiteSpace(city))
+                return DisasterErrors.CityRequired;
+
 
             if (location is null)
                 return DisasterErrors.LocationRequired;
@@ -109,11 +127,13 @@ namespace Eghatha.Domain.Disasters
                 title,
                 description,
                 location,
+                province,
+                city,
                 startTime,
                 reporter,
                 customeTypeDescription);
 
-            disaster.AddDomainEvent(new DisasterCreated(id, location.Latitude, location.Longitude, type, customeTypeDescription, startTime));
+            disaster.AddDomainEvent(new DisasterCreated(id, location.Latitude, location.Longitude, province , city ,  type, customeTypeDescription, startTime));
            
             return disaster;
         }
@@ -203,6 +223,8 @@ namespace Eghatha.Domain.Disasters
 
                 _volunteers.Add(volunteerResult.Value);
             }
+
+            AddDomainEvent(new VolunteersAssignedToDisaster(Id, volunteerIds, Location, City, Province , Type.Name , StartTime , Title , Description));
             return Result.Updated;
         }
 
@@ -250,24 +272,26 @@ namespace Eghatha.Domain.Disasters
             if (Status != DisasterStatus.Reported && Status != DisasterStatus.InProgress)
                 return DisasterErrors.CannotAssignTeamWhenNotInValidStatus;
 
-            if (_teamIds.Contains(teamId))
+            if (Teams.Any(t => t.TeamId == teamId))
                 return DisasterErrors.TeamAlreadyAssigned;
 
-            _teamIds.Add(teamId);
+            _teams.Add(new DisasterTeam( Id,  teamId));
 
+            AddDomainEvent(new TeamAssignedToDisasterEvent(Id, teamId , Title , City ));
             return Result.Updated;
         }
 
         public ErrorOr<Updated> RemoveTeam(Guid teamId)
         {
-            if (!_teamIds.Contains(teamId))
+            var team = _teams.FirstOrDefault(t => t.TeamId == teamId);
+            if (team is null)
                 return DisasterErrors.TeamNotFound;
 
 
             if (Status != DisasterStatus.Reported)
                 return DisasterErrors.CannotRemoveVolunteerWhenNotInReportedStatus;
 
-            _teamIds.Remove(teamId);
+            _teams.Remove(team);
 
             return Result.Updated;
 

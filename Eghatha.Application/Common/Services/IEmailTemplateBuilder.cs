@@ -16,5 +16,7 @@ namespace Eghatha.Application.Common.Services
         string BuildVolunteerApprovedEmail(string fullName);
 
         string BuildVolunteerRejectedEmail(string fullName, string? reason);
+
+        string BuildDisasterAssignmentEmail(string volunteerName, double latitude, double longitude, string title, string type, string city, string province, DateTimeOffset startTime, string description);
     }
 }

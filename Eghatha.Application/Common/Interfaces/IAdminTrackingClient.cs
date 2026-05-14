@@ -11,5 +11,7 @@ namespace Eghatha.Application.Common.Interfaces
         Task TeamLiveLocationUpdated(Guid teamId , double latitude , double longitude);
 
         Task NewVolunteerRegisterd(Guid referenceId, string message,  string url , DateTimeOffset requestedAt);
+
+        Task NewDisasterReported(Guid referenceId, string message, double latitude ,double Longitude ,   string url, DateTimeOffset createdAt);
     }
 }

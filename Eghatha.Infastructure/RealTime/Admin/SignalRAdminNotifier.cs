@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Eghatha.Infastructure.RealTime
+namespace Eghatha.Infastructure.RealTime.Admin
 {
     public class SignalRAdminNotifier : IAdminNotifier
     {
@@ -24,6 +24,11 @@ namespace Eghatha.Infastructure.RealTime
 
          
 
+        }
+
+        public async Task NotifyNewDisasterReported(Guid referenceId, string message, double latitude, double longitude, string url, DateTimeOffset createdAt, CancellationToken cancellationToken)
+        {
+           await _hub.Clients.Group("Admins").NewDisasterReported(referenceId, message, latitude, longitude, url, createdAt);
         }
 
         public async Task NotifyNewVolunteerRegistered(Guid referenceId, string message, string url, DateTimeOffset requestedAt , CancellationToken cancellationToken )

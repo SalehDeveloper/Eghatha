@@ -1,9 +1,10 @@
 ﻿using Eghatha.Application.Common.Services;
+using Eghatha.Domain.Disasters;
+using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
+using MimeKit;
 using System.Text;
 using System.Threading.Tasks;
-using MailKit.Net.Smtp;
-using MimeKit;
 
 namespace Eghatha.Infastructure.Services
 {
@@ -95,14 +96,29 @@ namespace Eghatha.Infastructure.Services
             await SendEmailAsync(toEmail, subject, body);
         }
 
-        public async Task SendVolunteerRejectedEmailAsync(
-    string toEmail,
-    string fullName,
-    string? reason)
+        public async Task SendVolunteerRejectedEmailAsync( string toEmail, string fullName, string? reason)
         {
             var subject = "❌ Your Eghatha Volunteer Application Status";
             var body = _templateBuilder.BuildVolunteerRejectedEmail(fullName, reason);
 
+            await SendEmailAsync(toEmail, subject, body);
+        }
+
+
+        public async Task SendDisasterAssignmentEmailAsync(string toEmail,string volunteerName, double latitude, double longitude, string title, string type, string city, string province, DateTimeOffset startTime, string description)
+        {
+            var subject = $" a new disaster assigned - {title}";
+
+            var body = _templateBuilder.BuildDisasterAssignmentEmail(
+                volunteerName,
+                latitude,
+                longitude,
+                title,
+                type,
+                city,
+                province,
+                startTime,
+                description);
             await SendEmailAsync(toEmail, subject, body);
         }
         private string StripHtmlTags(string html)

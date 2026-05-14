@@ -38,13 +38,13 @@ namespace Eghatha.Application.Features.Teams.Commands.CreateTeam
 
             if (location.IsError) return location.Errors;
 
-          //  var currentUserId = _user.Id;
+            var currentUserId = _user.Id;
 
             var LocationResult = await _geocodingService.ResolveAsync(request.Latitude, request.Longitude, cancellationToken);
 
-            //var team = Team.Create(Guid.NewGuid(), request.Name, request.Speciality, LocationResult.Province, LocationResult.City, location.Value, currentUserId.Value);
+            var team = Team.Create(Guid.NewGuid(), request.Name, request.Speciality, LocationResult.Province, LocationResult.City, location.Value, currentUserId.Value);
 
-            var team = Team.Create(Guid.NewGuid(), request.Name, request.Speciality, LocationResult.Province, LocationResult.City, location.Value, Guid.Parse("9668180C-06CB-43DD-8CFA-2EF9D617F47E"));
+      
             if (team.IsError) return team.Errors;   
 
             await _teamRepository.AddAsync(team.Value);

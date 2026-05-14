@@ -36,9 +36,9 @@ namespace Eghatha.Application.Features.VolunteerRegisterations.Commands.RejectRe
 
             var volunteer = await _volunteerRepositry.GetByIdAsync(registeration.VolunteerId, cancellationToken);
 
-           // var registerationResult = registeration.Reject(_timeProvider.GetUtcNow(), _user.Id.Value , request.Reason);
+            var registerationResult = registeration.Reject(_timeProvider.GetUtcNow(), _user.Id.Value , request.Reason);
 
-            var registerationResult = registeration.Reject(_timeProvider.GetUtcNow(), Guid.Parse("9668180C-06CB-43DD-8CFA-2EF9D617F47E"), request.Reason);
+           
 
             if (registerationResult.IsError) return registerationResult.Errors;
 
