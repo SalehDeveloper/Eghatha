@@ -14,6 +14,8 @@ namespace Eghatha.Application.Common.Services
 
         Task<ErrorOr<string>> UploadVolunteerCvAsync(string email, IFormFile pdfFile);
 
+        Task<ErrorOr<string>> UploadDisasterReportAsync(Guid disasterId, byte[] pdfBytes);
+
 
     }
 }

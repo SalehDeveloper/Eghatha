@@ -27,5 +27,15 @@ namespace Eghatha.Api.Mappers
             return equipments.Select(t => t.ToResponse()).ToList();
         }
 
+        public static volunteerRankingResponse ToResponse(this VolunteerRankingDto dto)
+        {
+            return new volunteerRankingResponse(dto.VolunteerId , dto.FullName , dto.Speciality ,dto.Province , dto.City , dto.TotalMissions, dto.TotalScore, dto.AverageScore, dto.Rank);
+        }
+
+        public static IReadOnlyCollection<volunteerRankingResponse> ToResponses(this IReadOnlyCollection<VolunteerRankingDto> volunteers)
+        {
+            return volunteers.Select(t => t.ToResponse()).ToList();
+        }
+
     }
 }

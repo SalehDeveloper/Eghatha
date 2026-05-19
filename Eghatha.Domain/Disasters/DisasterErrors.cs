@@ -119,6 +119,15 @@ namespace Eghatha.Domain.Disasters
           code: "DisasterErrors.CityRequired",
           description: "city is required");
 
+        public static Error TeamNotAssignedToDisaster = Error.Conflict(
+            code: "DisasterErrors.TeamNotAssignedToDisaster",
+            description:"team not assigned to this disaster ");
+
+        public static Error InvalidStatus = Error.Validation(
+             code: "DisasterErrors.InvalidStatus",
+             description: "invalid disaster status");
+
+
 
     }
 }

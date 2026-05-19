@@ -27,7 +27,8 @@ namespace Eghatha.Infastructure.Data
             var entries = ChangeTracker.Entries().ToList();
             await SaveChangesAsync(cancellationToken);
             await DispatchDomainEventsAsync(cancellationToken);
-           
+            await SaveChangesAsync(cancellationToken);
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -1,5 +1,6 @@
 ﻿using Eghatha.Application.Common.Models;
 using Eghatha.Application.Features.Volunteers.Dtos;
+using Eghatha.Application.Features.Volunteers.Queries.GetTopVolunteers;
 using Eghatha.Domain.Abstractions;
 using Eghatha.Domain.Volunteers;
 using Eghatha.Domain.Volunteers.Equipments;
@@ -33,6 +34,16 @@ namespace Eghatha.Application.Common.Interfaces
 
         Task<IReadOnlyList<Volunteer>> GetAvailableBySpecialitiesAsync(IReadOnlyList<VolunteerSpeciality> specialities, CancellationToken cancellationToken);
         Task<List<VolunteerDto>> GetVolunteersDetailsByIdsAsync(List<Guid> ids, CancellationToken cancellationToken);
+
+        Task<PaginatedList<VolunteerRankingDto>> GetTopVolunteersAsync(int page,
+            int pageSize,
+            string? province, 
+            string? city,
+            VolunteerSpeciality? speciality,
+            double? minAverageScore,
+            VolunteerRankingSortBy sortBy,
+            bool descending,
+            CancellationToken cancellationToken);
     }
 
 }

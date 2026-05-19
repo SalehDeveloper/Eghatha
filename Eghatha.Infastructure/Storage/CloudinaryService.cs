@@ -83,6 +83,37 @@ namespace Eghatha.Infastructure.Storage
             return result.SecureUrl.ToString();
         }
 
+        public async Task<ErrorOr<string>> UploadDisasterReportAsync(Guid disasterId,byte[] pdfBytes)
+        {
+            if (pdfBytes is null || pdfBytes.Length == 0)
+                return ErrorOr.Error.Validation(
+                    code: "Report.EmptyPdf",
+                    description: "PDF content is required.");
+
+            using var stream = new MemoryStream(pdfBytes);
+
+            var uploadParams = new RawUploadParams
+            {
+                File = new FileDescription(
+                    $"disaster-report-{disasterId}.pdf",
+                    stream),
+
+                PublicId = $"disasters/{disasterId}/report",
+                Overwrite = true
+            };
+
+            var result = await _cloudinary.UploadAsync(uploadParams);
+
+            if (result.StatusCode != HttpStatusCode.OK)
+            {
+                return ErrorOr.Error.Failure(
+                    code: "Cloudinary.UploadFailed",
+                    description: "Failed to upload disaster report.");
+            }
+
+            return result.SecureUrl.ToString();
+        }
+
 
 
         private static readonly List<string> AllowedPhotoTypes = new()

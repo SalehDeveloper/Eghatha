@@ -14,6 +14,7 @@ using Eghatha.Application.Features.Volunteers.Commands.UpdateVolunteerEquipment;
 using Eghatha.Application.Features.Volunteers.Queries.GetAll;
 using Eghatha.Application.Features.Volunteers.Queries.GetById;
 using Eghatha.Application.Features.Volunteers.Queries.GetEquipments;
+using Eghatha.Application.Features.Volunteers.Queries.GetTopVolunteers;
 using Eghatha.Contract.Shared;
 using Eghatha.Contract.Teams.Requests;
 using Eghatha.Contract.Teams.Responses;
@@ -510,5 +511,63 @@ namespace Eghatha.Api.Controllers
                   Ok(new PagedResponse<VolunteerEquipmentResponse>(res.PageNumber, res.PageSize, res.TotalPages, res.TotalCount, res.Items.ToResponses()));
 
         }
+
+
+        [HttpGet(ApiEndpoints.Volunteers.GetTopVolunteers)]
+        [ProducesResponseType(typeof(PagedResponse<volunteerRankingResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        [EndpointName("GetTopVolunteers")]
+        [EndpointSummary("Retrieve top ranked volunteers")]
+        [EndpointDescription("This endpoint returns a paginated list of top-performing volunteers based on evaluation metrics such as average score, total missions, and total score. It supports filtering by province, city, speciality, and minimum score threshold. Sorting can be applied by different ranking strategies(TotalMissions, TotalScore, AverageScore).")]
+        public async Task<IActionResult> GetTopVolunteers([FromQuery] PagedRequest pagedRequest , [FromQuery] GetTopVolunteersFilter  filter , CancellationToken cancellationToken)
+        {
+            VolunteerSpeciality? speciality = null;
+
+            if (filter.Speciality != null)
+            {
+
+                if (!VolunteerSpeciality.TryFromName(filter.Speciality, true, out var parsed))
+                    return Problem(VolunteerErrors.SpecialityInvalid);
+                speciality = parsed;
+            }
+
+
+            var query = new GetTopVolunteersQuery(
+                pagedRequest.Page,
+                pagedRequest.PageSize,
+                filter.Province,
+                filter.City,
+                speciality,
+                filter.MinAverageScore,
+                MapSort(filter.SortBy),
+                filter.Descending);
+
+            var res = await _sender.Send(query, cancellationToken);
+
+            return Ok(new PagedResponse<volunteerRankingResponse>(res.PageNumber, res.PageSize, res.TotalPages, res.TotalCount, res.Items.ToResponses()));
+        }
+
+        private VolunteerRankingSortBy MapSort(string? sortBy)
+        {
+            var normalized = sortBy?.Trim().ToLower();
+
+            return normalized switch
+            {
+                "averagescore" => VolunteerRankingSortBy.AverageScore,
+                "totalmissions" => VolunteerRankingSortBy.TotalMissions,
+                "totalscore" => VolunteerRankingSortBy.TotalScore,
+                _ => VolunteerRankingSortBy.AverageScore
+            };
+        }
+
+
+
+
+
+
     }
 }

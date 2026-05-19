@@ -119,6 +119,8 @@ namespace Eghatha.Api
             public const string AddEquipment = $"{Base}/{{volunteerid:guid}}/equipments";
             public const string GetVolunteerEquipments = $"{Base}/{{volunteerid:guid}}/equipments";
 
+            public const string GetTopVolunteers = $"{Base}/top";
+
 
         }
 
@@ -131,9 +133,22 @@ namespace Eghatha.Api
 
             public const string AssignTeams = $"{Base}/{{disasterid:guid}}/assign-teams";
             public const string AssignVolunteers= $"{Base}/{{disasterid:guid}}/assign-volunteers";
+            public const string DispatchResource =$"{Base}/{{disasterid:guid}}/resources";
+            public const string ConsumeResource = $"{Base}/{{disasterid:guid}}/resources/{{resourceid:guid}}/consume";
+            public const string ReturnResource = $"{Base}/{{disasterid:guid}}/resources/{{resourceid:guid}}/return";
+            public const string MarkResourceDamaged = $"{Base}/{{disasterid:guid}}/resources/{{resourceid:guid}}/damage";
 
+            public const string Resolve = $"{Base}/{{disasterid:guid}}/resolve";
+            public const string Close = $"{Base}/{{disasterid:guid}}/close";
 
+            public const string AddAffectedPersons=$"{Base}/{{disasterid:guid}}/affected-persons";
+            public const string UpdateAffectedPersons = $"{Base}/{{disasterid:guid}}/affected-persons/{{affectedPersonId:guid}}";
 
+            public const string GenerateReport = $"{Base}/{{disasterid:guid}}/report";
+
+            public const string GetTimeline = $"{Base}/{{disasterid:guid}}/timeline";   
+            
+            public const string EvaluateVolunteer =$"{Base}/{{disasterid:guid}}/volunteers/{{volunteerid:guid}}/evaluate";
         }
     }
 }

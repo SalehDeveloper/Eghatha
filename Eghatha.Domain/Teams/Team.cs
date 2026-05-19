@@ -289,7 +289,7 @@ namespace Eghatha.Domain.Teams
             return Result.Updated;
         }
 
-        public ErrorOr<Updated> ConsumeResource(Guid resourceId, int quantity)
+        public ErrorOr<Resource> DeductResource(Guid resourceId, int quantity)
         {
             var resource = _resources.FirstOrDefault(r => r.Id == resourceId);
           
@@ -300,9 +300,11 @@ namespace Eghatha.Domain.Teams
                 return ResourceErrors.NotEnoughResources;
 
 
-            resource.DecreaseQuantity(quantity);
+            var res = resource.DecreaseQuantity(quantity);
 
-            return Result.Updated;
+            if (res.IsError) return res.Errors;
+
+            return resource; ;
         }
 
         public ErrorOr<Updated> ReturnResource(Guid resourceId, int quantity)

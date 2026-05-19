@@ -33,7 +33,9 @@ namespace Eghatha.Domain.Disasters.DisasterVolunteers
 
         public int InitiativeScore { get; private set; }
 
+        public int TotalScore => CommitmentScore + skillScore +SafetyScore + TeamWorkScore +  InitiativeScore;
 
+        public double AverageScore => TotalScore / 5.0;
         public static ErrorOr<EvaluationScores> Create (
         int commitmentScore,
         int skillScore,

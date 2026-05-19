@@ -49,6 +49,11 @@ namespace Eghatha.Infastructure.Data.Configurations
             builder.Property(dr => dr.Notes)
                 .HasMaxLength(500);
 
+            builder.Property(r => r.ResourceType)
+            .HasConversion(
+            v => v.Value,
+            v => ResourceType.FromValue(v)).IsRequired();
+
             // Computed property - not mapped
             builder.Ignore(dr => dr.RemainingQuantity);
 

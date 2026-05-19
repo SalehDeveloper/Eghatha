@@ -23,5 +23,13 @@ namespace Eghatha.Domain.Disasters.DisasterResources
         public static readonly Error InvalidDamagedQuantity = Error.Conflict(
             code: "DisasterResourceErrors.InvalidDamagedQuantity",
             description: "damaged quantity cannot exceed remaining quantity");
+
+        public static readonly Error ResourceNotFound = Error.NotFound(
+            code: "DisasterResourceErrors.ResourceNotFound",
+            description: "resource not found");
+
+        public static readonly Error ResourceIsNotConsumable = Error.Conflict(
+            code: "DisasterResourceErrors.ResourceIsNotConsumable",
+            description: "reousnce is not consumable");
     }
 }

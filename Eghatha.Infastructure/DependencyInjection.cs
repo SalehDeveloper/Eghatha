@@ -9,6 +9,7 @@ using Eghatha.Infastructure.Data.Interceptors;
 using Eghatha.Infastructure.Identity;
 using Eghatha.Infastructure.Identity.Policies;
 using Eghatha.Infastructure.RealTime.Admin;
+using Eghatha.Infastructure.RealTime.Team;
 using Eghatha.Infastructure.Repositories;
 using Eghatha.Infastructure.Services;
 using Eghatha.Infastructure.Storage;
@@ -118,6 +119,9 @@ namespace Eghatha.Infastructure
             services.AddScoped<IVolunteerRecommendationService, VolunteerRecommendationService>();
             services.AddScoped<IVolunteerScoringService, VolunteerScoringService>();
             services.AddScoped<ITeamScoringService , TeamScoringService>();
+            services.AddScoped<ITeamNotifier, SignalRTeamNotifier>();
+            services.AddScoped<IDisasterReportPdfService, DisasterReportPdfService>();
+            services.AddScoped<IDisasterTimeLineRepository , DisasterTimeLineRepository>();
 
 
 

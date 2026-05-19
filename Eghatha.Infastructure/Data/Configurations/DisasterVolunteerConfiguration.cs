@@ -70,12 +70,13 @@ namespace Eghatha.Infastructure.Data.Configurations
                 .WithMany(d => d.Volunteers)
                 .HasForeignKey(dv => dv.DisasterId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasOne<TeamMember>()
-          .WithMany()
-          .HasForeignKey(dv => dv.EvaluatedByLeaderId)
-          .OnDelete(DeleteBehavior.Restrict)
-          .IsRequired(false);
+          
+            
+            builder.HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(dv => dv.EvaluatedByLeaderId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
 
             // Indexes
             builder.HasIndex(dv => new { dv.DisasterId, dv.VolunteerId }).IsUnique();

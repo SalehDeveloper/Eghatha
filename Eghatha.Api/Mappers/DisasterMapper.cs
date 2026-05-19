@@ -1,6 +1,8 @@
 ﻿using Eghatha.Application.Common.Models;
 using Eghatha.Application.Features.Disasters.Dtos;
 using Eghatha.Contract.Disasters.Responses;
+using Eghatha.Domain.Disasters.AffectedPersons;
+using MimeKit.Cryptography;
 
 namespace Eghatha.Api.Mappers
 {
@@ -35,5 +37,82 @@ namespace Eghatha.Api.Mappers
             return dtos.Select(dto => dto.ToResponse()).ToList();
         }
 
+        private static AffectedPersonDto ToDto(this Contract.Disasters.Requests.AffectedPersonDto response)
+        {
+            HealthStatus.TryFromName(response.Status, out var status);
+
+            return new AffectedPersonDto(response.Name, response.Age,response.Phone, status , response.Notes);
+        }
+    
+        public static List<AffectedPersonDto> ToDtos(this IReadOnlyCollection<Contract.Disasters.Requests.AffectedPersonDto> responses)
+        {
+            return responses.Select(response => response.ToDto()).ToList();
+        }
+
+        public static DisasterResponse ToResponse(this DisasterDto dto)
+        {
+            return new DisasterResponse(dto.Id, dto.Title, dto.City, dto.Province, dto.Type.Name, dto.Status.Name, dto.StartTime);
+                
+        }
+
+        public static IReadOnlyCollection<DisasterResponse> ToResponses(this IReadOnlyCollection<DisasterDto> dtos)
+        {
+            return dtos.Select(dto => dto.ToResponse()).ToList();
+
+        }
+
+        public static ReporterResponse ToResponse (this ReporterDto dto)
+        {
+            return new ReporterResponse(dto.Name, dto.Phone);
+        }
+
+        public static DisasterTeamResponse ToResponse(this TeamDto dto)
+        {
+            return new DisasterTeamResponse(dto.TeamId, dto.TeamName);
+        }
+        
+        public static ResourceResponse ToResponse(this ResourceDto dto)
+        {
+            return new ResourceResponse(dto.Id, dto.ResourceType, dto.Sent, dto.Consumed, dto.Returned, dto.Damaged, dto.Notes);
+        }
+        public static ReportResponse ToResponse(this ReportDto dto)
+        {
+            return new ReportResponse(dto.Id, dto.Summary, dto.PdfUrl, dto.IssuedAt);
+        }
+
+        public static AffectedPersonResponse ToResponse( this AffectedPersonDto dto )
+        {
+            return new AffectedPersonResponse(dto.Name, dto.Age, dto.Phone, dto.Status.Name, dto.Notes);
+        }
+
+        public static DisasterDetailsResponse ToResponse(this DisasterDetailsDto dto)
+        {
+            return new DisasterDetailsResponse(dto.Id,
+                dto.Title,
+                dto.Description,
+                dto.City,
+                dto.Province,
+                dto.Type.Name,
+                dto.Status.Name,
+                dto.StartTime,
+                dto.EndTime,
+                dto.Reporter.ToResponse(),
+                dto.Teams.Select(t => t.ToResponse()).ToList(),
+                dto.Resources.Select(r => r.ToResponse()).ToList(),
+                dto.AffectedPeople.Select(p => p.ToResponse()).ToList(),
+                dto.Report.ToResponse()
+                );
+        }
+
+
+        public static DisasterTimeLineResponse ToResponse(this DisasterTimelineDto dto)
+        {
+            return new DisasterTimeLineResponse(dto.Id, dto.EventType, dto.Description, dto.OccurredAt);
+        }
+
+        public static IReadOnlyCollection<DisasterTimeLineResponse> ToResponses(this IReadOnlyCollection<DisasterTimelineDto> dtos)
+        {
+            return dtos.Select(dto => dto.ToResponse()).ToList();
+        }
     }
 }

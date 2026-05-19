@@ -7,7 +7,9 @@ using Eghatha.Domain.Disasters.Events;
 using Eghatha.Domain.Disasters.Reports;
 using Eghatha.Domain.Shared.Errors;
 using Eghatha.Domain.Shared.ValueObjects;
+using Eghatha.Domain.Teams.Resources;
 using ErrorOr;
+using System.Security.AccessControl;
 
 
 namespace Eghatha.Domain.Disasters
@@ -120,8 +122,8 @@ namespace Eghatha.Domain.Disasters
             if (type == DisasterType.Other && string.IsNullOrWhiteSpace(customeTypeDescription))
                 return DisasterErrors.CustomTypeDescriptionRequired;
 
-             
-            var disaster =  new Disaster(
+
+            var disaster = new Disaster(
                 id,
                 type,
                 title,
@@ -133,8 +135,8 @@ namespace Eghatha.Domain.Disasters
                 reporter,
                 customeTypeDescription);
 
-            disaster.AddDomainEvent(new DisasterCreated(id, location.Latitude, location.Longitude, province , city ,  type, customeTypeDescription, startTime));
-           
+            disaster.AddDomainEvent(new DisasterCreated(id, location.Latitude, location.Longitude, province, city, type, customeTypeDescription, startTime));
+
             return disaster;
         }
 
@@ -144,8 +146,8 @@ namespace Eghatha.Domain.Disasters
                 return DisasterErrors.InvalidStatusTransition(Status, DisasterStatus.InProgress);
 
             Status = DisasterStatus.InProgress;
-              
-             AddDomainEvent(new DisasterResponseStarted(Id, Status , StartTime)); 
+
+            AddDomainEvent(new DisasterResponseStarted(Id, Status, StartTime));
             return Result.Updated;
         }
 
@@ -157,7 +159,7 @@ namespace Eghatha.Domain.Disasters
             Status = DisasterStatus.Resolved;
             EndTime = date;
 
-             AddDomainEvent(new DisasterResolved(Id, Status,  date));
+            AddDomainEvent(new DisasterResolved(Id, Status, date));
 
             return Result.Updated;
         }
@@ -185,48 +187,51 @@ namespace Eghatha.Domain.Disasters
             return Result.Updated;
         }
 
-        public ErrorOr<Updated> AssignVolunteer(Guid volunteerId)
+        public ErrorOr<List<DisasterVolunteer>> AssignVolunteers(IEnumerable<Guid> volunteerIds)
         {
-            if (Status != DisasterStatus.Reported && Status != DisasterStatus.InProgress)
+            if (Status != DisasterStatus.Reported &&
+                Status != DisasterStatus.InProgress)
+            {
                 return DisasterErrors.CannotAssignVolunteerWhenNotInValidStatus;
+            }
 
-            if (_volunteers.Any(v => v.VolunteerId == volunteerId))
-                return DisasterErrors.VolunteerAlreadyAssigned;
+            var newVolunteers = new List<DisasterVolunteer>();
 
-
-            var volunteer = DisasterVolunteer.Create(Guid.NewGuid(), volunteerId, Id);
-
-            if (volunteer.IsError)
-                return volunteer.Errors;
-
-            _volunteers.Add(volunteer.Value);
-
-            return Result.Updated;
-
-
-        }
-
-        public ErrorOr<Updated> AssignVolunteers(List<Guid> volunteerIds)
-        {
-            if (Status != DisasterStatus.Reported && Status != DisasterStatus.InProgress)
-                return DisasterErrors.CannotAssignVolunteerWhenNotInValidStatus;
-
-            foreach (var volunteerId in volunteerIds)
+            foreach (var volunteerId in volunteerIds.Distinct())
             {
                 if (_volunteers.Any(v => v.VolunteerId == volunteerId))
                     continue;
 
-                var volunteerResult = DisasterVolunteer.Create(Guid.NewGuid(), volunteerId, Id);
+                var volunteer = DisasterVolunteer.Create(
+                    Guid.NewGuid(),
+                    volunteerId,
+                    Id);
 
-                if (volunteerResult.IsError)
-                    return volunteerResult.Errors;
+                if (volunteer.IsError)
+                    return volunteer.Errors;
 
-                _volunteers.Add(volunteerResult.Value);
+                newVolunteers.Add(volunteer.Value);
             }
 
-            AddDomainEvent(new VolunteersAssignedToDisaster(Id, volunteerIds, Location, City, Province , Type.Name , StartTime , Title , Description));
-            return Result.Updated;
+            if (newVolunteers.Count > 0)
+            {
+                AddDomainEvent(new VolunteersAssignedToDisaster(
+                    Id,
+                    newVolunteers.Select(v => v.VolunteerId).ToList(),
+                    Location,
+                    City,
+                    Province,
+                    Type.Name,
+                    StartTime,
+                    Title,
+                    Description
+                ));
+            }
+
+            return newVolunteers;
         }
+
+
 
         public ErrorOr<Updated> EvaluateVolunteer(
            Guid volunteerId,
@@ -241,9 +246,13 @@ namespace Eghatha.Domain.Disasters
             if (volunteer is null)
                 return DisasterErrors.volunteerNotFound;
 
-            return volunteer.Evaluate(evaluation, notes, evaluatedByLeaderId, evaluatedAt);
+            var res =  volunteer.Evaluate(evaluation, notes, evaluatedByLeaderId, evaluatedAt);
 
+            if (res.IsError) return res.Errors;
 
+            AddDomainEvent(new VolunteerEvaluated(volunteer.VolunteerId, Id, evaluation.TotalScore, evaluatedAt));
+
+            return Result.Updated;
 
         }
 
@@ -275,9 +284,9 @@ namespace Eghatha.Domain.Disasters
             if (Teams.Any(t => t.TeamId == teamId))
                 return DisasterErrors.TeamAlreadyAssigned;
 
-            _teams.Add(new DisasterTeam( Id,  teamId));
+            _teams.Add(new DisasterTeam(Id, teamId));
 
-            AddDomainEvent(new TeamAssignedToDisasterEvent(Id, teamId , Title , City ));
+            AddDomainEvent(new TeamAssignedToDisasterEvent(Id, teamId, Title, City));
             return Result.Updated;
         }
 
@@ -299,13 +308,16 @@ namespace Eghatha.Domain.Disasters
         }
 
 
-        public ErrorOr<Updated> AssignResource(Guid resourceId,Guid teamId ,  int quantitySent, DateTimeOffset assignedAt, string? notes = null)
+        public ErrorOr<DisasterResource> DispatchResource(Guid resourceId, Guid teamId, Teams.Resources.ResourceType resourceType, int quantitySent, DateTimeOffset assignedAt, string? notes = null)
         {
             if (resourceId == Guid.Empty)
                 return DomainErrors.IdMustBeProvided("Resource");
 
             if (teamId == Guid.Empty)
                 return DomainErrors.IdMustBeProvided("Team");
+
+            if (!_teams.Any(t => t.TeamId == teamId))
+                return DisasterErrors.TeamNotAssignedToDisaster;
 
             if (Status != DisasterStatus.Reported && Status != DisasterStatus.InProgress)
                 return DisasterErrors.CannotAssignVolunteerWhenNotInValidStatus;
@@ -318,25 +330,101 @@ namespace Eghatha.Domain.Disasters
             {
                 resource.IncreaseQuantity(quantitySent);
 
-                return Result.Updated;
+                return resource;
             }
 
             if (quantitySent <= 0)
                 return DisasterErrors.ResourceQuantityshouldBeGreaterThanZero;
 
-            var res = DisasterResource.Create(Guid.NewGuid(), Id, resourceId,teamId ,  quantitySent, assignedAt, notes);
+            var res = DisasterResource.Create(Guid.NewGuid(), Id, resourceId, resourceType, teamId, quantitySent, assignedAt, notes);
 
             if (res.IsError)
                 return res.Errors;
 
             _resources.Add(res.Value);
 
-            return Result.Updated;
+            AddDomainEvent(new ResourceDispatchedToDisaster(Id , resourceId, quantitySent , teamId));
+
+            return res;
 
         }
 
+        public ErrorOr<Updated> ConsumeResource(Guid resourceId, int quantity)
+        {
+            if (resourceId == Guid.Empty)
+                return DomainErrors.IdMustBeProvided("Resource");
 
-        public ErrorOr<Updated> AddAffectedPersons(
+            if (quantity <= 0)
+                return DisasterErrors.ResourceQuantityshouldBeGreaterThanZero;
+
+            var resource = _resources.FirstOrDefault(r => r.Id == resourceId);
+
+            if (resource is null)
+                return DisasterResourceErrors.ResourceNotFound;
+
+            if (!resource.ResourceType.IsConsumable)
+                return DisasterResourceErrors.ResourceIsNotConsumable;
+
+
+            
+            var res =  resource.Consume(quantity);
+
+            if (res.IsError)
+                return res.Errors;
+
+            AddDomainEvent(new ResourceConsumed(Id, resource.ResourceId ,  quantity , resource.TeamId));
+
+            return res;
+        }
+
+        public ErrorOr<Updated> ReturnResource(Guid disasterResourceId, int quantity)
+        {
+            if (disasterResourceId == Guid.Empty)
+                return DomainErrors.IdMustBeProvided("DisasterResource");
+
+            if (quantity <= 0)
+                return DisasterErrors.ResourceQuantityshouldBeGreaterThanZero;
+
+            var resource = _resources
+                .FirstOrDefault(r => r.Id == disasterResourceId);
+
+            if (resource is null)
+                return DisasterResourceErrors.ResourceNotFound;
+
+            var res =  resource.Return(quantity);
+
+            if (res.IsError)
+                return res.Errors;
+
+            AddDomainEvent(new ResourceReturned(Id, resource.ResourceId, resource.TeamId, quantity));
+
+            return res;
+        }
+
+        public ErrorOr<Updated> MarkResourceAsDamaged(Guid disasterResourceId, int quantity)
+        {
+            if (disasterResourceId == Guid.Empty)
+                return DomainErrors.IdMustBeProvided("DisasterResource");
+
+            if (quantity <= 0)
+                return DisasterErrors.ResourceQuantityshouldBeGreaterThanZero;
+
+            var resource = _resources
+                .FirstOrDefault(r => r.Id == disasterResourceId);
+
+            if (resource is null)
+                return DisasterResourceErrors.ResourceNotFound;
+
+            var res=  resource.MarkDamaged(quantity);
+            if (res.IsError) return res.Errors;
+
+            AddDomainEvent(new ResourceDamaged(Id , resource.ResourceId , resource.TeamId , quantity));
+
+            return res;
+
+        }
+
+        public ErrorOr<List<AffectedPerson>> AddAffectedPersons(
             IEnumerable<
                 (
                 string name,
@@ -346,7 +434,8 @@ namespace Eghatha.Domain.Disasters
                 string? notes)>
             affectedPersons)
         {
-
+            var affected = new List<AffectedPerson>();
+            
             if (affectedPersons is null || !affectedPersons.Any())
                 return Error.Validation(code: "Disaster.AffectedPersons.DataRequired", description: "affected persons data must be provided");
 
@@ -362,8 +451,11 @@ namespace Eghatha.Domain.Disasters
                     return personToAdd.Errors;
 
                 _affectedPeople.Add(personToAdd.Value);
+                affected.Add(personToAdd.Value);
             }
-            return Result.Updated;
+
+            AddDomainEvent(new AffectedPersonsAdded(Id, affected.Select(p => p.Id).ToList()));
+            return affected;
         }
 
         public ErrorOr<Updated> UpdateAffectedPerson(Guid id,
@@ -399,23 +491,24 @@ namespace Eghatha.Domain.Disasters
 
         }
 
-        public ErrorOr<Updated> AddReport(string summary, string teams, string resources, string affectedPersons, DateTimeOffset issuedAt)
+        public ErrorOr<Report> AddReport(Report report )
         {
-
-            if (Report is not null)
-                return DisasterErrors.ReportAlreadyExists;
+            if (report is null)
+                return Error.Validation(
+                    code: "Report.Required",
+                    description: "Report is required.");
 
             if (Status != DisasterStatus.Closed)
                 return DisasterErrors.CannotGenerateReportWhenDisasterNotClosed;
 
-             var report = Report.Create( summary, teams, resources, affectedPersons, issuedAt);
-            
-             Report = report.Value;
-             
-            if (report.IsError)
-                return report.Errors;
+            if (Report is not null)
+                return DisasterErrors.ReportAlreadyExists;
 
-            return Result.Updated;
+            Report = report;
+
+            AddDomainEvent(new DisasterReportGenerated(Id , Report.Id));
+            return Report;
+
         }
     }
 }

@@ -13,6 +13,6 @@ namespace Eghatha.Application.Features.Disasters.Dtos
     DisasterStatus Status,
     IReadOnlyList<RecommendedTeamDto> RecommendedTeams,
     IReadOnlyList<RecommendedVolunteerDto> RecommendedVolunteers);
-    
-    
+
+
 }

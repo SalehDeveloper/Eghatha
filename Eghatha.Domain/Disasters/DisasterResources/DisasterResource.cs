@@ -1,5 +1,6 @@
 ﻿using Eghatha.Domain.Abstractions;
 using Eghatha.Domain.Shared.Errors;
+using Eghatha.Domain.Teams.Resources;
 using ErrorOr;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,9 @@ namespace Eghatha.Domain.Disasters.DisasterResources
     public sealed class DisasterResource : AuditableEntity
     { 
         public Guid DisasterId { get; private set; }
-        public Guid ResourceId { get; private set; }    
+        public Guid ResourceId { get; private set; }
+
+        public ResourceType ResourceType { get; private set; }
 
         public Guid TeamId { get; private set; }
         public int QuantitySent { get; private set; }
@@ -35,10 +38,12 @@ namespace Eghatha.Domain.Disasters.DisasterResources
             Guid id,
             Guid disasterId,
             Guid resourceId,
-            Guid teamId , 
+            ResourceType resourceType,
+            Guid teamId,
             int quantitySent,
             DateTimeOffset assignedAt,
-            string? notes)
+            string? notes
+           )
             : base(id)
         {
             DisasterId = disasterId;
@@ -47,12 +52,17 @@ namespace Eghatha.Domain.Disasters.DisasterResources
             AssignedAt = assignedAt;
             Notes = notes;
             TeamId = teamId;
+            QuantityConsumed = 0;
+            QuantityReturned = 0;
+            QuantityDamaged = 0;
+            ResourceType = resourceType;
         }
 
         public static ErrorOr<DisasterResource> Create(
             Guid id ,
             Guid disasterId,
             Guid resourceId,
+            ResourceType resourceType,
             Guid teamId ,
             int quantitySent,
             DateTimeOffset assignedAt ,
@@ -75,7 +85,7 @@ namespace Eghatha.Domain.Disasters.DisasterResources
                     code: "DisasterResources.QuantitySentShouldBeGreaetrThanZero",
                     description: "quantity sent should be greater than zero");
 
-            return new DisasterResource(id, disasterId, resourceId,teamId, quantitySent, assignedAt , notes);
+            return new DisasterResource(id, disasterId, resourceId, resourceType, teamId, quantitySent, assignedAt , notes );
         }
 
         public ErrorOr<Updated> IncreaseQuantity(int quantity)

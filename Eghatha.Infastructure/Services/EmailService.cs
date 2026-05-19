@@ -1,6 +1,7 @@
 ﻿using Eghatha.Application.Common.Services;
 using Eghatha.Domain.Disasters;
 using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using System.Text;
@@ -53,28 +54,26 @@ namespace Eghatha.Infastructure.Services
 
             emailMessage.Body = bodyBuilder.ToMessageBody();
 
-            using (var client = new SmtpClient())
+            using var client = new SmtpClient(new MailKit.ProtocolLogger("smtp.log"));
+            try
             {
-                try
-                {
-                    client.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
-                    await client.ConnectAsync(_emailOptions.SmtpServer, _emailOptions.Port, true);
-                    client.AuthenticationMechanisms.Remove("XOAUTH2");
-                    await client.AuthenticateAsync(_emailOptions.UserName, _emailOptions.Password);
-                    await client.SendAsync(emailMessage);
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception($"Failed to send email: {ex.Message}");
-                }
-                finally
-                {
+                await client.ConnectAsync(_emailOptions.SmtpServer, 587, SecureSocketOptions.StartTls);
+                client.AuthenticationMechanisms.Remove("XOAUTH2");
+                await client.AuthenticateAsync(_emailOptions.UserName, _emailOptions.Password);
+                await client.SendAsync(emailMessage);
+            }
+            catch (Exception ex)
+            {
+                // preserve original exception
+                throw new Exception("Failed to send email", ex);
+            }
+            finally
+            {
+                if (client.IsConnected)
                     await client.DisconnectAsync(true);
-                    client.Dispose();
-                }
             }
         }
-
+        
         public async Task SendTeamInvitationEmailAsync(string toEmail,string fullName,string teamName,string otpCode,int expirationMinutes)
         {
             var subject = "🎉 You've been invited to join a team";

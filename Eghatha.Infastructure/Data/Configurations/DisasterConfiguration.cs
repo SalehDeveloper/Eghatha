@@ -1,5 +1,6 @@
 ﻿using Eghatha.Domain.Disasters;
 using Eghatha.Domain.Disasters.AffectedPersons;
+using Eghatha.Domain.Disasters.Reports;
 using Eghatha.Domain.Teams;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -81,37 +82,14 @@ namespace Eghatha.Infastructure.Data.Configurations
                     .IsRequired();
             });
 
-            // Configure Report (owned entity - one-to-one)
-            builder.OwnsOne(d => d.Report, report =>
-            {
-                report.Property(r => r.Summary)
-                    .HasColumnName("ReportSummary")
-                    .HasMaxLength(2000)
-                    .IsRequired();
 
-                report.Property(r => r.Teams)
-                    .HasColumnName("ReportTeams")
-                    .HasMaxLength(2000)
-                    .IsRequired();
-
-                report.Property(r => r.Resources)
-                    .HasColumnName("ReportResources")
-                    .HasMaxLength(2000)
-                    .IsRequired();
-
-                report.Property(r => r.AffectedPersons)
-                    .HasColumnName("ReportAffectedPersons")
-                    .HasMaxLength(2000)
-                    .IsRequired();
-
-                report.Property(r => r.IssuedAt)
-                    .HasColumnName("ReportIssuedAt")
-                    .IsRequired();
-            });
+            builder.HasOne(d => d.Report)
+                      .WithOne()
+                      .HasForeignKey<Report>(r => r.DisasterId)
+                      .OnDelete(DeleteBehavior.Cascade);
 
 
 
-           
 
             builder.Navigation(d => d.Volunteers)
             .HasField("_volunteers")

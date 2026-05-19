@@ -34,6 +34,10 @@ namespace Eghatha.Application.Common.Errors
             code: "Volunteer.NotFound",
             description: "Volunteer not found.");
 
+        public static readonly Error DisasterResourceNotFound = Error.NotFound(
+         code: "DisasterResourceNotFound.NotFound",
+         description: "Disaster-resource not found.");
+
         public static readonly Error RegisterationNotFound = Error.NotFound(
            code: "RegisterationNotFound.NotFound",
            description: "Volunteer registeration not found.");

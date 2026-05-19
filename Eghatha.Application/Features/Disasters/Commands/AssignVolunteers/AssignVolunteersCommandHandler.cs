@@ -29,6 +29,13 @@ namespace Eghatha.Application.Features.Disasters.Commands.AssignVolunteers
             if (res.IsError)
                 return res.Errors;
 
+            var newVolunteers = res.Value;
+
+            if (newVolunteers.Count > 0)
+            {
+                await _disasterRepository.AddVolunteersAsync(newVolunteers);
+            }
+
             await _unitOfWork.CompleteAsync(cancellationToken);
 
             return Result.Success;

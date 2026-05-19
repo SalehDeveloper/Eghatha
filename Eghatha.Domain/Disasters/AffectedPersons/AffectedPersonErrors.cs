@@ -17,6 +17,10 @@ namespace Eghatha.Domain.Disasters.AffectedPersons
            code: "AffectedPerson.Age.Invalid",
           description: "age should be greater than zero.");
 
+        public static readonly Error InvalidStatus = Error.Validation(
+         code: "AffectedPerson.Status.Invalid",
+        description: "invalid status.");
+
 
     }
 }
