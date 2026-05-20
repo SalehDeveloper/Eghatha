@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning.Conventions;
+using Eghatha.Api.Controllers;
 
 namespace Eghatha.Api
 {
@@ -149,6 +150,32 @@ namespace Eghatha.Api
             public const string GetTimeline = $"{Base}/{{disasterid:guid}}/timeline";   
             
             public const string EvaluateVolunteer =$"{Base}/{{disasterid:guid}}/volunteers/{{volunteerid:guid}}/evaluate";
+
+           
+
+        }
+
+        public static class ReferenceData
+        {
+            public const string Base = $"{apiBase}/reference-data";
+            public const string GetDisasterTypes = $"{Base}/disaster-types";
+            public const string GetDisasterStatuses = $"{Base}/disaster-statuses";
+            public const string GetHealthStatuses = $"{Base}/health-statuses";
+            public const string GetTeamSpecialities = $"{Base}/team-specialities";
+            public const string GetTeamMemberStatuses = $"{Base}/team-member-statuses";
+            public const string GetTeamStatuses = $"{Base}/team-statuses";
+            public const string GetResourceStatuses = $"{Base}/resource-statuses";
+            public const string GetResourceTypes = $"{Base}/resource-types";
+
+
+            public const string GetRegistrationStatuses = $"{Base}/registration-statuses";
+
+            public const string GetVolunteerStatuses = $"{Base}/volunteer-statuses";
+            public const string GetVolunteerSpecialities = $"{Base}/volunteer-specialities";
+
+            public const string GetEquipmentCategories = $"{Base}/equipment-categories";
+            public const string GetEquipmentStatuses = $"{Base}/equipment-statuses";
+
         }
     }
 }

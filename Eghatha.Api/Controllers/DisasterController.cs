@@ -17,6 +17,8 @@ using Eghatha.Application.Features.Disasters.Commands.UpdateAffectedPerson;
 using Eghatha.Application.Features.Disasters.Dtos;
 using Eghatha.Application.Features.Disasters.Queries.GetAll;
 using Eghatha.Application.Features.Disasters.Queries.GetById;
+using Eghatha.Application.Features.Disasters.Queries.GetDisasterStatuses;
+using Eghatha.Application.Features.Disasters.Queries.GetDisasterTypes;
 using Eghatha.Application.Features.Disasters.Queries.GetTimeLine;
 using Eghatha.Application.Features.Teams.Queries.GetTeams;
 using Eghatha.Contract.Disasters.Requests;
@@ -472,6 +474,10 @@ namespace Eghatha.Api.Controllers
                 _ => NoContent(),
                 Problem);
         }
+
+
+
+    
 
         private static TimelineSortDirection MapSort(string sort)
         {
