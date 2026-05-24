@@ -112,7 +112,8 @@ namespace Eghatha.Api
           
             app.UseExceptionHandler();
 
-         
+            app.UseCors("_myAllowSpecificOrigins");
+
             app.UseStatusCodePages();
 
             app.UseHttpsRedirection();

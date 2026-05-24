@@ -84,7 +84,7 @@ namespace Eghatha.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [EndpointSummary("Gets all team specialities.")]
         [EndpointDescription("Returns a list of all supported team specialities  that can be used when filtering , createing teams.")]
-        [EndpointName("GetAffectedPersonHealthStatuses")]
+        [EndpointName("GetTeamSpecialities")]
         public async Task<IActionResult> GetTeamSpecialities(CancellationToken cancellationToken)
         {
             var query = new GetTeamSpecialitiesQuery();

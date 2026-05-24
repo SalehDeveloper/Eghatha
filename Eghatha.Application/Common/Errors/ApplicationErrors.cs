@@ -45,5 +45,10 @@ namespace Eghatha.Application.Common.Errors
         public static readonly Error UserWithEmailAlreadyExitst = Error.Conflict(
             code: "User.UserWithEmailAlreadyExitst",
             description:"user with this email alreadt exist");
+
+
+        public static readonly Error NotificationNotFound = Error.NotFound(
+            code: "Notification.NotFound",
+            description: "notification not found.");
     }
 }

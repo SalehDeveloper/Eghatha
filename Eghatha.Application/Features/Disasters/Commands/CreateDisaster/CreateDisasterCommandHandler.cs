@@ -1,8 +1,11 @@
-﻿using Eghatha.Application.Common.Interfaces;
+﻿using Eghatha.Application.Common.Authentication;
+using Eghatha.Application.Common.Interfaces;
+using Eghatha.Application.Common.Models;
 using Eghatha.Application.Common.Services;
 using Eghatha.Application.Features.Disasters.Dtos;
 using Eghatha.Domain.Abstractions;
 using Eghatha.Domain.Disasters;
+using Eghatha.Domain.Notifications;
 using Eghatha.Domain.Shared.ValueObjects;
 using ErrorOr;
 using MediatR;
@@ -22,18 +25,13 @@ namespace Eghatha.Application.Features.Disasters.Commands.CreateDisaster
         private readonly IGeocodingService _geocodingService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public CreateDisasterCommandHandler(
-            IDisasterRepository disasterRepository,
-            ITeamRecommendationService teamRecommendationService,
-            IVolunteerRecommendationService volunteerRecommendationService,
-            IUnitOfWork unitOfWork,
-            IGeocodingService geocodingService)
+        public CreateDisasterCommandHandler(IDisasterRepository disasterRepository, ITeamRecommendationService teamRecommendationService, IVolunteerRecommendationService volunteerRecommendationService, IGeocodingService geocodingService, IUnitOfWork unitOfWork)
         {
             _disasterRepository = disasterRepository;
             _teamRecommendationService = teamRecommendationService;
             _volunteerRecommendationService = volunteerRecommendationService;
-            _unitOfWork = unitOfWork;
             _geocodingService = geocodingService;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<ErrorOr<CreateDisasterDto>> Handle(
@@ -95,6 +93,8 @@ namespace Eghatha.Application.Features.Disasters.Commands.CreateDisaster
             await _disasterRepository.AddAsync(
                 disaster,
                 cancellationToken);
+
+      
 
             await _unitOfWork.CompleteAsync( cancellationToken);
 

@@ -177,5 +177,23 @@ namespace Eghatha.Api
             public const string GetEquipmentStatuses = $"{Base}/equipment-statuses";
 
         }
+
+        public static class Notifications 
+        {
+            public const string Base = $"{apiBase}/notifications";
+
+            public const string GetAll = $"{Base}";
+
+            public const string GetById = $"{Base}/{{notificationid:guid}}";
+
+            public const string GetUnreadCount = $"{Base}/unread-count";
+
+            public const string MarkAsRead = $"{Base}/{{notificationid:guid}}/read";
+
+            public const string MarkAllAsRead = $"{Base}/read";
+
+
+        }
+
     }
 }
