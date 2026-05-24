@@ -335,8 +335,7 @@ namespace Eghatha.Infastructure.Repositories
         public async Task<IReadOnlyList<Team>> GetAvailableTeamsAsync(IReadOnlyList<TeamSpeciality> specialities,CancellationToken cancellationToken)
         {
 
-            return await _context.Set<Team>()
-                   .Include(x => x.Members)
+            return await _context.Set<Team>().AsNoTracking()
                    .Where(x =>
                        specialities.Contains(x.Speciality)
                        && (x.Status == TeamStatus.Active || x.Status == TeamStatus.Returning)
@@ -347,7 +346,7 @@ namespace Eghatha.Infastructure.Repositories
 
         public async Task<Guid?> GetTeamLeaderByUserId(Guid userId , CancellationToken cancellationToken )
         {
-            return await _context.Set<TeamMember>()
+            return await _context.Set<TeamMember>().AsNoTracking()
                 .Where(x => x.UserId == userId && x.IsLeader)
                 .Select(x => x.Id)
                 .FirstOrDefaultAsync(cancellationToken);
