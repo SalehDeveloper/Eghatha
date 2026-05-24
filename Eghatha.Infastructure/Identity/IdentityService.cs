@@ -285,5 +285,16 @@ namespace Eghatha.Infastructure.Identity
                 return false;
             return true;
         }
+
+        public async Task<List<Guid>> GetAdminIdsAsync(CancellationToken cancellationToken)
+        {
+            return await (
+                          from ur in _appDbContext.UserRoles.AsNoTracking()
+                          join r in _appDbContext.Roles.AsNoTracking()
+                              on ur.RoleId equals r.Id
+                          where r.Name == Role.Admin.ToString()
+                          select ur.UserId
+                          ).ToListAsync(cancellationToken);
+        }
     }
 }

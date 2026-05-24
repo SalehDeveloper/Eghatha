@@ -34,5 +34,7 @@ namespace Eghatha.Application.Common.Authentication
 
         Task<ErrorOr<Success>> AddUserToRoleAsync(Guid userId, Role role);
         Task<bool> UserExistsAsync(string email, CancellationToken cancellationToken);
+
+        Task<List<Guid>> GetAdminIdsAsync(CancellationToken cancellationToken);
     }
 }
