@@ -125,6 +125,7 @@ namespace Eghatha.Infastructure
             services.AddScoped<IDisasterReportPdfService, DisasterReportPdfService>();
             services.AddScoped<IDisasterTimeLineRepository , DisasterTimeLineRepository>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<IIdentityCacheService, IdentityCacheService>();
 
 
