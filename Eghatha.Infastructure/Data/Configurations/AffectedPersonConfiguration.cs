@@ -47,7 +47,7 @@ namespace Eghatha.Infastructure.Data.Configurations
                 .HasForeignKey(ap => ap.DisasterId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            
+
             builder.HasIndex(ap => ap.Status);
         }
     }
