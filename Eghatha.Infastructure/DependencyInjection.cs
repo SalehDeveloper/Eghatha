@@ -8,6 +8,7 @@ using Eghatha.Infastructure.Data;
 using Eghatha.Infastructure.Data.Interceptors;
 using Eghatha.Infastructure.Identity;
 using Eghatha.Infastructure.Identity.Policies;
+using Eghatha.Infastructure.Outbox;
 using Eghatha.Infastructure.RealTime.Admin;
 using Eghatha.Infastructure.RealTime.Team;
 using Eghatha.Infastructure.Repositories;
@@ -42,6 +43,7 @@ namespace Eghatha.Infastructure
             });
             AddPersistence(services, configuration);
             AddAuthentication(services, configuration);
+            AddBackgroundJobs(services, configuration);
 
             return services;
         }
@@ -122,6 +124,8 @@ namespace Eghatha.Infastructure
             services.AddScoped<ITeamNotifier, SignalRTeamNotifier>();
             services.AddScoped<IDisasterReportPdfService, DisasterReportPdfService>();
             services.AddScoped<IDisasterTimeLineRepository , DisasterTimeLineRepository>();
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IIdentityCacheService, IdentityCacheService>();
 
 
 
@@ -177,5 +181,16 @@ namespace Eghatha.Infastructure
                 });
         }
 
+
+        private static void AddBackgroundJobs(this IServiceCollection services, IConfiguration configuration)
+        {
+
+            services.Configure<OutboxOptions>(configuration.GetSection("Outbox"));
+
+            services.AddHostedService<OutboxProcessor>();
+
+        }
+    
     }
+    
 }
