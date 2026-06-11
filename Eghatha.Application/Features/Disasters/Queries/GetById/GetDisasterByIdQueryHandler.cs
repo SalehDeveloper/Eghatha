@@ -42,8 +42,10 @@ namespace Eghatha.Application.Features.Disasters.Queries.GetById
                 disaster.Description,
                 disaster.City,
                 disaster.Province,
-                disaster.Type,
-                disaster.Status,
+                disaster.Type.Name,
+                disaster.Status.Name,
+                disaster.Location.Latitude,
+                  disaster.Location.Longitude,
                 disaster.StartTime,
                 disaster.EndTime,
                 new ReporterDto(
@@ -73,7 +75,7 @@ namespace Eghatha.Application.Features.Disasters.Queries.GetById
                         p.Name,
                         p.Age,
                         p.Phone,
-                        p.Status,
+                        p.Status.Name,
                         p.Notes
                     )
                 ).ToList(),

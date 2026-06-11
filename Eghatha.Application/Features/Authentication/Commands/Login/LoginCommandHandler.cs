@@ -1,5 +1,6 @@
 ﻿using Eghatha.Application.Common.Authentication;
 using Eghatha.Application.Common.Interfaces;
+using Eghatha.Application.Features.Authentication.Dtos;
 using Eghatha.Domain.Abstractions;
 using Eghatha.Domain.Identity;
 using ErrorOr;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Eghatha.Application.Features.Authentication.Commands.Login
 {
-    public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, ErrorOr<AppUserDto>>
+    public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, ErrorOr<TokenResponse>>
     {
         private readonly IIdentityService _identityService;
         private readonly IUnitOfWork _unitOfWork;
@@ -37,7 +38,7 @@ namespace Eghatha.Application.Features.Authentication.Commands.Login
             _cookieService = cookieService;
         }
 
-        public async Task<ErrorOr<AppUserDto>> Handle(LoginCommand request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<TokenResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
             var authResult = await _identityService.AuthenticateAsync(request.Email, request.Password , cancellationToken);
 
@@ -57,10 +58,14 @@ namespace Eghatha.Application.Features.Authentication.Commands.Login
         
             await _unitOfWork.CompleteAsync(cancellationToken);
 
-            _cookieService.SetAccessTokenInCookies(accessToken);
-            _cookieService.SetRefreshTokenInCookies(refresToken);
+        
 
-            return user;
+            return new TokenResponse
+            {
+                AccessToken = accessToken.Token,
+                RefreshToken = refresToken,
+                ExpiresOnUtc=accessToken.Expires
+            };
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Eghatha.Application.Features.Volunteers.Queries.GetTopVolunteers
      int PageSize,
      string? Province,
      string? City,
-     VolunteerSpeciality? Speciality,
+     string? Speciality,
      double? MinAverageScore,
      VolunteerRankingSortBy SortBy = VolunteerRankingSortBy.AverageScore,
      bool Descending = true)
@@ -26,7 +26,7 @@ namespace Eghatha.Application.Features.Volunteers.Queries.GetTopVolunteers
             $"ps={PageSize}:" +
             $"province={Province ?? "-"}:" +
             $"city={City ?? "-"}:" +
-            $"speciality={Speciality?.Name ?? "-"}:" +
+            $"speciality={Speciality ?? "-"}:" +
             $"minScore={MinAverageScore?.ToString() ?? "-"}:" +
             $"sort={SortBy}:" +
             $"desc={Descending}";

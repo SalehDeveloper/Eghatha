@@ -69,7 +69,7 @@ namespace Eghatha.Api.Controllers
             var result = await _sender.Send(command, cancellationToken);
 
             return result.Match(
-                v => base.Ok(v),
+                v => base.Ok(new CreateVolunteerResponse(v)),
                 Problem);
         }
 
@@ -93,9 +93,9 @@ namespace Eghatha.Api.Controllers
             if (filter.Speciality != null)
             {
 
-                if (!VolunteerSpeciality.TryFromName(filter.Speciality, true, out var parsed))
+                if (!VolunteerSpeciality.TryFromName(filter.Speciality, true, out var _))
                     return Problem(VolunteerErrors.SpecialityInvalid);
-                speciality = parsed;
+               
             }
 
             VolunteerStatus? status = null;
@@ -103,14 +103,14 @@ namespace Eghatha.Api.Controllers
             if (filter.Status != null)
             {
 
-                if (!VolunteerStatus.TryFromName(filter.Status, true, out var parsed))
+                if (!VolunteerStatus.TryFromName(filter.Status, true, out var _))
                     return Problem(VolunteerErrors.StatusInvalid);
-                status = parsed;
+              
             }
 
 
 
-            var query = new GetAllVolunteersQuery(pagedRequest.Page, pagedRequest.PageSize, filter.SearchTerm, status, speciality, filter.Province, filter.City);
+            var query = new GetAllVolunteersQuery(pagedRequest.Page, pagedRequest.PageSize, filter.SearchTerm, filter.Status, filter.Speciality, filter.Province, filter.City);
 
             var res = await _sender.Send(query, cancellationToken);
 
@@ -498,12 +498,12 @@ namespace Eghatha.Api.Controllers
             if (filter.Category != null)
             {
 
-                if (!EquipmentCategory.TryFromName(filter.Category, true, out var parsed))
+                if (!EquipmentCategory.TryFromName(filter.Category, true, out var _))
                     return Problem(EquipmentErrors.UnSupportedCategory);
-                category = parsed;
+                
             }
 
-            var query = new GetVolunteerEquipmentsQuery(volunteerId, pagedRequest.Page, pagedRequest.PageSize, category);
+            var query = new GetVolunteerEquipmentsQuery(volunteerId, pagedRequest.Page, pagedRequest.PageSize, filter.Category);
 
             var res = await _sender.Send(query, cancellationToken);
 
@@ -530,9 +530,9 @@ namespace Eghatha.Api.Controllers
             if (filter.Speciality != null)
             {
 
-                if (!VolunteerSpeciality.TryFromName(filter.Speciality, true, out var parsed))
+                if (!VolunteerSpeciality.TryFromName(filter.Speciality, true, out var _))
                     return Problem(VolunteerErrors.SpecialityInvalid);
-                speciality = parsed;
+             
             }
 
 
@@ -541,7 +541,7 @@ namespace Eghatha.Api.Controllers
                 pagedRequest.PageSize,
                 filter.Province,
                 filter.City,
-                speciality,
+                filter.Speciality,
                 filter.MinAverageScore,
                 MapSort(filter.SortBy),
                 filter.Descending);

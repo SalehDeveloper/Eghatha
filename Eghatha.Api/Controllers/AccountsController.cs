@@ -1,11 +1,14 @@
 ﻿using Eghatha.Api.Mappers;
+using Eghatha.Application.Common.Interfaces;
 using Eghatha.Application.Common.Models;
 using Eghatha.Application.Features.Accounts.Commands.ActivateAccount;
 using Eghatha.Application.Features.Accounts.Commands.DeActivateAccount;
+using Eghatha.Application.Features.Accounts.Queries.GetAccountById;
 using Eghatha.Application.Features.Accounts.Queries.GetAccounts;
 using Eghatha.Contract.Accounts.Requests;
 using Eghatha.Contract.Accounts.Responses;
 using Eghatha.Contract.Shared;
+using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,9 +17,11 @@ namespace Eghatha.Api.Controllers
 {
     public class AccountsController : ApiController
     {
-        public AccountsController(ISender sender) : base(sender)
-        {
+        private readonly IUser user;
 
+        public AccountsController(ISender sender, IUser user) : base(sender)
+        {
+            this.user = user;
         }
 
 
@@ -79,7 +84,6 @@ namespace Eghatha.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [EndpointSummary("Retrieve accounts")]
         [EndpointDescription("Returns a paginated list of accounts with optional filtering by role (Admin, TeamMember, Volunteer), active status, and search term.")]
         [EndpointName("GetAccounts")]
@@ -89,13 +93,34 @@ namespace Eghatha.Api.Controllers
 
             var res = await _sender.Send(query, ct);
 
-            
-
-
             return 
                    Ok( new PagedResponse<AccountResponse>(res.PageNumber, res.PageSize, res.TotalPages, res.TotalCount, res.Items.MapToAccounts()));
                     
 
         }
+        [HttpGet(ApiEndpoints.Accounts.GetMyAccount)]
+        [ProducesResponseType(typeof(AccountResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> GetAccountById( CancellationToken cancellationToken  )
+        {
+            var userId = user.Id;
+
+            var query = new GetByIdQuery(userId.Value );
+
+            var res = await _sender.Send(query , cancellationToken);
+
+            return res.Match(
+             v => base.Ok(v.MapToAccount()),
+             Problem);
+
+        }
+    
+    
     }
 }

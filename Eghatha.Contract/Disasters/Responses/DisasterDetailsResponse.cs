@@ -14,6 +14,8 @@ namespace Eghatha.Contract.Disasters.Responses
     string Province,
     string Type,
     string Status,
+    double Latitude,
+    double Longitude,
     DateTimeOffset StartTime,
     DateTimeOffset? EndTime,
     ReporterResponse Reporter,

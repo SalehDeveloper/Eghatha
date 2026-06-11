@@ -9,7 +9,7 @@ namespace Eghatha.Api.Mappers
     {
         public static VolunteerResponse ToResponse(this VolunteerDto dto )
         {
-            return new VolunteerResponse(dto.Id, dto.FullName, dto.Email, dto.PhoneNumber, dto.Status.Name, dto.Speciality.Name, dto.province, dto.city, dto.YearsOfExperience, dto.AverageScore);
+            return new VolunteerResponse(dto.Id, dto.FullName, dto.Email, dto.PhoneNumber, dto.Status, dto.Speciality, dto.province, dto.city, dto.YearsOfExperience, dto.AverageScore);
         }
 
         public static IReadOnlyCollection<VolunteerResponse> ToResponses(this IReadOnlyCollection<VolunteerDto> volunteers)
@@ -19,7 +19,7 @@ namespace Eghatha.Api.Mappers
 
         public static VolunteerEquipmentResponse ToResponse(this VolunteerEquipmentDto dto)
         {
-            return new VolunteerEquipmentResponse(dto.Id, dto.Name, dto.Category.Name, dto.Quantity, dto.Status.Name);
+            return new VolunteerEquipmentResponse(dto.Id, dto.Name, dto.Category, dto.Quantity, dto.Status);
         }
 
         public static IReadOnlyCollection<VolunteerEquipmentResponse> ToResponses(this IReadOnlyCollection<VolunteerEquipmentDto> equipments)

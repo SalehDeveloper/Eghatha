@@ -24,8 +24,8 @@ namespace Eghatha.Infastructure.Repositories
             int page,
             int pageSize,
             string? searchTerm,
-            VolunteerStatus? status,
-            VolunteerSpeciality? speciality,
+            string? status,
+            string? speciality,
             string? province,
             string? city,
             CancellationToken cancellationToken)
@@ -34,15 +34,19 @@ namespace Eghatha.Infastructure.Repositories
                 .AsNoTracking()
                 .AsQueryable();
 
+            VolunteerStatus? volunteerStatus = null;
+            VolunteerSpeciality? volunteerSpeciality = null;
 
-            if (status != null && !string.IsNullOrWhiteSpace(status.Name))
+            if (!string.IsNullOrWhiteSpace(status))
             {
-                query = query.Where(v => v.Status == status);
+                volunteerStatus = VolunteerStatus.FromName(status, true);
+                query = query.Where(v => v.Status == volunteerSpeciality);
             }
 
-            if (speciality != null && !string.IsNullOrWhiteSpace(speciality.Name))
+            if (!string.IsNullOrWhiteSpace(speciality))
             {
-                query = query.Where(v => v.Speciality == speciality);
+                volunteerSpeciality = VolunteerSpeciality.FromName(speciality, true);
+                query = query.Where(v => v.Speciality == volunteerSpeciality);
             }
 
             if (!string.IsNullOrWhiteSpace(province))
@@ -122,8 +126,8 @@ namespace Eghatha.Infastructure.Repositories
                     fullName,
                     user.Email,
                     user.PhoneNumber,
-                    VolunteerStatus.FromName(v.Status),
-                    VolunteerSpeciality.FromName(v.Speciality),
+                    v.Status,
+                    v.Speciality,
                     v.Province,
                     v.City,
                     v.YearsOfExperience,
@@ -151,8 +155,8 @@ namespace Eghatha.Infastructure.Repositories
                         $"{user.FirstName} {user.LastName}",
                         user.Email,
                         user.PhoneNumber,
-                        vol.Status,
-                        vol.Speciality,
+                        vol.Status.Name,
+                        vol.Speciality.Name,
                         vol.Province,
                         vol.City,
                         vol.YearsOfExperience,
@@ -175,7 +179,7 @@ namespace Eghatha.Infastructure.Repositories
             await _context.Set<Equipment>().AddAsync(equipment, cancellationToken);
         }
 
-        public async Task<PaginatedList<VolunteerEquipmentDto>> GetVolunteerEquipmentsAsync(Guid volunteerId, int page, int pageSize, EquipmentCategory? category, CancellationToken cancellationToken)
+        public async Task<PaginatedList<VolunteerEquipmentDto>> GetVolunteerEquipmentsAsync(Guid volunteerId, int page, int pageSize, string? category, CancellationToken cancellationToken)
         {
             var query = _context.Set<Volunteer>()
                 .AsNoTracking()
@@ -184,8 +188,14 @@ namespace Eghatha.Infastructure.Repositories
                 .Where(e => e.IsDeleted == false)
                 .AsQueryable();
 
-            if (category != null)
-                query = query.Where(e => e.Category == category);
+
+            EquipmentCategory? equipmentCategory = null;
+            if (!string.IsNullOrWhiteSpace(category))
+            {
+                equipmentCategory = EquipmentCategory.FromName(category, true);
+                query = query.Where(e => e.Category == equipmentCategory);
+            }
+              
 
             var totalCount = await query.CountAsync(cancellationToken);
 
@@ -195,9 +205,9 @@ namespace Eghatha.Infastructure.Repositories
                 .Select(e => new VolunteerEquipmentDto(
                     e.Id,
                     e.Name,
-                    e.Category,
+                    e.Category.Name,
                     e.Quantity,
-                    e.Status
+                    e.Status.Name
                 ))
                 .ToListAsync(cancellationToken);
 
@@ -245,8 +255,8 @@ namespace Eghatha.Infastructure.Repositories
                         $"{user.FirstName} {user.LastName}",
                         user.Email,
                         user.PhoneNumber,
-                        vol.Status,
-                        vol.Speciality,
+                        vol.Status.Name,
+                        vol.Speciality.Name,
                         vol.Province,
                         vol.City,
                         vol.YearsOfExperience,
@@ -255,11 +265,11 @@ namespace Eghatha.Infastructure.Repositories
             return await query.ToListAsync();
         }
 
-        public async Task<PaginatedList<VolunteerRankingDto>> GetTopVolunteersAsync(int page, int pageSize, string? province, string? city, VolunteerSpeciality? speciality, double? minAverageScore, VolunteerRankingSortBy sortBy, bool descending, CancellationToken cancellationToken)
+        public async Task<PaginatedList<VolunteerRankingDto>> GetTopVolunteersAsync(int page, int pageSize, string? province, string? city, string? speciality, double? minAverageScore, VolunteerRankingSortBy sortBy, bool descending, CancellationToken cancellationToken)
         {
             var query = _context.Set<Volunteer>()
-     .AsNoTracking()
-     .AsQueryable();
+                 .AsNoTracking()
+                 .AsQueryable();
 
             // ---------------- FILTERS ----------------
 
@@ -279,10 +289,13 @@ namespace Eghatha.Infastructure.Repositories
                     EF.Functions.Like(v.City, $"%{ci}%"));
             }
 
-            if (speciality is not null)
+            VolunteerSpeciality? volunteerSpeciality = null;
+
+            if (!string.IsNullOrWhiteSpace(speciality))
             {
+                volunteerSpeciality = VolunteerSpeciality.FromName(speciality , true);
                 query = query.Where(v =>
-                    v.Speciality == speciality);
+                    v.Speciality == volunteerSpeciality);
             }
 
             if (minAverageScore.HasValue)

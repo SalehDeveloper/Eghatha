@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Eghatha.Application.Features.Teams.Queries.GetTeams
 {
-    public record GetTeamsQuery(int Page, int PageSize, string? SearchTerm, TeamStatus? Status, TeamSpeciality? Speciality, string? Province, string? City)
+    public record GetTeamsQuery(int Page, int PageSize, string? SearchTerm, string? Status, string? Speciality, string? Province, string? City)
         : ICachedQuery<PaginatedList<TeamDto>>
     {
         public string CachKey =>
@@ -19,8 +19,8 @@ namespace Eghatha.Application.Features.Teams.Queries.GetTeams
       $"p={Page}:" +
       $"ps={PageSize}:" +
       $"q={SearchTerm ?? "-"}:" +
-      $"status={Status?.Name ?? "-"}:" +
-      $"speciality={Speciality?.Name ?? "-"}:" +
+      $"status={Status ?? "-"}:" +
+      $"speciality={Speciality ?? "-"}:" +
       $"province={Province ?? "-"}:" +
       $"city={City ?? "-"}";
 

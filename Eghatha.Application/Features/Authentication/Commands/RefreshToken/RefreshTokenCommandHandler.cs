@@ -1,18 +1,20 @@
 ﻿using Eghatha.Application.Common.Authentication;
 using Eghatha.Application.Common.Errors;
 using Eghatha.Application.Common.Interfaces;
+using Eghatha.Application.Features.Authentication.Dtos;
 using Eghatha.Domain.Abstractions;
 using ErrorOr;
 using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Eghatha.Application.Features.Authentication.Commands.RefreshToken
 {
-    public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, ErrorOr<Success>>
+    public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, ErrorOr<TokenResponse>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
@@ -37,60 +39,70 @@ namespace Eghatha.Application.Features.Authentication.Commands.RefreshToken
             _identityService = identityService;
         }
 
-        public async Task<ErrorOr<Success>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<TokenResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {
-           
-            var refreshToken = _cookieService.GetRefreshToken();
 
-            if(string.IsNullOrEmpty(refreshToken))
-                  return ApplicationErrors.InvalidRefreshToken;
+            var principal = _jwtService.GetPrincipalFromExpiredToken(request.ExpiredAccessToken);
 
-            var token = await _refreshTokenRepository.GetByTokenAsync(refreshToken , cancellationToken);
-
-            if (token == null)
-                return ApplicationErrors.InvalidRefreshToken;
-
-            if (token.ExpiresOnUtc <= _timeProvider.GetUtcNow())
-                return ApplicationErrors.InvalidRefreshToken;
-
-           
-            if (token.IsRevoked)
+            if (principal is null)
             {
-                await _refreshTokenRepository.RevokeAllByUserId(token.UserId, cancellationToken);
-                await _unitOfWork.CompleteAsync(cancellationToken);
-
-                return ApplicationErrors.InvalidRefreshToken;
+         
+                return ApplicationErrors.ExpiredAccessTokenInvalid;
             }
 
-            var user = await _identityService.GetUserByIdAsync(token.UserId, cancellationToken);
 
-            if (user.IsError )
-                return ApplicationErrors.InvalidRefreshToken;
+            var userId = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId is null)
+            {
+              
+                return ApplicationErrors.UserIdClaimInvalid;
+            }
+
+            // get user by id 
+
+            var user = await _identityService.GetUserByIdAsync(Guid.Parse(userId), cancellationToken);
+
+            if (user.IsError) return user.Errors;
 
 
-            token.Revoke();
+
+            var refreshToken = await _refreshTokenRepository.GetTokenForUserAsync(request.RefreshToken, user.Value.UserId);
+
+            if (refreshToken is null || refreshToken.ExpiresOnUtc < _timeProvider.GetUtcNow() || refreshToken.IsRevoked)
+            {
+                return ApplicationErrors.RefreshTokenExpired;
+
+            }
+
+            // revoke all refresh tokens for the user to prevent reuse of any existing tokens
+
+            await _refreshTokenRepository.RevokeAllByUserId(user.Value.UserId, cancellationToken);
+
+            // genereate nwe access token , refresh token 
+
+            var newAccessToken = _jwtService.GenerateAccessToken(user.Value);
 
             var newRefreshToken = _jwtService.GenerateRefreshToken();
 
-            var newTokenEntity = Domain.Identity.RefreshToken.Create( token.UserId, newRefreshToken ,_timeProvider.GetUtcNow().AddDays(Domain.Identity.RefreshToken.RefreshTokenDurationInDays));
-                
+            var newTokenEntity = Domain.Identity.RefreshToken.Create(user.Value.UserId, newRefreshToken, _timeProvider.GetUtcNow().AddDays(Domain.Identity.RefreshToken.RefreshTokenDurationInDays));
+
 
             if (newTokenEntity.IsError)
                 return newTokenEntity.Errors;
 
             await _refreshTokenRepository.AddAsync(newTokenEntity.Value, cancellationToken);
 
-            
-            var accessToken = _jwtService.GenerateAccessToken(user.Value);
-
-           
             await _unitOfWork.CompleteAsync(cancellationToken);
 
-            // 8. Set cookies AFTER success
-            _cookieService.SetRefreshTokenInCookies(newRefreshToken);
-            _cookieService.SetAccessTokenInCookies(accessToken);
+            return new TokenResponse
+            {
+                AccessToken = newAccessToken.Token , 
+                RefreshToken = newRefreshToken,
+                ExpiresOnUtc = newAccessToken.Expires
+            }
 
-            return Result.Success;
+           ;
         }
     }
 }

@@ -35,6 +35,8 @@ namespace Eghatha.Api
         {
 
             public const string Base = $"{apiBase}/accounts";
+            public const string GetMyAccount = $"{Base}/my-account";
+
             public const string GetAll = $"{Base}";
             public const string Activate = $"{Base}/{{id:guid}}/activate";
             public const string DeActivate = $"{Base}/{{id:guid}}/deactivate";
@@ -57,19 +59,27 @@ namespace Eghatha.Api
 
             public const string GetAll = $"{Base}";
 
+            public const string GetAllOnMap = $"{Base}/map";
+
             public const string GetById = $"{Base}/{{teamid:guid}}";
 
+            public const string GetTeamDisasters = $"{Base}/{{teamid:guid}}/disasters";
             public const string GetTeamMembers = $"{Base}/{{teamid:guid}}/members";
             public const string GetTeamResources = $"{Base}/{{teamid:guid}}/resources";
-
+            public const string GetTeamLocation = $"{Base}/{{teamid:guid}}/location";
+            public const string GetCurrentTeamDisaster = $"{Base}/{{teamid:guid}}/current-disaster";
 
             public const string UpdateLiveLocation = $"{Base}/{{teamid:guid}}/live-location";
 
             public const string AddMemeber = $"{Base}/{{teamid:guid}}/members";
+
             public const string ChangeLeader = $"{Base}/{{teamid:guid}}/leader/{{memberid:guid}}";
+
+            public const string GetCurrentMemberInfo = $"{Base}/me";
 
             public const string Activate = $"{Base}/{{teamid:guid}}/activate";
             public const string DeActivate = $"{Base}/{{teamid:guid}}/deactivate";
+            public const string Returning = $"{Base}/{{teamid:guid}}/returning";
 
 
             public const string DeactivateMember = $"{Base}/{{teamid:guid}}/members/{{memberid:guid}}/deactivate";
@@ -151,8 +161,11 @@ namespace Eghatha.Api
             
             public const string EvaluateVolunteer =$"{Base}/{{disasterid:guid}}/volunteers/{{volunteerid:guid}}/evaluate";
 
-           
+           public const string GetRecommendedTeams = $"{Base}/{{disasterid:guid}}/recommended-teams";
 
+            public const string GetRecommendedVolunteers = $"{Base}/{{disasterid:guid}}/recommended-volunteers";
+
+            public const string GetDisasterVolunteers = $"{Base}/{{disasterid:guid}}/volunteers";
         }
 
         public static class ReferenceData

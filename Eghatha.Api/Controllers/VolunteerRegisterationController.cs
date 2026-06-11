@@ -91,15 +91,15 @@ namespace Eghatha.Api.Controllers
             if (filter.Status != null)
             {
 
-                if (!RegisterationStatus.TryFromName(filter.Status, true, out var parsed))
+                if (!RegisterationStatus.TryFromName(filter.Status, true, out var _))
                     return Problem(TeamErrors.InvalidSpeciality);
-                status = parsed;
+                
             }
 
            
 
 
-            var query = new GetAllRegisterationsQuery( pagedRequest.Page , pagedRequest.PageSize ,filter.SearchTerm , status);
+            var query = new GetAllRegisterationsQuery( pagedRequest.Page , pagedRequest.PageSize ,filter.SearchTerm , filter.Status);
 
             var res = await _sender.Send(query, cancellationToken);
 

@@ -1,4 +1,5 @@
 ﻿using Eghatha.Api.Mappers;
+using Eghatha.Application.Common.Interfaces;
 using Eghatha.Application.Features.Authentication.Commands.ConfirmEmail;
 using Eghatha.Application.Features.Authentication.Commands.Login;
 using Eghatha.Application.Features.Authentication.Commands.Logout;
@@ -6,28 +7,32 @@ using Eghatha.Application.Features.Authentication.Commands.RefreshToken;
 using Eghatha.Application.Features.Authentication.Commands.RequestPasswordReset;
 using Eghatha.Application.Features.Authentication.Commands.ResendEmailConfirmationCode;
 using Eghatha.Application.Features.Authentication.Commands.ResetPassword;
+using Eghatha.Application.Features.Authentication.Dtos;
 using Eghatha.Application.Features.Authentication.Queries.GetLoggedInUser;
 using Eghatha.Contract.Identity.Requests;
 using Eghatha.Contract.Identity.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Eghatha.Api.Controllers
 {
     public class IdentityController : ApiController
     {
-        public IdentityController(ISender sender) : base(sender)
-        {
+        private readonly IUser user;
 
+        public IdentityController(ISender sender, IUser user) : base(sender)
+        {
+            this.user = user;
         }
 
         [HttpPost(ApiEndpoints.Identity.Login)]
-        [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Contract.Identity.Responses.TokenResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         [EndpointSummary("Authenticate user and generate access , refresh tokens.")]
-        [EndpointDescription("Validates the user's credentials (email and password) and returns an authenticated user response with a valid session if successful.")]
+        [EndpointDescription("Validates the user's credentials (email and password) and returns an authenticated user response with a valid tokens if successful.")]
         [EndpointName("Login")]
         public async Task<IActionResult> Login(LoginRequest request, CancellationToken cancellationToken)
         {
@@ -36,32 +41,33 @@ namespace Eghatha.Api.Controllers
             var result = await _sender.Send(command, cancellationToken);
 
             return result.Match(
-                v => base.Ok(v.ToUserResponse()),
+                v => base.Ok(v.ToResponse()),
                 Problem);
 
         }
 
 
         [HttpPost(ApiEndpoints.Identity.RefreshToken)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType( typeof(Contract.Identity.Responses.TokenResponse)  , StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        [EndpointSummary("Rotates authentication tokens using refresh token.")]
-        [EndpointDescription("Validates the refresh token stored in an HTTP-only cookie and issues a new access token and refresh token pair. The previous refresh token is revoked to prevent reuse.")]
+        [EndpointSummary("Refreshes access token using a valid refresh token.")]
+        [EndpointDescription("Exchanges an expired access token and a valid refresh token for a new token pair.")]
         [EndpointName("RefreshToken")]
-        public async Task<IActionResult> RefreshToken(CancellationToken cancellationToken)
+        public async Task<IActionResult> RefreshToken( [FromBody] RefreshTokenRequest request , CancellationToken cancellationToken)
         {
-            var command = new RefreshTokenCommand();
+            var command = new RefreshTokenCommand(request.RefreshToken , request.ExpiredAccessToken);
 
             var result = await _sender.Send(command, cancellationToken);
 
             return result.Match(
-                v => base.NoContent(),
+                v => base.Ok(v.ToResponse()),
                 Problem);
         }
 
         [Authorize]
         [HttpGet(ApiEndpoints.Identity.Me)]
+        [ProducesResponseType(typeof(UserResponse), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(MeResponse), StatusCodes.Status200OK)]
@@ -70,14 +76,19 @@ namespace Eghatha.Api.Controllers
         [EndpointName("Me")]
         public async Task<IActionResult> Me(CancellationToken cancellationToken)
         {
-            var query = new GetLoggedinUserQuery();
+            var userId = user.Id;
+
+          
+
+
+            var query = new GetLoggedinUserQuery(userId.Value);
 
             var result = await _sender.Send(query, cancellationToken);
 
 
 
             return result.Match(
-                v => base.Ok(v.ToMeResponse()),
+                v => base.Ok(v.ToUserResponse()),
                  Problem);
 
         }
@@ -123,7 +134,7 @@ namespace Eghatha.Api.Controllers
                  Problem);
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpPost(ApiEndpoints.Identity.Logout)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]

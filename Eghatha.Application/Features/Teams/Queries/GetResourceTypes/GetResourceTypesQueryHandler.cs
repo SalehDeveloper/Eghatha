@@ -15,6 +15,7 @@ namespace Eghatha.Application.Features.Teams.Queries.GetResourceTypes
                     x.Value,
                     x.Name,
                     x.IsConsumable))
+                .OrderBy(x=> x.Value)
                 .ToList();
 
             return Task.FromResult<IReadOnlyList<ResourceTypeResponse>>(result);

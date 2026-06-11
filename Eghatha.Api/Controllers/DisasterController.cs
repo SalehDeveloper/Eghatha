@@ -19,6 +19,9 @@ using Eghatha.Application.Features.Disasters.Queries.GetAll;
 using Eghatha.Application.Features.Disasters.Queries.GetById;
 using Eghatha.Application.Features.Disasters.Queries.GetDisasterStatuses;
 using Eghatha.Application.Features.Disasters.Queries.GetDisasterTypes;
+using Eghatha.Application.Features.Disasters.Queries.GetDisasterVolunteers;
+using Eghatha.Application.Features.Disasters.Queries.GetRecommendedTeams;
+using Eghatha.Application.Features.Disasters.Queries.GetRecommendedVolunteers;
 using Eghatha.Application.Features.Disasters.Queries.GetTimeLine;
 using Eghatha.Application.Features.Teams.Queries.GetTeams;
 using Eghatha.Contract.Disasters.Requests;
@@ -384,7 +387,7 @@ namespace Eghatha.Api.Controllers
 
 
 
-            var query = new GetDisastersQuery(pagedRequest.Page, pagedRequest.PageSize, filter.City, filter.Province, type , status , filter.From , filter.To);
+            var query = new GetDisastersQuery(pagedRequest.Page, pagedRequest.PageSize, filter.City, filter.Province, filter.Type , filter.Status , filter.From , filter.To);
 
             var res = await _sender.Send(query, cancellationToken);
 
@@ -393,6 +396,51 @@ namespace Eghatha.Api.Controllers
         }
 
 
+
+
+        // [Authorize(Roles = ApplicationRole.Admin)]
+        [HttpGet(ApiEndpoints.Disasters.GetRecommendedTeams)]
+        [ProducesResponseType(typeof(List<RecommendedTeamsResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        [EndpointSummary("Retrieves recommended teams.")]
+        [EndpointDescription("Returns a  list of recommended teams for a specific disaster.")]
+        [EndpointName("GetRecommendedTeams")]
+        public async Task<IActionResult> GetRecommendedTeams([FromRoute] Guid disasterId, CancellationToken cancellationToken)
+        {
+            var query = new GetRecommendedTeamQuery(disasterId);
+            var res = await _sender.Send(query, cancellationToken);
+            return res.Match(
+                v => Ok(v.ToResponses()),
+                Problem);
+        }
+
+
+        // [Authorize(Roles = ApplicationRole.Admin)]
+        [HttpGet(ApiEndpoints.Disasters.GetRecommendedVolunteers)]
+        [ProducesResponseType(typeof(List<RecommendedTeamsResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        [EndpointSummary("Retrieves recommended volunteers.")]
+        [EndpointDescription("Returns a  list of recommended volunteers for a specific disaster.")]
+        [EndpointName("GetRecommendedVolunteers")]
+        public async Task<IActionResult> GetRecommendedVolunteers([FromRoute] Guid disasterId, CancellationToken cancellationToken)
+        {
+            var query = new GetRecommendedVolunteersQuery(disasterId);
+            var res = await _sender.Send(query, cancellationToken);
+            return res.Match(
+                v => Ok(v.ToResponses()),
+                Problem);
+        }
+       
         // [Authorize(Roles = ApplicationRole.Admin)]
         [HttpGet(ApiEndpoints.Disasters.GetById)]
         [ProducesResponseType(typeof(DisasterDetailsResponse), StatusCodes.Status200OK)]
@@ -476,6 +524,24 @@ namespace Eghatha.Api.Controllers
         }
 
 
+        [HttpGet(ApiEndpoints.Disasters.GetDisasterVolunteers)]
+        [ProducesResponseType(typeof(PaginatedList<DisasterVolunteerResponse>), StatusCodes.Status200OK)]
+        [EndpointSummary("get disaster volunteers")]
+        [EndpointDescription("get volunteers for a specific disaster.")]
+        [EndpointName("GetDisasterVolunteers")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetDisasterVolunteers([FromRoute] Guid disasterid, [FromQuery] PagedRequest pagedRequest, CancellationToken cancellationToken)
+        {
+            var query = new GetDisasterVolunteersQuery(disasterid, pagedRequest.Page, pagedRequest.PageSize);
+            var result = await _sender.Send(query, cancellationToken);
+            return
+                Ok(new PagedResponse<DisasterVolunteerResponse>(result.PageNumber, result.PageSize, result.TotalPages, result.TotalCount, result.Items.ToResponses()));
+        }
 
     
 

@@ -12,6 +12,7 @@ namespace Eghatha.Application.Features.Teams.Queries.GetTeamStatuses
         {
             var result = TeamStatus.List
                 .Select(x => new TeamStatusResponse(x.Value, x.Name))
+                .OrderBy(x=>x.Value)
                 .ToList();
 
             return Task.FromResult<IReadOnlyList<TeamStatusResponse>>(result);

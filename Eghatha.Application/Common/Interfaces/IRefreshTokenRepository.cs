@@ -13,5 +13,7 @@ namespace Eghatha.Application.Common.Interfaces
         Task<RefreshToken?> GetByTokenAsync(string token, CancellationToken cancellationToken);
 
         Task<int> RevokeAllByUserId(Guid userId, CancellationToken cancellationToken);
+
+        Task<RefreshToken> GetTokenForUserAsync(string token, Guid userId);
     }
 }

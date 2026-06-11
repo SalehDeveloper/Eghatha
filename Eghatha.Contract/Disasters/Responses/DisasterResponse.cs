@@ -10,6 +10,8 @@ namespace Eghatha.Contract.Disasters.Responses
      string Title,
      string City,
      string Province,
+     double Latitude,
+     double Longitude,
      string Type,
      string Status,
      DateTimeOffset StartTime

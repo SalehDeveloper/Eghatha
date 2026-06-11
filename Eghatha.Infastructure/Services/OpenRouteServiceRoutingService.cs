@@ -40,6 +40,16 @@ namespace Eghatha.Infastructure.Services
                 request,
                 cancellationToken);
 
+            var responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception(
+     $"Status: {(int)response.StatusCode} {response.StatusCode}\n" +
+     $"Response: {responseBody}\n" +
+     $"Request locations: {System.Text.Json.JsonSerializer.Serialize(locations)}");
+            }
+
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content

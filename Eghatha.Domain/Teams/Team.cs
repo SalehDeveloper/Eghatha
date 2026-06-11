@@ -177,8 +177,16 @@ namespace Eghatha.Domain.Teams
             if (userId == Guid.Empty)
                 return DomainErrors.IdMustBeProvided("User");
 
-            if (isLeader && _members.Any(m => m.IsLeader))
-                return TeamErrors.TeamAlreadyHasLeader;
+            //if (isLeader && _members.Any(m => m.IsLeader))
+            //    return TeamErrors.TeamAlreadyHasLeader;
+
+            if (isLeader)
+            {
+                foreach (var teamMember in  Members)
+                {
+                    teamMember.SetLeader(false);
+                }
+            }
 
             var member = TeamMember.Create(Guid.NewGuid(), userId,  jobTitle, isLeader, joinedAt);
 
@@ -238,7 +246,7 @@ namespace Eghatha.Domain.Teams
         public bool IsReadyForMission => Status == TeamStatus.Active && _members.Any(m => m.Status == TeamMemberStatus.Active);
         public TeamMember? Leader => _members.FirstOrDefault(m => m.IsLeader);
 
-        public ErrorOr<Resource> AddResource(int quantity, ResourceType type)
+        public ErrorOr<AddResourceResult> AddResource(int quantity, ResourceType type)
         {
 
             var existing = _resources.FirstOrDefault(r => r.Type == type);
@@ -247,7 +255,7 @@ namespace Eghatha.Domain.Teams
             {
                 existing.IncreaseQuantity(quantity);
 
-                return existing;
+                return new AddResourceResult(existing ,  false);
 
             }
 
@@ -258,7 +266,7 @@ namespace Eghatha.Domain.Teams
 
             _resources.Add(newResource.Value);
 
-            return newResource.Value;
+             return new AddResourceResult(newResource.Value, true);
         }
 
         public ErrorOr<Updated> IncreaseResourceQuantity(Guid resourceId, int quantity)

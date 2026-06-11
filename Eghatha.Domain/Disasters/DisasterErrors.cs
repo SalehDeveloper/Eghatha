@@ -127,6 +127,9 @@ namespace Eghatha.Domain.Disasters
              code: "DisasterErrors.InvalidStatus",
              description: "invalid disaster status");
 
+        public static Error FailedToAssign = Error.Conflict(
+            code: "DisasterErrors.FailedToAssign",
+            description: "failed to assign volunteer is already assigned or not available now");
 
 
     }

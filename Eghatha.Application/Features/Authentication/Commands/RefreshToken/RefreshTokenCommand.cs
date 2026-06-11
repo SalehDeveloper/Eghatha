@@ -1,4 +1,5 @@
-﻿using ErrorOr;
+﻿using Eghatha.Application.Features.Authentication.Dtos;
+using ErrorOr;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -8,5 +9,5 @@ using System.Threading.Tasks;
 
 namespace Eghatha.Application.Features.Authentication.Commands.RefreshToken
 {
-    public record RefreshTokenCommand() : IRequest<ErrorOr<Success>>;
+    public record RefreshTokenCommand(string RefreshToken , string ExpiredAccessToken) : IRequest<ErrorOr<TokenResponse>>;
 }

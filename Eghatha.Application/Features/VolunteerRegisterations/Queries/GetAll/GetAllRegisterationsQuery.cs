@@ -13,13 +13,13 @@ namespace Eghatha.Application.Features.VolunteerRegisterations.Queries.GetAll
     int Page,
     int PageSize,
     string? SearchTerm,
-    RegisterationStatus? Status) : ICachedQuery<PaginatedList<VolunteerRegisterationDto>>
+    string? Status) : ICachedQuery<PaginatedList<VolunteerRegisterationDto>>
     {
         public string CachKey => $"volunteer-registrations:" +
         $"p={Page}:" +
         $"ps={PageSize}:" +
         $"q={SearchTerm ?? "-"}:" +
-        $"status={Status?.Name ?? "-"}";
+        $"status={Status ?? "-"}";
 
         public string[] Tags => ["volunteer-registrations"];
 

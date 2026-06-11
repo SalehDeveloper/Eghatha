@@ -12,8 +12,8 @@ namespace Eghatha.Application.Features.Volunteers.Queries.GetAll
     public record GetAllVolunteersQuery(int Page,
     int PageSize,
     string? SearchTerm,
-    VolunteerStatus? Status,
-    VolunteerSpeciality? Speciality,
+    string? Status,
+    string? Speciality,
     string? Province,
     string? City)
     : ICachedQuery<PaginatedList<VolunteerDto>>
@@ -23,8 +23,8 @@ namespace Eghatha.Application.Features.Volunteers.Queries.GetAll
          $"p={Page}:" +
          $"ps={PageSize}:" +
          $"q={SearchTerm ?? "-"}:" +
-         $"status={Status?.Name ?? "-"}:" +
-         $"speciality={Speciality?.Name ?? "-"}:" +
+         $"status={Status ?? "-"}:" +
+         $"speciality={Speciality ?? "-"}:" +
          $"province={Province ?? "-"}:" +
          $"city={City ?? "-"}";
 

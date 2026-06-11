@@ -1,5 +1,6 @@
 ﻿using Eghatha.Application.Common.Authentication;
 using Eghatha.Application.Common.Models;
+using Eghatha.Application.Features.Authentication.Dtos;
 using Eghatha.Contract.Identity.Responses;
 
 namespace Eghatha.Api.Mappers
@@ -11,7 +12,8 @@ namespace Eghatha.Api.Mappers
             return new UserResponse(
                 userDto.UserId,
                 userDto.Email,
-                userDto.Roles);
+                userDto.Roles , 
+                userDto.Claims);
         }
 
         public static MeResponse ToMeResponse(this IdentityUser user)
@@ -24,6 +26,11 @@ namespace Eghatha.Api.Mappers
                 user.FirstName,
                 user.LastName,
                 user.PhotoUrl);
+        }
+
+        public static Contract.Identity.Responses.TokenResponse ToResponse(this Application.Features.Authentication.Dtos.TokenResponse tokenResponse )
+        {
+            return new Contract.Identity.Responses.TokenResponse(tokenResponse.AccessToken, tokenResponse.RefreshToken, tokenResponse.ExpiresOnUtc);
         }
     }
 }

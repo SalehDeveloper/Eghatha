@@ -49,6 +49,9 @@ namespace Eghatha.Infastructure.Services
                 .Select(x => new RouteDestination(x.team.Id, x.location))
                 .ToList();
 
+            Console.WriteLine($"Team count: {teams.Count}");
+            Console.WriteLine($"Destinations count: {destinations.Count}");
+
             var routes = await _routingService.CalculateAsync(
                 disaster.Location,
                 destinations,
@@ -69,6 +72,8 @@ namespace Eghatha.Infastructure.Services
                     item.team.Id,
                     item.team.Name,
                     item.team.Speciality,
+                    item.team.Province,
+                    item.team.City,
                    Math.Round(route.DistanceKm, 1),
                    Math.Round(route.DurationMinutes, 0),
                     score,
@@ -77,7 +82,7 @@ namespace Eghatha.Infastructure.Services
 
             return result
                 .OrderByDescending(x => x.Score)
-                .Take(5)
+                .Take(10)
                 .ToList();
         }
     }

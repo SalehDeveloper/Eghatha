@@ -5,6 +5,7 @@ using Eghatha.Domain.Disasters;
 using Eghatha.Domain.Teams;
 using ErrorOr;
 using MediatR;
+using Microsoft.Extensions.Caching.Hybrid;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,12 +19,14 @@ namespace Eghatha.Application.Features.Disasters.Commands.AssignTeams
         private readonly IDisasterRepository _disasterRepository;
         private readonly ITeamRepository _teamRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly HybridCache _hybridCache;
 
-        public AssignTeamsCommandHandler(ITeamRepository teamRepository, IUnitOfWork unitOfWork, IDisasterRepository disasterRepository)
+        public AssignTeamsCommandHandler(ITeamRepository teamRepository, IUnitOfWork unitOfWork, IDisasterRepository disasterRepository, HybridCache hybridCache)
         {
             _teamRepository = teamRepository;
             _unitOfWork = unitOfWork;
             _disasterRepository = disasterRepository;
+            _hybridCache = hybridCache;
         }
 
         public async Task<ErrorOr<Success>> Handle(AssignTeamsCommand request, CancellationToken cancellationToken)
@@ -59,6 +62,7 @@ namespace Eghatha.Application.Features.Disasters.Commands.AssignTeams
 
             await _unitOfWork.CompleteAsync(cancellationToken);
 
+            await _hybridCache.RemoveByTagAsync("disasters");
             return Result.Success;
         }
     }

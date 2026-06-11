@@ -5,9 +5,9 @@ namespace Eghatha.Application.Features.Volunteers.Dtos
     public sealed record VolunteerEquipmentDto(
     Guid Id,
     string Name,
-    EquipmentCategory Category,
+    string Category,
     int Quantity,
-    EquipmentStatus Status
+    string Status
 );
 
 }

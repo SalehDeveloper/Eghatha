@@ -1,5 +1,6 @@
 ﻿using Eghatha.Application.Common.Models;
 using Eghatha.Application.Features.Disasters.Dtos;
+using Eghatha.Application.Features.Disasters.Queries.GetDisasterVolunteers;
 using Eghatha.Domain.Abstractions;
 using Eghatha.Domain.Disasters;
 using Eghatha.Domain.Disasters.AffectedPersons;
@@ -31,7 +32,9 @@ namespace Eghatha.Application.Common.Interfaces
 
         Task AddReportAsync(Report report, CancellationToken cancellationToken);
 
-        Task<PaginatedList<DisasterDto>> GetDisastersAsync(int page, int pageSize, string? city, string? province, DisasterType? type, DisasterStatus? status, DateTimeOffset? from, DateTimeOffset? to, CancellationToken cancellationToken);
+        Task<PaginatedList<DisasterDto>> GetDisastersAsync(int page, int pageSize, string? city, string? province, string? type, string? status, DateTimeOffset? from, DateTimeOffset? to, CancellationToken cancellationToken);
+
+        Task<PaginatedList<DisasterVolunteerDto>> GetDisasterVolunteersAsync(Guid disasterId, int page, int pageSize, CancellationToken cancellationToken);
 
 
     }

@@ -1,7 +1,12 @@
 ﻿using Eghatha.Application.Common.Interfaces;
 using Eghatha.Application.Common.Models;
+using Eghatha.Application.Common.Services;
+using Eghatha.Application.Features.Notifications.Dtos;
 using Eghatha.Application.Features.Teams.Dtos;
+using Eghatha.Application.Features.Teams.Queries.GetTeamDisasters;
+using Eghatha.Application.Features.Teams.Queries.GetTeamMemberInfo;
 using Eghatha.Application.Features.Volunteers.Dtos;
+using Eghatha.Domain.Disasters;
 using Eghatha.Domain.Identity;
 using Eghatha.Domain.Teams;
 using Eghatha.Domain.Teams.Resources;
@@ -10,6 +15,7 @@ using Eghatha.Domain.Volunteers;
 using Eghatha.Domain.Volunteers.Equipments;
 using Eghatha.Infastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using QuestPDF.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,8 +26,11 @@ namespace Eghatha.Infastructure.Repositories
 {
     public class TeamRepository : BaseRepository<Team>, ITeamRepository
     {
-        public TeamRepository(AppDbContext context) : base(context)
+        private readonly ITeamOperationalLocationProvider _locationProvider;
+
+        public TeamRepository(AppDbContext context, ITeamOperationalLocationProvider locationProvider) : base(context)
         {
+            _locationProvider = locationProvider;
         }
 
 
@@ -46,7 +55,7 @@ namespace Eghatha.Infastructure.Repositories
 
         }
 
-        public async Task AddTeamMemberAsync(TeamMember member , CancellationToken  cancellationToken)
+        public async Task AddTeamMemberAsync(TeamMember member, CancellationToken cancellationToken)
         {
             await _context.Set<TeamMember>().AddAsync(member, cancellationToken);
         }
@@ -56,24 +65,31 @@ namespace Eghatha.Infastructure.Repositories
             await _context.Set<Resource>().AddAsync(resource, cancellationToken);
         }
 
-        public async Task<PaginatedList<TeamDto>> GetTeamsAsync(int page,int pageSize,string? searchTerm,TeamStatus? status,TeamSpeciality? speciality,string? province,string? city , CancellationToken cancellationToken )
+        public async Task<PaginatedList<TeamDto>> GetTeamsAsync(int page, int pageSize, string? searchTerm, string? status, string? speciality, string? province, string? city, CancellationToken cancellationToken)
         {
-            var query = _context.Set<Team>().Include(t=>t.Members).AsNoTracking().AsQueryable();
+            var query = _context.Set<Team>().Include(t => t.Members).AsNoTracking().AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
-               var st = searchTerm.Trim();
+                var st = searchTerm.Trim();
                 query = query.Where(t => EF.Functions.Like(t.Name, $"%{st}%"));
             }
 
-            if (status != null && !string.IsNullOrWhiteSpace( status.Name))
+            TeamStatus? teamStatus = null;
+            TeamSpeciality? teamSpeciality = null;
+
+            if (!string.IsNullOrWhiteSpace(status))
             {
-                query = query.Where(t => t.Status == status);
+                teamStatus = TeamStatus.FromName(status, true);
+                query = query.Where(t => t.Status == teamStatus);
             }
 
-            if (speciality != null && !string.IsNullOrWhiteSpace( speciality.Name))
-            {              
-                query = query.Where(t => t.Speciality == speciality);
+
+
+            if (!string.IsNullOrWhiteSpace(speciality))
+            {
+                teamSpeciality = TeamSpeciality.FromName(speciality, true);
+                query = query.Where(t => t.Speciality == teamSpeciality);
             }
 
             if (!string.IsNullOrWhiteSpace(province))
@@ -81,7 +97,7 @@ namespace Eghatha.Infastructure.Repositories
                 var pr = province.Trim();
 
                 query = query.Where(t => EF.Functions.Like(t.Province, $"%{pr}%"));
-              
+
             }
             if (!string.IsNullOrWhiteSpace(city))
             {
@@ -115,7 +131,7 @@ namespace Eghatha.Infastructure.Repositories
           })
           .ToListAsync(cancellationToken);
 
-            
+
             var userIds = teams
                 .SelectMany(t => t.Members)
                 .Select(m => m.UserId)
@@ -132,7 +148,7 @@ namespace Eghatha.Infastructure.Repositories
                 })
                 .ToDictionaryAsync(u => u.Id, cancellationToken);
 
-           
+
             var items = teams.Select(t =>
             {
                 var leader = t.Members.FirstOrDefault(m => m.IsLeader);
@@ -147,17 +163,17 @@ namespace Eghatha.Infastructure.Repositories
                 var membersCount = t.Members.Count();
                 var activeMembersCount = t.Members.Count(m => m.Status == TeamMemberStatus.Active);
 
-                var isReady = 
+                var isReady =
                     t.Status == TeamStatus.Active.Name &&
                     activeMembersCount > 0;
 
                 return new TeamDto(
                     t.Id,
                     t.Name,
-                    TeamSpeciality.FromName( t.Speciality),
+                    t.Speciality,
                     t.Province,
                     t.City,
-                    TeamStatus.FromName (t.Status),
+                    t.Status,
                     leaderName,
                     membersCount,
                     activeMembersCount,
@@ -165,7 +181,7 @@ namespace Eghatha.Infastructure.Repositories
                 );
             }).ToList();
 
-            
+
             return new PaginatedList<TeamDto>
             {
                 PageNumber = page,
@@ -228,21 +244,23 @@ namespace Eghatha.Infastructure.Repositories
             return new TeamDto(
                 team.Id,
                 team.Name,
-                TeamSpeciality.FromName(team.Speciality),
+                team.Speciality,
                 team.Province,
                 team.City,
-                TeamStatus.FromName(team.Status),
+                team.Status,
                 leaderName,
                 membersCount,
                 activeMembersCount,
                 isReady
             );
         }
-        public async Task<PaginatedList<TeamMemberDto>> GetTeamMembersAsync(Guid teamId,int page,int pageSize,string? searchTerm, TeamMemberStatus? status,CancellationToken cancellationToken)
+        public async Task<PaginatedList<TeamMemberDto>> GetTeamMembersAsync(Guid teamId, int page, int pageSize, string? searchTerm, string? status, CancellationToken cancellationToken)
         {
             var query = _context.Set<TeamMember>()
              .AsNoTracking()
               .Where(m => EF.Property<Guid>(m, "TeamId") == teamId);
+
+
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
@@ -250,10 +268,15 @@ namespace Eghatha.Infastructure.Repositories
                 query = query.Where(m => EF.Functions.Like(m.Id.ToString(), $"%{st}%"));
             }
 
-            if (status != null)
-                query = query.Where(m => m.Status == status);
+            TeamMemberStatus? memberStatus = null;
 
-             
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                memberStatus = TeamMemberStatus.FromName(status, true);
+
+                query = query.Where(m => m.Status == memberStatus);
+            }
+
 
 
             var totalCount = await query.CountAsync(cancellationToken);
@@ -268,7 +291,7 @@ namespace Eghatha.Infastructure.Repositories
                     m.JobTitle,
                     Status = m.Status.Name,
                     m.IsLeader
-                    
+
                 })
                 .ToListAsync(cancellationToken);
 
@@ -300,14 +323,20 @@ namespace Eghatha.Infastructure.Repositories
                 Items = items
             };
         }
-        public async Task<PaginatedList<TeamResourceDto>> GetTeamResourcesAsync( Guid teamId,int page,int pageSize,ResourceType? type,CancellationToken cancellationToken)
+        public async Task<PaginatedList<TeamResourceDto>> GetTeamResourcesAsync(Guid teamId, int page, int pageSize, string? type, CancellationToken cancellationToken)
         {
             var query = _context.Set<Resource>()
               .AsNoTracking()
                .Where(m => EF.Property<Guid>(m, "TeamId") == teamId);
 
+
+            ResourceType? resourceType = null;
+
+            if (!string.IsNullOrWhiteSpace(type))
+                resourceType = ResourceType.FromName(type, true);
+
             if (type != null)
-                query = query.Where(r => r.Type == type);
+                query = query.Where(r => r.Type == resourceType);
 
             var totalCount = await query.CountAsync(cancellationToken);
 
@@ -332,7 +361,7 @@ namespace Eghatha.Infastructure.Repositories
                 Items = resources
             };
         }
-        public async Task<IReadOnlyList<Team>> GetAvailableTeamsAsync(IReadOnlyList<TeamSpeciality> specialities,CancellationToken cancellationToken)
+        public async Task<IReadOnlyList<Team>> GetAvailableTeamsAsync(IReadOnlyList<TeamSpeciality> specialities, CancellationToken cancellationToken)
         {
 
             return await _context.Set<Team>().AsNoTracking()
@@ -343,16 +372,123 @@ namespace Eghatha.Infastructure.Repositories
                    )
                    .ToListAsync(cancellationToken);
         }
-
-        public async Task<Guid?> GetTeamLeaderByUserId(Guid userId , CancellationToken cancellationToken )
+        public async Task<Guid?> GetTeamLeaderByUserId(Guid userId, CancellationToken cancellationToken)
         {
             return await _context.Set<TeamMember>().AsNoTracking()
                 .Where(x => x.UserId == userId && x.IsLeader)
                 .Select(x => x.Id)
                 .FirstOrDefaultAsync(cancellationToken);
         }
+        public async Task<TeamMemberInfo> GetCurrentTeamMemberInfo(Guid userId, CancellationToken cancellationToken)
+        {
+
+            var team = await _context.Set<Team>()
+                .Include(x => x.Members)
+                .Where(t => t.Members.Any(tm => tm.UserId == userId)).FirstOrDefaultAsync(cancellationToken);
+
+            var teamLeader = team.Leader;
+
+            return new TeamMemberInfo(team.Id, teamLeader.UserId == userId);
+
+        }
+        public async Task<List<TeamMapDto>> GetTeamsOnMapAsync(CancellationToken cancellationToken)
+        {
+            var relevantStatuses = new[]
+       {
+            TeamStatus.Active,
+            TeamStatus.OnMission,
+            TeamStatus.Returning
+        };
+
+            var teams = await _context.Set<Team>()
+                .AsNoTracking()
+                .Where(t => relevantStatuses.Contains(t.Status))
+                .ToListAsync(cancellationToken);
+
+            if (teams.Count == 0)
+                return new List<TeamMapDto>();
+
+            // Only look up disaster assignments for OnMission / Returning
+            var missionTeamIds = teams
+                .Where(t => t.Status == TeamStatus.OnMission || t.Status == TeamStatus.Returning)
+                .Select(t => t.Id)
+                .ToHashSet();
+
+            var disasterByTeam = missionTeamIds.Count > 0
+                ? await _context.Set<DisasterTeam>()
+                    .Where(dt => missionTeamIds.Contains(dt.TeamId))
+                    .Select(dt => new { dt.TeamId, dt.DisasterId })
+                    .ToListAsync(cancellationToken)
+                    .ContinueWith(r => r.Result
+                        .GroupBy(x => x.TeamId)
+                        .ToDictionary(g => g.Key, g => g.First().DisasterId))
+                : new Dictionary<Guid, Guid>();
+
+            // Resolve locations in parallel (Redis → DB fallback)
+            var locationTasks = teams.Select(async t =>
+            {
+                var (loc, isLive) = await _locationProvider.GetLocationAsync(t, cancellationToken);
+                return (t.Id, loc, isLive);
+            });
+
+            var locations = (await Task.WhenAll(locationTasks))
+                .ToDictionary(x => x.Id, x => (x.loc, x.isLive));
+
+            var result = teams.Select(t =>
+            {
+                var (loc, isLive) = locations.TryGetValue(t.Id, out var l)
+                    ? l : (t.Location, false);
+
+                disasterByTeam.TryGetValue(t.Id, out var disasterId);
+
+                return new TeamMapDto(
+                    t.Id,
+                    t.Name,
+                    t.Speciality.Name,
+                    t.Status.Name,
+                    loc?.Latitude ?? 0,
+                    loc?.Longitude ?? 0,
+                    isLive,
+                    missionTeamIds.Contains(t.Id) ? disasterId : null
+                );
+            }).ToList();
+
+            return result;
+        }
+
+        public async Task<PaginatedList<TeamDisastersDto>> GetTeamDisastersAsync(Guid teamId, int page, int pageSize, CancellationToken cancellationToken)
+        {
+            var query = from dt in _context.Set<DisasterTeam>()
+                        join d in _context.Set<Disaster>()
+                        on dt.DisasterId equals d.Id
+                        where dt.TeamId == teamId
+                        orderby d.StartTime
+                        select new TeamDisastersDto(dt.DisasterId, d.Title, d.City, d.Province, d.Location.Latitude, d.Location.Longitude, d.Type.Name, d.Status.Name, d.StartTime);
 
 
+            return new PaginatedList<TeamDisastersDto>
+            {
+                PageNumber = page,
+                PageSize = pageSize,
+                TotalCount = await query.CountAsync(cancellationToken),
+                TotalPages = (int)Math.Ceiling(await query.CountAsync(cancellationToken) / (double)pageSize),
+                Items = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(cancellationToken)
 
+            };
+        }
+
+
+        public async Task<TeamDisastersDto> GetTeamDisasterAsync(Guid teamId, CancellationToken cancellationToken)
+        {
+            var query = from dt in _context.Set<DisasterTeam>()
+                        join d in _context.Set<Disaster>()
+                        on dt.DisasterId equals d.Id
+                        where dt.TeamId == teamId && (d.Status == DisasterStatus.Reported || d.Status == DisasterStatus.InProgress || d.Status == DisasterStatus.Resolved)
+                        orderby d.StartTime
+                        select new TeamDisastersDto(dt.DisasterId, d.Title, d.City, d.Province, d.Location.Latitude, d.Location.Longitude, d.Type.Name, d.Status.Name, d.StartTime);
+
+
+            return await query.FirstOrDefaultAsync(cancellationToken);
+        }
     }
 }

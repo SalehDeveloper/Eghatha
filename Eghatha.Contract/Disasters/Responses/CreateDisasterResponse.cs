@@ -15,6 +15,8 @@ namespace Eghatha.Contract.Disasters.Responses
     public sealed record RecommendedTeamsResponse(Guid TeamId,
     string TeamName,
     string Speciality,
+    string Province , 
+    string City,
     double DistanceKm,
     double DurationMinutes,
     double Score,
@@ -25,6 +27,5 @@ namespace Eghatha.Contract.Disasters.Responses
     double DistanceKm,
     double DurationMinutes,
     double Score);
-    
     
 }

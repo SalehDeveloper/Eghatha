@@ -1,5 +1,7 @@
 ﻿using Eghatha.Application.Features.Teams.Dtos;
+using Eghatha.Application.Features.Teams.Queries.GetTeamDisasters;
 using Eghatha.Contract.Teams.Responses;
+using static Eghatha.Api.ApiEndpoints;
 
 namespace Eghatha.Api.Mappers
 {
@@ -7,7 +9,7 @@ namespace Eghatha.Api.Mappers
     {
         public static TeamResponse ToResponse(this TeamDto team)
         {
-            return new TeamResponse(team.Id, team.Name, team.Speciality.Name, team.Province, team.City, team.Status.Name, team.LeaderName, team.MembersCount, team.ActiveMembersCount, team.IsReadyForMission);
+            return new TeamResponse(team.Id, team.Name, team.Speciality, team.Province, team.City, team.Status, team.LeaderName, team.MembersCount, team.ActiveMembersCount, team.IsReadyForMission);
         }
 
         public static IReadOnlyCollection<TeamResponse> ToResponses(this IReadOnlyCollection<TeamDto> teams)
@@ -34,6 +36,28 @@ namespace Eghatha.Api.Mappers
         {
             return teamResources.Select(t => t.ToResponse()).ToList();
         }
+
+
+        public static TeamMapResponse ToResponse(this TeamMapDto team)
+        {
+            return new TeamMapResponse(team.Id, team.Name, team.Speciality, team.Status, team.Latitude, team.Longitude, team.IsLiveLocation, team.AssignedDisasterId);
+        }
+
+        public static List<TeamMapResponse> ToResponses(this List<TeamMapDto> teams)
+        {
+            return teams.Select(t => t.ToResponse()).ToList();
+        }
+
+        public static TeamDisasterResponse ToResponse(this TeamDisastersDto dto)
+        {
+            return new TeamDisasterResponse(dto.DisasterId, dto.Title, dto.City, dto.Province, dto.Latitude, dto.Longitude, dto.Type, dto.Status, dto.StartTime);
+        }
+
+        public static IReadOnlyCollection<TeamDisasterResponse> ToResponses(this IReadOnlyCollection<TeamDisastersDto> td)
+        {
+            return td.Select(t => t.ToResponse()).ToList();
+        }
+
 
     }
 }

@@ -7,6 +7,7 @@ using Eghatha.Domain.Disasters;
 using Eghatha.Domain.Disasters.Reports;
 using ErrorOr;
 using MediatR;
+using Microsoft.Extensions.Caching.Hybrid;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,16 +24,19 @@ namespace Eghatha.Application.Features.Disasters.Commands.GenerateReport
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICloudinaryService _cloudinaryService;
         private readonly TimeProvider _timeProvider;
+        private readonly HybridCache _hybridCache;
 
 
 
-        public GenerateDisasterReportCommandHandler(IDisasterRepository disasterRepository, IDisasterReportPdfService disasterReportPdfService, IUnitOfWork unitOfWork, ICloudinaryService cloudinaryService, TimeProvider timeProvider)
+
+        public GenerateDisasterReportCommandHandler(IDisasterRepository disasterRepository, IDisasterReportPdfService disasterReportPdfService, IUnitOfWork unitOfWork, ICloudinaryService cloudinaryService, TimeProvider timeProvider, HybridCache hybridCache)
         {
             _disasterRepository = disasterRepository;
             _disasterReportPdfService = disasterReportPdfService;
             _unitOfWork = unitOfWork;
             _cloudinaryService = cloudinaryService;
             _timeProvider = timeProvider;
+            _hybridCache = hybridCache;
         }
 
         public async Task<ErrorOr<GenerateDisasterReportDto>> Handle(GenerateDisasterReportCommand request, CancellationToken cancellationToken)
@@ -74,6 +78,7 @@ namespace Eghatha.Application.Features.Disasters.Commands.GenerateReport
             await _disasterRepository.AddReportAsync(addReportResult.Value, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
 
+            await _hybridCache.RemoveByTagAsync("disasters");
             return new GenerateDisasterReportDto(uploadResult.Value);
 
         }

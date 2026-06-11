@@ -8,7 +8,9 @@ namespace Eghatha.Application.Features.Teams.Queries.GetTeamSpecialities
         {
             var specialities = Eghatha.Domain.Teams.TeamSpeciality.List
                 .Select(s => new TeamSpecialityResponse(s.Value, s.Name))
+                .OrderBy(x=> x.Value)
                 .ToList();
+                
             return Task.FromResult((IReadOnlyList<TeamSpecialityResponse>)specialities);
         }
     }

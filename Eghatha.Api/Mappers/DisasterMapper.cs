@@ -1,5 +1,6 @@
 ﻿using Eghatha.Application.Common.Models;
 using Eghatha.Application.Features.Disasters.Dtos;
+using Eghatha.Application.Features.Disasters.Queries.GetDisasterVolunteers;
 using Eghatha.Contract.Disasters.Responses;
 using Eghatha.Domain.Disasters.AffectedPersons;
 using MimeKit.Cryptography;
@@ -17,33 +18,33 @@ namespace Eghatha.Api.Mappers
                 dto.RecommendedVolunteers.ToResponses());
         }
 
-        private static RecommendedTeamsResponse ToResponse(this RecommendedTeamDto dto)
+        public static RecommendedTeamsResponse ToResponse(this RecommendedTeamDto dto)
         {
-            return new RecommendedTeamsResponse(dto.TeamId, dto.TeamName, dto.Speciality.Name, dto.DistanceKm, dto.DurationMinutes, dto.Score, dto.IsLiveLocation);
+            return new RecommendedTeamsResponse(dto.TeamId, dto.TeamName, dto.Speciality.Name, dto.Province, dto.City, dto.DistanceKm, dto.DurationMinutes, dto.Score, dto.IsLiveLocation);
         }
 
-        private static RecommendedVolunteerResponse ToResponse(this RecommendedVolunteerDto dto )
+        public static RecommendedVolunteerResponse ToResponse(this RecommendedVolunteerDto dto)
         {
             return new RecommendedVolunteerResponse(dto.VolunteerId, dto.Speciality.Name, dto.DistanceKm, dto.DurationMinutes, dto.Score);
         }
 
-        private static IReadOnlyCollection<RecommendedTeamsResponse> ToResponses(this IReadOnlyCollection<RecommendedTeamDto> dtos)
+        public static IReadOnlyCollection<RecommendedTeamsResponse> ToResponses(this IReadOnlyCollection<RecommendedTeamDto> dtos)
         {
             return dtos.Select(dto => dto.ToResponse()).ToList();
         }
 
-        private static IReadOnlyCollection<RecommendedVolunteerResponse> ToResponses(this IReadOnlyCollection<RecommendedVolunteerDto> dtos)
+        public static IReadOnlyCollection<RecommendedVolunteerResponse> ToResponses(this IReadOnlyCollection<RecommendedVolunteerDto> dtos)
         {
             return dtos.Select(dto => dto.ToResponse()).ToList();
         }
 
         private static AffectedPersonDto ToDto(this Contract.Disasters.Requests.AffectedPersonDto response)
         {
-            HealthStatus.TryFromName(response.Status, out var status);
 
-            return new AffectedPersonDto(response.Name, response.Age,response.Phone, status , response.Notes);
+
+            return new AffectedPersonDto(response.Name, response.Age, response.Phone, response.Status, response.Notes);
         }
-    
+
         public static List<AffectedPersonDto> ToDtos(this IReadOnlyCollection<Contract.Disasters.Requests.AffectedPersonDto> responses)
         {
             return responses.Select(response => response.ToDto()).ToList();
@@ -51,8 +52,8 @@ namespace Eghatha.Api.Mappers
 
         public static DisasterResponse ToResponse(this DisasterDto dto)
         {
-            return new DisasterResponse(dto.Id, dto.Title, dto.City, dto.Province, dto.Type.Name, dto.Status.Name, dto.StartTime);
-                
+            return new DisasterResponse(dto.Id, dto.Title, dto.City, dto.Province, dto.Latitude, dto.Longitude, dto.Type, dto.Status, dto.StartTime);
+
         }
 
         public static IReadOnlyCollection<DisasterResponse> ToResponses(this IReadOnlyCollection<DisasterDto> dtos)
@@ -61,7 +62,7 @@ namespace Eghatha.Api.Mappers
 
         }
 
-        public static ReporterResponse ToResponse (this ReporterDto dto)
+        public static ReporterResponse ToResponse(this ReporterDto dto)
         {
             return new ReporterResponse(dto.Name, dto.Phone);
         }
@@ -70,7 +71,7 @@ namespace Eghatha.Api.Mappers
         {
             return new DisasterTeamResponse(dto.TeamId, dto.TeamName);
         }
-        
+
         public static ResourceResponse ToResponse(this ResourceDto dto)
         {
             return new ResourceResponse(dto.Id, dto.ResourceType, dto.Sent, dto.Consumed, dto.Returned, dto.Damaged, dto.Notes);
@@ -80,9 +81,9 @@ namespace Eghatha.Api.Mappers
             return new ReportResponse(dto.Id, dto.Summary, dto.PdfUrl, dto.IssuedAt);
         }
 
-        public static AffectedPersonResponse ToResponse( this AffectedPersonDto dto )
+        public static AffectedPersonResponse ToResponse(this AffectedPersonDto dto)
         {
-            return new AffectedPersonResponse(dto.Name, dto.Age, dto.Phone, dto.Status.Name, dto.Notes);
+            return new AffectedPersonResponse(dto.Name, dto.Age, dto.Phone, dto.Status, dto.Notes);
         }
 
         public static DisasterDetailsResponse ToResponse(this DisasterDetailsDto dto)
@@ -92,15 +93,17 @@ namespace Eghatha.Api.Mappers
                 dto.Description,
                 dto.City,
                 dto.Province,
-                dto.Type.Name,
-                dto.Status.Name,
+                dto.Type,
+                dto.Status,
+                dto.Latitude,
+                dto.Longitude,
                 dto.StartTime,
                 dto.EndTime,
                 dto.Reporter.ToResponse(),
                 dto.Teams.Select(t => t.ToResponse()).ToList(),
                 dto.Resources.Select(r => r.ToResponse()).ToList(),
                 dto.AffectedPeople.Select(p => p.ToResponse()).ToList(),
-                dto.Report.ToResponse()
+                dto.Report?.ToResponse()
                 );
         }
 
@@ -114,5 +117,17 @@ namespace Eghatha.Api.Mappers
         {
             return dtos.Select(dto => dto.ToResponse()).ToList();
         }
+
+
+        public static DisasterVolunteerResponse ToResponse(this DisasterVolunteerDto dto)
+        {
+            return new DisasterVolunteerResponse(dto.Id, dto.Name, dto.Email, dto.PhoneNumber, dto.PhotoUrl, dto.Status);
+        }
+
+        public static IReadOnlyCollection<DisasterVolunteerResponse> ToResponses(this IReadOnlyCollection<DisasterVolunteerDto> dtos)
+        {
+            return dtos.Select(dto => dto.ToResponse()).ToList();
+        }
+
     }
 }

@@ -31,5 +31,11 @@ namespace Eghatha.Infastructure.Repositories
 
             return tokens.Count;
         }
+
+
+        public async Task<RefreshToken> GetTokenForUserAsync(string token, Guid userId)
+        {
+            return await _context.Set<RefreshToken>().FirstOrDefaultAsync(r => r.Token == token && r.UserId == userId);
+        }
     }
 }

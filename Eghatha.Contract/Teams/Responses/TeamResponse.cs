@@ -17,6 +17,6 @@ namespace Eghatha.Contract.Teams.Responses
     int MembersCount,
     int ActiveMembersCount,
     bool IsReadyForMission);
-    
-    
+
+
 }

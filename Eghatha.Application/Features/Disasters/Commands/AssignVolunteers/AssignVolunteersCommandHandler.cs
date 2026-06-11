@@ -1,8 +1,10 @@
 ﻿using Eghatha.Application.Common.Errors;
 using Eghatha.Application.Common.Interfaces;
 using Eghatha.Domain.Abstractions;
+using Eghatha.Domain.Disasters;
 using ErrorOr;
 using MediatR;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace Eghatha.Application.Features.Disasters.Commands.AssignVolunteers
 {
@@ -10,11 +12,13 @@ namespace Eghatha.Application.Features.Disasters.Commands.AssignVolunteers
     {
         private readonly IDisasterRepository _disasterRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly HybridCache _hybridCache;
 
-        public AssignVolunteersCommandHandler(IDisasterRepository disasterRepository, IUnitOfWork unitOfWork)
+        public AssignVolunteersCommandHandler(IDisasterRepository disasterRepository, IUnitOfWork unitOfWork, HybridCache hybridCache)
         {
             _disasterRepository = disasterRepository;
             _unitOfWork = unitOfWork;
+            _hybridCache = hybridCache;
         }
 
         public async Task<ErrorOr<Success>> Handle(AssignVolunteersCommand request, CancellationToken cancellationToken)
@@ -35,9 +39,13 @@ namespace Eghatha.Application.Features.Disasters.Commands.AssignVolunteers
             {
                 await _disasterRepository.AddVolunteersAsync(newVolunteers);
             }
+            else
+            {
+                return DisasterErrors.FailedToAssign;
+            }
 
             await _unitOfWork.CompleteAsync(cancellationToken);
-
+            await _hybridCache.RemoveByTagAsync("disasters");
             return Result.Success;
         }
     }

@@ -12,6 +12,7 @@ namespace Eghatha.Application.Features.Teams.Queries.GetResourceStatuses
         {
             var result = ResourceStatus.List
                 .Select(x => new ResourceStatusResponse(x.Value, x.Name))
+                .OrderBy(x=> x.Value)
                 .ToList();
 
             return Task.FromResult<IReadOnlyList<ResourceStatusResponse>>(result);

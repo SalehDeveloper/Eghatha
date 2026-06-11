@@ -14,14 +14,14 @@ namespace Eghatha.Application.Features.Teams.Queries.GetTeamMembers
       int Page,
       int PageSize,
       string? SearchTerm,
-      TeamMemberStatus? Status)
+      string? Status)
       : ICachedQuery<PaginatedList<TeamMemberDto>>
     {
         public string CachKey =>
             $"team:{TeamId}:members:" +
             $"p={Page}:ps={PageSize}:" +
             $"q={SearchTerm ?? "-"}:" +
-            $"status={Status?.Name ?? "-"}";
+            $"status={Status?? "-"}";
 
         public string[] Tags => ["teams"];
 

@@ -1,8 +1,10 @@
 ﻿using Eghatha.Application.Common.Errors;
 using Eghatha.Application.Common.Interfaces;
 using Eghatha.Domain.Abstractions;
+using Eghatha.Domain.Disasters.AffectedPersons;
 using ErrorOr;
 using MediatR;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace Eghatha.Application.Features.Disasters.Commands.AddAffectedPersons
 {
@@ -11,13 +13,16 @@ namespace Eghatha.Application.Features.Disasters.Commands.AddAffectedPersons
     {
         private readonly IDisasterRepository _disasterRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly HybridCache _hybridCache;
 
         public AddAffectedPersonsCommandHandler(
             IDisasterRepository disasterRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            HybridCache hybridCache)
         {
             _disasterRepository = disasterRepository;
             _unitOfWork = unitOfWork;
+            _hybridCache = hybridCache;
         }
 
         public async Task<ErrorOr<Success>> Handle(
@@ -35,7 +40,7 @@ namespace Eghatha.Application.Features.Disasters.Commands.AddAffectedPersons
                     p.Name,
                     p.Age,
                     p.Phone,
-                    p.Status,
+                   HealthStatus.FromName( p.Status , true),
                     p.Notes));
 
             var result = disaster.AddAffectedPersons(data);
@@ -46,6 +51,9 @@ namespace Eghatha.Application.Features.Disasters.Commands.AddAffectedPersons
             await _disasterRepository.AddAffectedPersonsAsync(result.Value, cancellationToken);
 
             await _unitOfWork.CompleteAsync(cancellationToken);
+
+
+            await _hybridCache.RemoveByTagAsync("disasters");
 
             return Result.Success;
         }

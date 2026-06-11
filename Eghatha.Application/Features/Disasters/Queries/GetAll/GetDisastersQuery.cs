@@ -14,8 +14,8 @@ namespace Eghatha.Application.Features.Disasters.Queries.GetAll
      int PageSize,
      string? City,
      string? Province,
-     DisasterType? Type,
-     DisasterStatus? Status,
+     string? Type,
+     string? Status,
      DateTimeOffset? From,
      DateTimeOffset? To
  ) : ICachedQuery<PaginatedList<DisasterDto>>
@@ -24,6 +24,6 @@ namespace Eghatha.Application.Features.Disasters.Queries.GetAll
 
         public TimeSpan Expiration => TimeSpan.FromMinutes(5);
 
-        public string CachKey => $"disasters:p={Page}:ps={PageSize}:city={City ?? "-"}:province={Province ?? "-"}:type={Type?.Name ?? "-"}:status={Status?.Name ?? "-"}:from={From}:to={To}";
+        public string CachKey => $"disasters:p={Page}:ps={PageSize}:city={City ?? "-"}:province={Province ?? "-"}:type={Type?? "-"}:status={Status?? "-"}:from={From}:to={To}";
     }
 }

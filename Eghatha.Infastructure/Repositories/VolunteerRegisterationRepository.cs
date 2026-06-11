@@ -23,7 +23,7 @@ namespace Eghatha.Infastructure.Repositories
         }
 
         public async Task<PaginatedList<VolunteerRegisterationDto>> GetRegisterationsAsync(int page, int pageSize, string? SearchTerm,
-            RegisterationStatus? Status , CancellationToken cancellationToken )
+            string? Status , CancellationToken cancellationToken )
         {
             var query =
                         from reg in _context.Set<VolunteerRegisteration>().AsNoTracking()
@@ -36,10 +36,12 @@ namespace Eghatha.Infastructure.Repositories
                             user
                         };
 
-           
-            if (Status != null)
+
+            RegisterationStatus? registerationStatus = null;
+            if (!string.IsNullOrEmpty(Status))
             {
-                query = query.Where(x => x.reg.Status == Status);
+                registerationStatus = RegisterationStatus.FromName(Status , true);
+                query = query.Where(x => x.reg.Status == registerationStatus);
             }
 
           
@@ -69,12 +71,12 @@ namespace Eghatha.Infastructure.Repositories
                     x.user.Email,
                     x.user.PhoneNumber,
                     x.user.PhotoUrl,
-                    x.vol.Location.Latitude,
-                    x.vol.Location.Longitude,
+                    x.vol.Province,
+                    x.vol.City,
                     x.vol.YearsOfExperience,
-                    x.vol.Speciality,
+                    x.vol.Speciality.Name,
                     x.vol.Cv,
-                    x.reg.Status,
+                    x.reg.Status.Name,
                     x.reg.RequestedAt,
                     x.reg.ReviewedAt,
                     x.reg.RejectionReason
@@ -107,12 +109,12 @@ namespace Eghatha.Infastructure.Repositories
             user.Email,
             user.PhoneNumber,
             user.PhotoUrl,
-            vol.Location.Latitude,
-            vol.Location.Longitude,
+            vol.Province,
+            vol.City,
             vol.YearsOfExperience,
-            vol.Speciality,
+            vol.Speciality.Name,
             vol.Cv,
-            reg.Status,
+            reg.Status.Name,
             reg.RequestedAt,
             reg.ReviewedAt,
             reg.RejectionReason

@@ -100,7 +100,7 @@ namespace Eghatha.Infastructure.Identity
             if (await _userManager.CheckPasswordAsync(user, password) is false)
                 return Error.Conflict("Invalid_Login_Attempt", "Email / Password are incorrect");
 
-            return new AppUserDto(user.Id, user.Email, await _userManager.GetRolesAsync(user));
+            return new AppUserDto(user.Id, user.Email, await _userManager.GetRolesAsync(user) ,await _userManager.GetClaimsAsync(user));
 
 
 
@@ -128,8 +128,8 @@ namespace Eghatha.Infastructure.Identity
                 return Error.NotFound("User_Not_Found", $"User with id {(userId)} not found");
 
             var roles = await _userManager.GetRolesAsync(user);
-
-            return new AppUserDto(userId, user.Email, roles);
+            var claims = await _userManager.GetClaimsAsync(user);
+            return new AppUserDto(userId, user.Email, roles ,claims );
         }
 
         public async Task<ErrorOr<Application.Common.Models.IdentityUser>> GetUserDetailsByIdAsync(Guid userId, CancellationToken cancellationToken)

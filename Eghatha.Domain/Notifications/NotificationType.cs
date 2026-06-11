@@ -9,5 +9,6 @@ namespace Eghatha.Domain.Notifications
     public enum NotificationType
     {
         DisasterReported = 1,
+        VolunteerRegistered = 2,
     }
 }

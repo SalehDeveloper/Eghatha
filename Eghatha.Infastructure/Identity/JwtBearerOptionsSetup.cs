@@ -41,20 +41,23 @@ namespace Eghatha.Infastructure.Identity
 
 
             };
-
             options.Events = new JwtBearerEvents
             {
-
                 OnMessageReceived = context =>
                 {
+                    var accessToken = context.Request.Query["access_token"];
+                    var path = context.HttpContext.Request.Path;
 
-                    var accessToken = context.Request.Cookies["accessToken"];
-                    if (!string.IsNullOrEmpty(accessToken))
+                    if (!string.IsNullOrEmpty(accessToken) &&
+                        path.StartsWithSegments("/hubs"))
+                    {
                         context.Token = accessToken;
+                    }
 
                     return Task.CompletedTask;
                 }
             };
+
 
 
         }

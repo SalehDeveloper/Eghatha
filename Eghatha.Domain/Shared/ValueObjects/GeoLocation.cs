@@ -1,9 +1,5 @@
 ﻿using ErrorOr;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Eghatha.Domain.Shared.ValueObjects
 {
@@ -12,8 +8,9 @@ namespace Eghatha.Domain.Shared.ValueObjects
         public double Latitude { get; private set; }
         public double Longitude { get; private set; }
 
-        
-        private GeoLocation(double latitude, double longitude)
+
+        [JsonConstructor]
+        public GeoLocation(double latitude, double longitude)
         {
      
 
@@ -25,12 +22,12 @@ namespace Eghatha.Domain.Shared.ValueObjects
         public static ErrorOr<GeoLocation> Create ( double latitude, double longitude)
         {
             if (latitude < -90 || latitude > 90)
-                Error.Validation(
+              return  Error.Validation(
                     code:"GeoLocation.InvalidLatitude",
                     description:"Latitude must be between -90 and 90");
 
             if (longitude < -180 || longitude > 180)
-              Error.Validation(
+            return  Error.Validation(
                   code: "GeoLocation.Invalidlongitude",
                   "Longitude must be between -180 and 180");
 

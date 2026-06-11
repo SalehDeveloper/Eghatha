@@ -6,6 +6,8 @@ namespace Eghatha.Application.Common.Models
     Guid TeamId,
     string TeamName,
     TeamSpeciality Speciality,
+    string Province , 
+    string City,
     double DistanceKm,
     double DurationMinutes,
     double Score,

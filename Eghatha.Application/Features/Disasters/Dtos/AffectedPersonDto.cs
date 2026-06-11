@@ -6,7 +6,7 @@ namespace Eghatha.Application.Features.Disasters.Dtos
     string Name,
     int Age,
     string Phone,
-    HealthStatus Status,
+    string Status,
     string? Notes);
 
 

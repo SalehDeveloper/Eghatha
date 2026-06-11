@@ -12,6 +12,7 @@ namespace Eghatha.Application.Features.Volunteers.Queries.GetEquipmentCategories
         {
             var result = EquipmentCategory.List
                 .Select(x => new EquipmentCategoryResponse(x.Value, x.Name))
+                .OrderBy(x=> x.Value)
                 .ToList();
 
             return Task.FromResult<IReadOnlyList<EquipmentCategoryResponse>>(result);

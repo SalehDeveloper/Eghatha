@@ -1,4 +1,5 @@
-﻿using Eghatha.Application.Common.Models;
+﻿using Eghatha.Application.Common.Authentication;
+using Eghatha.Application.Common.Models;
 using Eghatha.Application.Features.Authentication.Dtos;
 using ErrorOr;
 using MediatR;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Eghatha.Application.Features.Authentication.Queries.GetLoggedInUser
 {
-    public sealed record GetLoggedinUserQuery:IRequest<ErrorOr<IdentityUser>>;
+    public sealed record GetLoggedinUserQuery(Guid UserId):IRequest<ErrorOr<AppUserDto>>;
     
     
 }

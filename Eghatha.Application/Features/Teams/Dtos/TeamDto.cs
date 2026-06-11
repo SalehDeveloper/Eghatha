@@ -9,14 +9,14 @@ namespace Eghatha.Application.Features.Teams.Dtos
 {
     public record TeamDto(Guid Id,
     string Name,
-    TeamSpeciality Speciality,
+    string Speciality,
     string Province,
     string City,
-    TeamStatus Status,
+    string Status,
     string? LeaderName,
     int MembersCount,
     int ActiveMembersCount,
     bool IsReadyForMission);
-    
-    
+
+
 }

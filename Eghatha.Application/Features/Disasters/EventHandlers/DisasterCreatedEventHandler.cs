@@ -24,10 +24,10 @@ namespace Eghatha.Application.Features.Disasters.EventHandlers
         }
 
         public async Task Handle(DisasterCreated notification, CancellationToken cancellationToken)
-        {  
-         
+        {
 
 
+            Console.WriteLine("[Notifier] Calling NotifyNewDisasterReported");
             await _adminNotifier.NotifyNewDisasterReported(
                 notification.Id,
                 $"a new diaster of type {notification.Type} has been reported in {notification.Province}, {notification.City} at {notification.OccuredAt}" , 
@@ -36,6 +36,7 @@ namespace Eghatha.Application.Features.Disasters.EventHandlers
                 $"/disasters/{notification.Id}" , 
                 notification.OccuredAt , 
                 cancellationToken);
+            Console.WriteLine("[Notifier] Done");
         }
     }
 }

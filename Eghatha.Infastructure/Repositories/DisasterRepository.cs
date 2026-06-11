@@ -1,13 +1,17 @@
 ﻿using Eghatha.Application.Common.Interfaces;
 using Eghatha.Application.Common.Models;
 using Eghatha.Application.Features.Disasters.Dtos;
+using Eghatha.Application.Features.Disasters.Queries.GetDisasterVolunteers;
+using Eghatha.Application.Features.Teams.Queries.GetTeamDisasters;
 using Eghatha.Domain.Disasters;
 using Eghatha.Domain.Disasters.AffectedPersons;
 using Eghatha.Domain.Disasters.DisasterResources;
 using Eghatha.Domain.Disasters.DisasterVolunteers;
 using Eghatha.Domain.Disasters.Reports;
+using Eghatha.Domain.Volunteers;
 using Eghatha.Infastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Ocsp;
 
 namespace Eghatha.Infastructure.Repositories
 {
@@ -79,8 +83,7 @@ namespace Eghatha.Infastructure.Repositories
             await _context.Set<Report>().AddAsync(report, cancellationToken);
         }
 
-
-        public async Task<PaginatedList<DisasterDto>> GetDisastersAsync(int page, int pageSize, string? city, string? province, DisasterType? type, DisasterStatus? status, DateTimeOffset? from, DateTimeOffset? to, CancellationToken cancellationToken)
+        public async Task<PaginatedList<DisasterDto>> GetDisastersAsync(int page, int pageSize, string? city, string? province, string? type, string? status, DateTimeOffset? from, DateTimeOffset? to, CancellationToken cancellationToken)
         {
             var query = _context.Set<Disaster>()
                 .AsNoTracking()
@@ -99,11 +102,30 @@ namespace Eghatha.Infastructure.Repositories
                 query = query.Where(d => EF.Functions.Like(d.Province, $"%{p}%"));
             }
 
-            if (type != null)
-                query = query.Where(d => d.Type == type);
 
-            if (status != null)
-                query = query.Where(d => d.Status == status);
+
+            DisasterType? disasterType = null;
+            DisasterStatus? disasterStatus = null;
+
+            if (!string.IsNullOrWhiteSpace(type))
+            {
+                disasterType = DisasterType.FromName(type, true);
+            }
+
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                disasterStatus = DisasterStatus.FromName(status, true);
+            }
+
+            if (disasterType is not null)
+            {
+                query = query.Where(d => d.Type == disasterType);
+            }
+
+            if (disasterStatus is not null)
+            {
+                query = query.Where(d => d.Status == disasterStatus);
+            }
 
             if (from.HasValue)
                 query = query.Where(d => d.StartTime >= from.Value);
@@ -124,8 +146,10 @@ namespace Eghatha.Infastructure.Repositories
                     d.Title,
                     d.City,
                     d.Province,
-                    d.Type,
-                    d.Status,
+                    d.Location.Latitude,
+                    d.Location.Longitude,
+                    d.Type.Name,
+                    d.Status.Name,
                     d.StartTime
                 ))
                 .ToListAsync(cancellationToken);
@@ -138,6 +162,38 @@ namespace Eghatha.Infastructure.Repositories
                 TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize),
                 Items = items
             };
+        }
+
+        public async Task<PaginatedList<DisasterVolunteerDto>> GetDisasterVolunteersAsync(Guid disasterId, int page, int pageSize, CancellationToken cancellationToken)
+        {
+            var query =
+                         from dv in _context.Set<DisasterVolunteer>()
+                         join v in _context.Set<Volunteer>()
+                         on dv.VolunteerId equals v.Id
+                         join u in _context.Set<ApplicationUser>()
+                         on v.Id equals u.Id
+                         where dv.DisasterId == disasterId
+                         select new DisasterVolunteerDto(
+                             v.Id,
+                             $"{u.FirstName} {u.LastName}",
+                             u.Email,
+                             u.PhoneNumber,
+                             u.PhotoUrl,
+                             v.Status.Name);
+
+
+
+
+            return new PaginatedList<DisasterVolunteerDto>
+            {
+                PageNumber = page,
+                PageSize = pageSize,
+                TotalCount = await query.CountAsync(cancellationToken),
+                TotalPages = (int)Math.Ceiling(await query.CountAsync(cancellationToken) / (double)pageSize),
+                Items = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(cancellationToken)
+
+            };
+
         }
     }
 }

@@ -10,10 +10,15 @@ using Eghatha.Application.Features.Teams.Commands.IncreaseTeamResource;
 using Eghatha.Application.Features.Teams.Commands.UpdateLiveTeamLocation;
 using Eghatha.Application.Features.Teams.Commands.UpdateTeam;
 using Eghatha.Application.Features.Teams.Commands.UpdateTeamStatus;
+using Eghatha.Application.Features.Teams.Queries.GetCurrentTeamDisaster;
+using Eghatha.Application.Features.Teams.Queries.GetCurrentTeamLocation;
 using Eghatha.Application.Features.Teams.Queries.GetTeamById;
+using Eghatha.Application.Features.Teams.Queries.GetTeamDisasters;
+using Eghatha.Application.Features.Teams.Queries.GetTeamMemberInfo;
 using Eghatha.Application.Features.Teams.Queries.GetTeamMembers;
 using Eghatha.Application.Features.Teams.Queries.GetTeamResources;
 using Eghatha.Application.Features.Teams.Queries.GetTeams;
+using Eghatha.Application.Features.Teams.Queries.GetTeamsOnMap;
 using Eghatha.Contract.Accounts.Responses;
 using Eghatha.Contract.Shared;
 using Eghatha.Contract.Teams.Requests;
@@ -23,8 +28,10 @@ using Eghatha.Domain.Teams.Resources;
 using Eghatha.Domain.Teams.TeamMembers;
 using ErrorOr;
 using MediatR;
+using MediatR.NotificationPublishers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace Eghatha.Api.Controllers
 {
@@ -51,14 +58,14 @@ namespace Eghatha.Api.Controllers
             if (!TeamSpeciality.TryFromName(request.Speciality, true, out var speciality))
                 return Problem(TeamErrors.InvalidSpeciality);
 
-            var command = new CreateTeamCommand(request.Name, speciality,  request.Latitude, request.Longitude);
+            var command = new CreateTeamCommand(request.Name, speciality, request.Latitude, request.Longitude);
 
             var result = await _sender.Send(command, cancellationToken);
 
             return result.Match(
                 v => base.CreatedAtAction(
                     nameof(GetById),
-                    new { teamid = v} ,
+                    new { teamid = v },
                     null
                    ),
                 Problem);
@@ -162,6 +169,33 @@ namespace Eghatha.Api.Controllers
         }
 
 
+        //[Authorize(ApplicationRole.Admin)]
+        [HttpPost(ApiEndpoints.Teams.Returning)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        [EndpointSummary("make team status as Retuning.")]
+        [EndpointDescription("Sets the team status to Returning")]
+        [EndpointName("TeamReturning")]
+
+        public async Task<IActionResult> TeamReturning([FromRoute] Guid teamid, CancellationToken cancellationToken)
+        {
+
+
+            var command = new UpdateTeamStatusCommand(teamid, TeamStatus.Returning);
+
+            var result = await _sender.Send(command, cancellationToken);
+
+            return result.Match(
+                _ => base.NoContent(),
+                Problem);
+        }
+
+
         //[Authorize(Roles = ApplicationRole.TeamMember)]
         //[Authorize(Policy =ApplicationPolicies.CanUpdateTeamLocation)]
         [HttpPatch(ApiEndpoints.Teams.UpdateLiveLocation)]
@@ -189,7 +223,7 @@ namespace Eghatha.Api.Controllers
 
 
 
-         [Authorize(Roles = ApplicationRole.Admin)]
+        [Authorize(Roles = ApplicationRole.Admin)]
         [HttpPost(ApiEndpoints.Teams.AddMemeber)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -201,7 +235,7 @@ namespace Eghatha.Api.Controllers
         [EndpointSummary("Adds a member to a team.")]
         [EndpointDescription("Creates and assigns a new member to the specified team. Optionally sets the member as team leader.")]
         [EndpointName("AddTeamMember")]
-        public async Task<IActionResult> AddTeamMember([FromRoute] Guid teamid, [FromBody] AddTeamMemberRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> AddTeamMember([FromRoute] Guid teamid, [FromForm] AddTeamMemberRequest request, CancellationToken cancellationToken)
         {
             var command = new AddTeamMemberCommand(teamid, request.FirstName, request.LastName, request.Email, request.PhoneNumber, request.Photo, request.JobTitle, request.IsLeader);
 
@@ -419,7 +453,7 @@ namespace Eghatha.Api.Controllers
 
         // [Authorize(Roles = ApplicationRole.Admin)]
         [HttpGet(ApiEndpoints.Teams.GetAll)]
-        [ProducesResponseType(typeof(PagedResponse<TeamResponse>) , StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PagedResponse<TeamResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
@@ -429,16 +463,16 @@ namespace Eghatha.Api.Controllers
         [EndpointSummary("Retrieves teams.")]
         [EndpointDescription("Returns a paginated list of teams with optional filtering by status, speciality, location, and search term.")]
         [EndpointName("GetTeams")]
-        public async Task<IActionResult> GetTeams([FromQuery] GetTeamsFilter filter ,  [FromQuery] PagedRequest pagedRequest , CancellationToken cancellationToken )
+        public async Task<IActionResult> GetTeams([FromQuery] GetTeamsFilter filter, [FromQuery] PagedRequest pagedRequest, CancellationToken cancellationToken)
         {
             TeamSpeciality? speciality = null;
 
             if (filter.Speciality != null)
             {
 
-                if (!TeamSpeciality.TryFromName(filter.Speciality, true, out var parsed))
+                if (!TeamSpeciality.TryFromName(filter.Speciality, true, out var _))
                     return Problem(TeamErrors.InvalidSpeciality);
-                speciality = parsed;
+
             }
 
             TeamStatus? status = null;
@@ -446,21 +480,41 @@ namespace Eghatha.Api.Controllers
             if (filter.Status != null)
             {
 
-                if (!TeamStatus.TryFromName(filter.Status, true, out var parsed))
+                if (!TeamStatus.TryFromName(filter.Status, true, out var _))
                     return Problem(TeamErrors.InvalidSpeciality);
-                status = parsed;
+
             }
 
 
 
-            var query = new GetTeamsQuery(pagedRequest.Page, pagedRequest.PageSize, filter.SearchTerm, status, speciality, filter.Province, filter.City);
+            var query = new GetTeamsQuery(pagedRequest.Page, pagedRequest.PageSize, filter.SearchTerm, filter.Status, filter.Speciality, filter.Province, filter.City);
 
-            var res =  await _sender.Send(query, cancellationToken);
+            var res = await _sender.Send(query, cancellationToken);
 
             return
                  Ok(new PagedResponse<TeamResponse>(res.PageNumber, res.PageSize, res.TotalPages, res.TotalCount, res.Items.ToResponses()));
         }
 
+
+        [HttpGet(ApiEndpoints.Teams.GetAllOnMap)]
+        [ProducesResponseType(typeof(List<TeamMapResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        [EndpointSummary("Retrieves teams on map.")]
+        [EndpointDescription("Returns a list of teams on map")]
+        [EndpointName("GetTeamsOnMapAsync")]
+        public async Task<IActionResult> GetTeamsOnMapAsync(CancellationToken cancellationToken)
+        {
+            var query = new GetTeamsOnMapQuery();
+
+            var result = await _sender.Send(query, cancellationToken);
+
+            return Ok(result.ToResponses());
+        }
 
         // [Authorize(Roles = ApplicationRole.Admin)]
         [HttpGet(ApiEndpoints.Teams.GetById)]
@@ -474,9 +528,9 @@ namespace Eghatha.Api.Controllers
         [EndpointSummary("Retrieves a team by ID.")]
         [EndpointDescription("Returns detailed information about a specific team.")]
         [EndpointName("GetTeamById")]
-        public async Task<IActionResult> GetById([FromRoute] Guid teamid ,CancellationToken cancellationToken)
+        public async Task<IActionResult> GetById([FromRoute] Guid teamid, CancellationToken cancellationToken)
         {
-            
+
             var query = new GetTeamByIdQuery(teamid);
 
             var res = await _sender.Send(query, cancellationToken);
@@ -485,7 +539,30 @@ namespace Eghatha.Api.Controllers
                 return Problem(ApplicationErrors.TeamNotFound);
 
             return
-                 Ok( res.ToResponse());
+                 Ok(res.ToResponse());
+        }
+
+        // [Authorize(Roles = ApplicationRole.Admin)]
+        [HttpGet(ApiEndpoints.Teams.GetCurrentMemberInfo)]
+        [ProducesResponseType(typeof(TeamMemberInfo), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        [EndpointSummary("Retrieves current team member info ")]
+        [EndpointDescription("Returns  information about the current team-member")]
+        [EndpointName("GetCurrentMemberInfo")]
+        public async Task<IActionResult> GetCurrentMemberInfo(CancellationToken cancellationToken)
+        {
+
+            var query = new GetCurrentTeamMemberInfo();
+
+            var res = await _sender.Send(query, cancellationToken);
+
+            return
+                 Ok(res);
         }
 
 
@@ -501,7 +578,7 @@ namespace Eghatha.Api.Controllers
         [EndpointSummary("Retrieves team members.")]
         [EndpointDescription("Returns a paginated list of members belonging to a specific team with optional filtering.")]
         [EndpointName("GetTeamMembers")]
-        public async Task<IActionResult> GetTeamMembers([FromRoute] Guid teamid ,[FromQuery] PagedRequest pagedRequest , [FromQuery] GetTeamMembersFilter filter, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetTeamMembers([FromRoute] Guid teamid, [FromQuery] PagedRequest pagedRequest, [FromQuery] GetTeamMembersFilter filter, CancellationToken cancellationToken)
         {
             TeamMemberStatus? status = null;
 
@@ -513,7 +590,7 @@ namespace Eghatha.Api.Controllers
                 status = parsed;
             }
 
-            var query = new GetTeamMembersQuery(teamid, pagedRequest.Page, pagedRequest.PageSize, filter.SearchTerm, status);
+            var query = new GetTeamMembersQuery(teamid, pagedRequest.Page, pagedRequest.PageSize, filter.SearchTerm, filter.MemberStatus);
 
             var res = await _sender.Send(query, cancellationToken);
 
@@ -547,12 +624,83 @@ namespace Eghatha.Api.Controllers
                 type = parsed;
             }
 
-            var query = new GetTeamResourcesQuery(teamid, pagedRequest.Page, pagedRequest.PageSize, type);
+            var query = new GetTeamResourcesQuery(teamid, pagedRequest.Page, pagedRequest.PageSize, filter.Type);
 
             var res = await _sender.Send(query, cancellationToken);
 
             return Ok(new PagedResponse<TeamResourceResponse>(res.PageNumber, res.PageSize, res.TotalPages, res.TotalCount, res.Items.ToResponses()));
         }
 
+
+
+
+        [HttpGet(ApiEndpoints.Teams.GetTeamDisasters)]
+        [ProducesResponseType(typeof(PagedResponse<TeamDisasterResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        [EndpointSummary("Retrieves team disaster.")]
+        [EndpointDescription("Returns a paginated list of disasters assigned to a specific team.")]
+        [EndpointName("GetTeamDisasters")]
+        public async Task<IActionResult> GetTeamDisasters([FromRoute] Guid teamid, [FromQuery] PagedRequest pagedRequest, CancellationToken cancellationToken)
+        {
+            var query = new GetTeamDisastersQuery(teamid, pagedRequest.Page, pagedRequest.PageSize);
+
+            var res = await _sender.Send(query, cancellationToken);
+
+            return Ok(new PagedResponse<TeamDisasterResponse>(res.PageNumber, res.PageSize, res.TotalPages, res.TotalCount, res.Items.ToResponses()));
+
+        }
+
+
+        [HttpGet(ApiEndpoints.Teams.GetCurrentTeamDisaster)]
+        [ProducesResponseType(typeof(TeamDisasterResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        [EndpointSummary("Retrieves team disaste.")]
+        [EndpointDescription("Returns current disatser for a specific team.")]
+        [EndpointName("GetTeamDisaster")]
+        public async Task<IActionResult> GetTeamDisaster([FromRoute] Guid teamid, CancellationToken cancellationToken)
+        {
+            var query = new GetCurrentTeamDisasterQuery(teamid);
+
+           var res = await _sender.Send(query, cancellationToken);
+
+
+            return res.Match(
+                v => base.Ok(v.ToResponse()),
+                Problem);
+        }
+
+
+      [HttpGet(ApiEndpoints.Teams.GetTeamLocation)]
+        [ProducesResponseType(typeof(TeamLocation), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        [EndpointSummary("Retrieves team current location.")]
+        [EndpointDescription("Return current location for a specific team .")]
+        [EndpointName("GetTeamLocation")]
+        public async Task<IActionResult> GetTeamLocation([FromRoute] Guid teamid, CancellationToken cancellationToken)
+        {
+            var query = new GetTeamCurrentLocationQuery(teamid);
+            var res = await _sender.Send(query, cancellationToken);
+
+            return res.Match(
+          v => base.Ok(v),
+          Problem);
+
+
+        }
     }
 }

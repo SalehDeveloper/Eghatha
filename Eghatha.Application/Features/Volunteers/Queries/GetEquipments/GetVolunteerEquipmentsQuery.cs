@@ -13,13 +13,13 @@ namespace Eghatha.Application.Features.Volunteers.Queries.GetEquipments
     Guid VolunteerId,
     int Page,
     int PageSize,
-    EquipmentCategory? Category)
+    string? Category)
     : ICachedQuery<PaginatedList<VolunteerEquipmentDto>>
     {
         public string CachKey =>
             $"volunteer:{VolunteerId}:equipments:" +
             $"p={Page}:ps={PageSize}:" +
-            $"category={Category?.Name ?? "-"}";
+            $"category={Category ?? "-"}";
 
         public string[] Tags => ["volunteers"];
 

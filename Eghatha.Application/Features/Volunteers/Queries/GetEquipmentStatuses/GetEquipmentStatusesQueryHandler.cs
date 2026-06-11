@@ -12,6 +12,7 @@ namespace Eghatha.Application.Features.Volunteers.Queries.GetEquipmentStatuses
         {
             var result = EquipmentStatus.List
                 .Select(x => new EquipmentStatusResponse(x.Value, x.Name))
+                 .OrderBy(x => x.Value)
                 .ToList();
 
             return Task.FromResult<IReadOnlyList<EquipmentStatusResponse>>(result);

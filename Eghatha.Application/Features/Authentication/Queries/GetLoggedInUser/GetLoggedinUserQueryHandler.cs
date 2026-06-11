@@ -12,22 +12,21 @@ using System.Threading.Tasks;
 
 namespace Eghatha.Application.Features.Authentication.Queries.GetLoggedInUser
 {
-    public class GetLoggedinUserQueryHandler : IRequestHandler<GetLoggedinUserQuery, ErrorOr<IdentityUser>>
+    public class GetLoggedinUserQueryHandler: IRequestHandler<GetLoggedinUserQuery, ErrorOr<AppUserDto>>
     {
-        private readonly IUser _user;
+        
         private readonly IIdentityService _identityService;
 
-        public GetLoggedinUserQueryHandler(IUser user, IIdentityService identityService)
+        public GetLoggedinUserQueryHandler(IIdentityService identityService)
         {
-            _user = user;
             _identityService = identityService;
         }
 
-        public async Task<ErrorOr<IdentityUser>> Handle(GetLoggedinUserQuery request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<AppUserDto>> Handle(GetLoggedinUserQuery request, CancellationToken cancellationToken)
         {
-            var userId = _user.Id;
+          
 
-            var user = await _identityService.GetUserDetailsByIdAsync(userId.Value , cancellationToken);
+            var user = await _identityService.GetUserByIdAsync(  request.UserId, cancellationToken);
 
             if (user.IsError) return user.Errors;
 

@@ -4,6 +4,7 @@ using Eghatha.Domain.Abstractions;
 using Eghatha.Domain.Disasters;
 using ErrorOr;
 using MediatR;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace Eghatha.Application.Features.Disasters.Commands.ResolveDisaster
 {
@@ -14,15 +15,18 @@ namespace Eghatha.Application.Features.Disasters.Commands.ResolveDisaster
         private readonly IUnitOfWork _unitOfWork;
         private readonly TimeProvider _timeProvider;
 
+        private readonly HybridCache _hybridCache;
 
         public ResolveDisasterCommandHandler(
             IDisasterRepository disasterRepository,
             IUnitOfWork unitOfWork,
-            TimeProvider timeProvider)
+            TimeProvider timeProvider,
+            HybridCache hybridCache)
         {
             _disasterRepository = disasterRepository;
             _unitOfWork = unitOfWork;
             _timeProvider = timeProvider;
+            _hybridCache = hybridCache;
         }
 
         public async Task<ErrorOr<Success>> Handle(
@@ -42,6 +46,7 @@ namespace Eghatha.Application.Features.Disasters.Commands.ResolveDisaster
 
             await _unitOfWork.CompleteAsync(cancellationToken);
 
+            await _hybridCache.RemoveByTagAsync("disasters");
             return Result.Success;
         }
     }

@@ -8,8 +8,8 @@ namespace Eghatha.Api.Mappers
     {
         public static VolunteerRegisterationResponse ToResponse(this VolunteerRegisterationDto dto)
         {
-            return new VolunteerRegisterationResponse(dto.Id, dto.VolunteerId, dto.FullName, dto.Email, dto.PhoneNumber, dto.Photo, dto.Latitude, dto.Longitude,
-                dto.YearsOfExperince, dto.Speciality.Name, dto.Cv, dto.Status.Name, dto.RequestedAt, dto.ReviewedAt, dto.RejectionReason);
+            return new VolunteerRegisterationResponse(dto.Id, dto.VolunteerId, dto.FullName, dto.Email, dto.PhoneNumber, dto.Photo, dto.Province, dto.City,
+                dto.YearsOfExperince, dto.Speciality, dto.Cv, dto.Status, dto.RequestedAt, dto.ReviewedAt, dto.RejectionReason);
         }
 
         public static IReadOnlyCollection<VolunteerRegisterationResponse> ToResponses(this IReadOnlyCollection<VolunteerRegisterationDto> dtos)

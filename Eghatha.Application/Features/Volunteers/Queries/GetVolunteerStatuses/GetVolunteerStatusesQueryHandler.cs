@@ -12,6 +12,7 @@ namespace Eghatha.Application.Features.Volunteers.Queries.GetVolunteerStatuses
         {
             var result = VolunteerStatus.List
                 .Select(x => new VolunteerStatusResponse(x.Value, x.Name))
+                 .OrderBy(x => x.Value)
                 .ToList();
 
             return Task.FromResult<IReadOnlyList<VolunteerStatusResponse>>(result);

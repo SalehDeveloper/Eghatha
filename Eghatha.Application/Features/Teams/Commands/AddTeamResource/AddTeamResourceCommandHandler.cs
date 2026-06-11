@@ -34,8 +34,13 @@ namespace Eghatha.Application.Features.Teams.Commands.AddTeamResource
             var res = team.AddResource(request.Quantity, request.Type);
 
             if (res.IsError) return res.Errors;
+             
+            if (res.Value.IsNew)
+            {
+                await _teamRepository.AddTeamResourceAsync(res.Value.Resource, cancellationToken);
+            }
 
-            await _teamRepository.AddTeamResourceAsync(res.Value, cancellationToken);
+            
             await _unitOfWork.CompleteAsync(cancellationToken);
             await _hybridCache.RemoveByTagAsync("teams");
             return Result.Updated;

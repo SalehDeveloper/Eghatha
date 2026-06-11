@@ -14,13 +14,13 @@ namespace Eghatha.Application.Features.Teams.Queries.GetTeamResources
     Guid TeamId,
     int Page,
     int PageSize,
-    Domain.Teams.Resources.ResourceType? Type)
+    string? Type)
     : ICachedQuery<PaginatedList<TeamResourceDto>>
     {
         public string CachKey =>
             $"team:{TeamId}:resources:" +
             $"p={Page}:ps={PageSize}:" +
-            $"type={Type?.Name ?? "-"}";
+            $"type={Type?? "-"}";
 
         public string[] Tags => ["teams"];
 

@@ -15,7 +15,7 @@ namespace Eghatha.Application.Common.Interfaces
     {
 
         Task<PaginatedList<VolunteerRegisterationDto>> GetRegisterationsAsync(int page, int pageSize, string? SearchTerm,
-            RegisterationStatus? Status, CancellationToken cancellationToken);
+              string? Status, CancellationToken cancellationToken);
 
         Task<VolunteerRegisterationDto?> GetRegisterationByIdAsync(Guid registerationId, CancellationToken cancellationToken);
     }

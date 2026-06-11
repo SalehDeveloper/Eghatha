@@ -12,6 +12,7 @@ namespace Eghatha.Application.Features.Volunteers.Queries.GetVolunteerSpecialiti
         {
             var result = VolunteerSpeciality.List
                 .Select(x => new VolunteerSpecialityResponse(x.Value, x.Name))
+                 .OrderBy(x => x.Value)
                 .ToList();
 
             return Task.FromResult<IReadOnlyList<VolunteerSpecialityResponse>>(result);

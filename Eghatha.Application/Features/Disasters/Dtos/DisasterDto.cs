@@ -13,8 +13,10 @@ namespace Eghatha.Application.Features.Disasters.Dtos
      string Title,
      string City,
      string Province,
-     DisasterType Type,
-     DisasterStatus Status,
+     double Latitude,
+     double Longitude,
+     string Type,
+     string Status,
      DateTimeOffset StartTime
  );
 
@@ -25,8 +27,10 @@ namespace Eghatha.Application.Features.Disasters.Dtos
     string Description,
     string City,
     string Province,
-    DisasterType Type,
-    DisasterStatus Status,
+    string Type,
+    string Status,
+    double Latitude,
+    double Longitude,
     DateTimeOffset StartTime,
     DateTimeOffset? EndTime,
     ReporterDto Reporter,

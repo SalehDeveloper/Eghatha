@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using Eghatha.Application.Common.Authentication;
+using Eghatha.Application.Features.Authentication.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -29,7 +30,7 @@ namespace Eghatha.Infastructure.Identity
            
         }
 
-        public string GenerateAccessToken(AppUserDto user)
+        public AccessTokenDto GenerateAccessToken(AppUserDto user)
         {
             var claims = new List<Claim>
             {
@@ -59,12 +60,40 @@ namespace Eghatha.Infastructure.Identity
                 );
 
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return new AccessTokenDto(accessToken, _timeProvider.GetUtcNow().AddMinutes(_options.AccessTokenDurationInMinutes).UtcDateTime);
         }
 
         public string GenerateRefreshToken()
         {
             return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+        }
+
+        public ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
+        {
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Key)),
+                ValidateIssuer = true,
+                ValidIssuer = _options.Issuer,
+                ValidateAudience = true,
+                ValidAudience = _options.Audience,
+                ValidateLifetime = false, // Ignore token expiration
+                ClockSkew = TimeSpan.Zero
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+
+            if (securityToken is not JwtSecurityToken jwtSecurityToken ||
+                !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            {
+                throw new SecurityTokenException("Invalid token.");
+            }
+
+            return principal;
         }
 
 

@@ -14,15 +14,15 @@ namespace Eghatha.Application.Common.Interfaces
 {
     public interface IVolunteerRepository : IBaseRepository<Volunteer>
     {
-       Task<PaginatedList<VolunteerDto>> GetVolunteersAsync(
-       int page,
-       int pageSize,
-       string? searchTerm,
-       VolunteerStatus? status,
-       VolunteerSpeciality? speciality,
-       string? province,
-       string? city,
-       CancellationToken cancellationToken);
+        Task<PaginatedList<VolunteerDto>> GetVolunteersAsync(
+          int page,
+          int pageSize,
+          string? searchTerm,
+          string? status,
+          string? speciality,
+          string? province,
+          string? city,
+          CancellationToken cancellationToken);
 
         Task<VolunteerDto> GetVolunteerDetailsByIdAsync(Guid id, CancellationToken cancellationToken);
 
@@ -30,20 +30,12 @@ namespace Eghatha.Application.Common.Interfaces
 
         Task AddEquipmentAsync(Equipment equipment, CancellationToken cancellationToken);
 
-        Task<PaginatedList<VolunteerEquipmentDto>> GetVolunteerEquipmentsAsync(Guid volunteerId, int page, int pageSize, EquipmentCategory? category, CancellationToken cancellationToken);
+        Task<PaginatedList<VolunteerEquipmentDto>> GetVolunteerEquipmentsAsync(Guid volunteerId, int page, int pageSize, string? category, CancellationToken cancellationToken);
 
         Task<IReadOnlyList<Volunteer>> GetAvailableBySpecialitiesAsync(IReadOnlyList<VolunteerSpeciality> specialities, CancellationToken cancellationToken);
         Task<List<VolunteerDto>> GetVolunteersDetailsByIdsAsync(List<Guid> ids, CancellationToken cancellationToken);
 
-        Task<PaginatedList<VolunteerRankingDto>> GetTopVolunteersAsync(int page,
-            int pageSize,
-            string? province, 
-            string? city,
-            VolunteerSpeciality? speciality,
-            double? minAverageScore,
-            VolunteerRankingSortBy sortBy,
-            bool descending,
-            CancellationToken cancellationToken);
+        Task<PaginatedList<VolunteerRankingDto>> GetTopVolunteersAsync(int page, int pageSize, string? province, string? city, string? speciality, double? minAverageScore, VolunteerRankingSortBy sortBy, bool descending, CancellationToken cancellationToken);
     }
 
 }
