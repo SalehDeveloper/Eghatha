@@ -483,7 +483,7 @@ namespace Eghatha.Infastructure.Repositories
             var query = from dt in _context.Set<DisasterTeam>()
                         join d in _context.Set<Disaster>()
                         on dt.DisasterId equals d.Id
-                        where dt.TeamId == teamId && (d.Status == DisasterStatus.Reported || d.Status == DisasterStatus.InProgress || d.Status == DisasterStatus.Resolved)
+                        where dt.TeamId == teamId && (d.Status == DisasterStatus.Reported || d.Status == DisasterStatus.InProgress || d.Status == DisasterStatus.Resolved || d.Status == DisasterStatus.Closed)
                         orderby d.StartTime
                         select new TeamDisastersDto(dt.DisasterId, d.Title, d.City, d.Province, d.Location.Latitude, d.Location.Longitude, d.Type.Name, d.Status.Name, d.StartTime);
 
