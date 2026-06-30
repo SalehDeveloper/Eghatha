@@ -42,12 +42,20 @@ namespace Eghatha.Domain.Teams
             {
             TeamStatus.OffDuty,
             TeamStatus.Returning,
+
         },
 
             [TeamStatus.Inactive] = new[]
             {
             TeamStatus.Active
+        },
+
+            [TeamStatus.Returning] = new[]
+            {
+            TeamStatus.Active 
         }
+
+
         };
 
         public static bool CanTransition(TeamStatus from, TeamStatus to)
