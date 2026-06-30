@@ -151,6 +151,7 @@ namespace Eghatha.Api
 
             public const string Resolve = $"{Base}/{{disasterid:guid}}/resolve";
             public const string Close = $"{Base}/{{disasterid:guid}}/close";
+            public const string Archive = $"{Base}/{{disasterid:guid}}/archive";
 
             public const string AddAffectedPersons=$"{Base}/{{disasterid:guid}}/affected-persons";
             public const string UpdateAffectedPersons = $"{Base}/{{disasterid:guid}}/affected-persons/{{affectedPersonId:guid}}";

@@ -2,6 +2,7 @@
 using Eghatha.Application.Common.Errors;
 using Eghatha.Application.Common.Models;
 using Eghatha.Application.Features.Disasters.Commands.AddAffectedPersons;
+using Eghatha.Application.Features.Disasters.Commands.ArchiveDisaster;
 using Eghatha.Application.Features.Disasters.Commands.AssignResource;
 using Eghatha.Application.Features.Disasters.Commands.AssignTeams;
 using Eghatha.Application.Features.Disasters.Commands.AssignVolunteers;
@@ -320,6 +321,26 @@ namespace Eghatha.Api.Controllers
         public async Task<IActionResult> Close([FromRoute] Guid disasterId,CancellationToken cancellationToken)
         {
             var command = new CloseDisasterCommand(disasterId);
+
+            var result = await _sender.Send(command, cancellationToken);
+
+            return result.Match(
+                _ => NoContent(),
+                Problem);
+        }
+
+
+        [HttpPost(ApiEndpoints.Disasters.Archive)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [EndpointSummary("archive disaster")]
+        [EndpointDescription("archive a resolved disaster and finalizes all operations.")]
+        [EndpointName("ArchiveDisaster")]
+        public async Task<IActionResult> Archive([FromRoute] Guid disasterId, CancellationToken cancellationToken)
+        {
+            var command = new ArchiveDisasterCommand(disasterId);
 
             var result = await _sender.Send(command, cancellationToken);
 
