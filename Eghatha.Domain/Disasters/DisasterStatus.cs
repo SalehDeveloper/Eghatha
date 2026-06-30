@@ -17,7 +17,9 @@ namespace Eghatha.Domain.Disasters
 
         public static readonly DisasterStatus Closed = new DisasterStatus(nameof(Closed), 4);
 
-        public static readonly DisasterStatus Cancelled  = new DisasterStatus(nameof(Cancelled), 5);
+        public static readonly DisasterStatus Archived = new DisasterStatus(nameof(Archived), 5);
+
+        public static readonly DisasterStatus Cancelled  = new DisasterStatus(nameof(Cancelled), 6);
 
         public DisasterStatus(string name, int value) 
             : base(name, value)

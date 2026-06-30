@@ -175,6 +175,17 @@ namespace Eghatha.Domain.Disasters
             return Result.Updated;
         }
 
+        public ErrorOr<Updated> Archive()
+        {
+            if (Status != DisasterStatus.Closed)
+                return DisasterErrors.InvalidStatusTransition(Status, DisasterStatus.Archived);
+
+            Status = DisasterStatus.Archived;
+
+            AddDomainEvent(new DisasterArchived(Id, Status));
+            return Result.Updated;
+        }
+
         public ErrorOr<Updated> Cancel(DateTimeOffset date)
         {
             if (Status == DisasterStatus.Resolved || Status == DisasterStatus.Closed || Status == DisasterStatus.Cancelled)
