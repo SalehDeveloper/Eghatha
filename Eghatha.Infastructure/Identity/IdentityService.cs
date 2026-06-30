@@ -103,9 +103,6 @@ namespace Eghatha.Infastructure.Identity
             return new AppUserDto(user.Id, user.Email, await _userManager.GetRolesAsync(user) ,await _userManager.GetClaimsAsync(user));
 
 
-
-
-
         }
 
         public async Task<ErrorOr<Application.Common.Models.IdentityUser>> GetIdentityUserByEmailAsync(string email, CancellationToken cancellationToken)

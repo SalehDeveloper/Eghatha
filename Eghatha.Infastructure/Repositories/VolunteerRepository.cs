@@ -40,7 +40,7 @@ namespace Eghatha.Infastructure.Repositories
             if (!string.IsNullOrWhiteSpace(status))
             {
                 volunteerStatus = VolunteerStatus.FromName(status, true);
-                query = query.Where(v => v.Status == volunteerSpeciality);
+                query = query.Where(v => v.Status == volunteerStatus);
             }
 
             if (!string.IsNullOrWhiteSpace(speciality))
