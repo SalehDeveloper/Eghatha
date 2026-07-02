@@ -169,6 +169,15 @@ namespace Eghatha.Domain.Disasters
             if (Status != DisasterStatus.Resolved)
                 return DisasterErrors.InvalidStatusTransition(Status, DisasterStatus.Closed);
 
+            // check if there are any volunteer without evaluation 
+            if (_volunteers.Any(v => v.EvaluationScores==null))
+                return DisasterErrors.CannotCloseDisasterWithUnevaluatedVolunteers;
+
+
+            // check of there are any resource not managed 
+            if (_resources.Any(r => r.QuantitySent != r.QuantityReturned + r.QuantityConsumed + r.QuantityDamaged))
+                return DisasterErrors.CannotCloseDisasterWithUnmanagedResources;
+
             Status = DisasterStatus.Closed;
 
             AddDomainEvent(new DisasterClosed(Id, Status));
@@ -180,6 +189,8 @@ namespace Eghatha.Domain.Disasters
             if (Status != DisasterStatus.Closed)
                 return DisasterErrors.InvalidStatusTransition(Status, DisasterStatus.Archived);
 
+            if (Report is null)
+                return DisasterErrors.CannotArchiveWithoutReport;
             Status = DisasterStatus.Archived;
 
             AddDomainEvent(new DisasterArchived(Id, Status));
@@ -322,7 +333,7 @@ namespace Eghatha.Domain.Disasters
         }
 
 
-        public ErrorOr<DisasterResource> DispatchResource(Guid resourceId, Guid teamId, Teams.Resources.ResourceType resourceType, int quantitySent, DateTimeOffset assignedAt, string? notes = null)
+        public ErrorOr<DispatchResourceResult> DispatchResource(Guid resourceId, Guid teamId, Teams.Resources.ResourceType resourceType, int quantitySent, DateTimeOffset assignedAt, string? notes = null)
         {
             if (resourceId == Guid.Empty)
                 return DomainErrors.IdMustBeProvided("Resource");
@@ -344,7 +355,7 @@ namespace Eghatha.Domain.Disasters
             {
                 resource.IncreaseQuantity(quantitySent);
 
-                return resource;
+                return new DispatchResourceResult(resource , false);
             }
 
             if (quantitySent <= 0)
@@ -359,7 +370,7 @@ namespace Eghatha.Domain.Disasters
 
             AddDomainEvent(new ResourceDispatchedToDisaster(Id , resourceId, quantitySent , teamId));
 
-            return res;
+            return   new DispatchResourceResult(res.Value, true); ;
 
         }
 

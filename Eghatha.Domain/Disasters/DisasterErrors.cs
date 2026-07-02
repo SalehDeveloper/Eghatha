@@ -131,6 +131,17 @@ namespace Eghatha.Domain.Disasters
             code: "DisasterErrors.FailedToAssign",
             description: "failed to assign volunteer is already assigned or not available now");
 
+        public static Error CannotArchiveWithoutReport = Error.Conflict(
+            code: "DisasterErrors.CannotArchiveWithoutReport",
+            description: "report must be generated before archiving the disaster");
+
+        public static Error CannotCloseDisasterWithUnevaluatedVolunteers = Error.Conflict(
+             code: "DisasterErrors.CannotCloseDisasterWithUnevaluatedVolunteers",
+            description: "all volunteers must be evaluated before closing the disaster");
+
+        public static Error CannotCloseDisasterWithUnmanagedResources = Error.Conflict(
+             code: "DisasterErrors.CannotCloseDisasterWithUnmanagedResources",
+            description: "all resources must be managed before closing the disaster");
 
     }
 }
