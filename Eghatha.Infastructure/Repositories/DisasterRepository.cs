@@ -21,6 +21,13 @@ namespace Eghatha.Infastructure.Repositories
         {
         }
 
+        public async Task<Disaster> GetByIdWithVolunteersAndResourcesAsync(Guid id, CancellationToken cancellationToken)
+        {
+            return await _context.Set<Disaster>()
+                .Include(x => x.Resources)
+                .Include(x => x.Volunteers)
+                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        }
         public async Task<Disaster> GetByIdWithTeamsAsync(Guid id, CancellationToken cancellationToken)
         {
             return await _context.Set<Disaster>().Include(x => x.Teams).FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
@@ -34,6 +41,10 @@ namespace Eghatha.Infastructure.Repositories
 
         }
 
+        public async Task<Disaster> GetByIdWithReportAsync(Guid id, CancellationToken cancellationToken)
+        {
+            return await _context.Set<Disaster>().Include(x => x.Report).FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        }
         public async Task AddVolunteersAsync(IEnumerable<DisasterVolunteer> volunteers)
         {
             await _context.Set<DisasterVolunteer>()
@@ -171,7 +182,7 @@ namespace Eghatha.Infastructure.Repositories
                          join v in _context.Set<Volunteer>()
                          on dv.VolunteerId equals v.Id
                          join u in _context.Set<ApplicationUser>()
-                         on v.Id equals u.Id
+                         on v.UserId equals u.Id  
                          where dv.DisasterId == disasterId
                          select new DisasterVolunteerDto(
                              v.Id,
