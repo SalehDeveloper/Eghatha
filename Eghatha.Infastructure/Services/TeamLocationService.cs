@@ -11,7 +11,8 @@ namespace Eghatha.Infastructure.Services
 {
     public class TeamLocationService : ITeamLocationService
     {
-        private const string Key = "teams:geo";
+        private static string LiveKey(Guid teamId) => $"team:location:live:{teamId}";
+        private static readonly TimeSpan LiveLocationTtl = TimeSpan.FromMinutes(2);
         private readonly IDatabase _db;
 
         public TeamLocationService(IConnectionMultiplexer redis)
@@ -19,41 +20,27 @@ namespace Eghatha.Infastructure.Services
             _db = redis.GetDatabase();
         }
 
+
         public async Task SetLocationAsync(Guid teamId, GeoLocation location)
         {
-            await _db.GeoAddAsync(
-                Key,
-                location.Longitude,
-                location.Latitude,
-                teamId.ToString());
+            var payload = $"{location.Latitude}|{location.Longitude}";
+            await _db.StringSetAsync(LiveKey(teamId), payload, LiveLocationTtl);
         }
 
         public async Task<GeoLocation?> GetLocationAsync(Guid teamId)
         {
-            var result = await _db.GeoPositionAsync(Key, teamId.ToString());
+            var value = await _db.StringGetAsync(LiveKey(teamId));
+            if (value.IsNullOrEmpty) return null;
 
-            var pos = result;
-            if (pos == null) return null;
+            var parts = value.ToString().Split('|');
+            if (parts.Length != 2) return null;
 
-            return GeoLocation.Create(pos.Value.Latitude, pos.Value.Longitude).Value;
+            return GeoLocation.Create(double.Parse(parts[0]), double.Parse(parts[1])).Value;
         }
 
-        public async Task<IReadOnlyList<(Guid teamId, double distance)>> GetNearbyTeamsAsync(
-            GeoLocation location,
-            double radiusKm)
+        public async Task RemoveLocationAsync(Guid teamId)
         {
-            var results = await _db.GeoRadiusAsync(
-                Key,
-                location.Longitude,
-                location.Latitude,
-                radiusKm,
-                GeoUnit.Kilometers,
-                count: 50,
-                order: Order.Ascending);
-
-            return results
-                .Select(r => (Guid.Parse(r.Member!), r.Distance ?? 0))
-                .ToList();
+            await _db.KeyDeleteAsync(LiveKey(teamId));
         }
     }
 }
