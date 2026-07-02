@@ -12,6 +12,7 @@ namespace Eghatha.Application.Common.Interfaces
 {
     public interface IDisasterRepository: IBaseRepository<Disaster>
     {
+        Task<Disaster> GetByIdWithVolunteersAndResourcesAsync(Guid id, CancellationToken cancellationToken);
         Task<Disaster> GetByIdWithTeamsAsync(Guid id, CancellationToken cancellationToken);
 
         Task<Disaster> GetByIdWithVolunteersAsync(Guid id, CancellationToken cancellationToken);
@@ -36,6 +37,6 @@ namespace Eghatha.Application.Common.Interfaces
 
         Task<PaginatedList<DisasterVolunteerDto>> GetDisasterVolunteersAsync(Guid disasterId, int page, int pageSize, CancellationToken cancellationToken);
 
-
+        Task<Disaster> GetByIdWithReportAsync(Guid id, CancellationToken cancellationToken);
     }
 }

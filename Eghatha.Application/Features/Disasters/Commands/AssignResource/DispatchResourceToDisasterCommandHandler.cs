@@ -55,7 +55,11 @@ namespace Eghatha.Application.Features.Disasters.Commands.AssignResource
             if (assignResult.IsError)
                 return assignResult.Errors;
 
-            await _disasterRepository.AddResourceAsync(assignResult.Value , cancellationToken);
+            if (assignResult.Value.IsNew)
+            {
+                await _disasterRepository.AddResourceAsync(assignResult.Value.Resource, cancellationToken);
+            }
+
             await _unitOfWork.CompleteAsync(cancellationToken);
 
             await _hybridCache.RemoveByTagAsync("disasters");

@@ -3,6 +3,7 @@ using Eghatha.Application.Common.Interfaces;
 using Eghatha.Domain.Abstractions;
 using ErrorOr;
 using MediatR;
+using Microsoft.Extensions.Caching.Hybrid;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,11 +16,14 @@ namespace Eghatha.Application.Features.Disasters.Commands.ConsumeResource
     {
         private readonly IDisasterRepository _disasterRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly HybridCache _hybridCache;
 
-        public ConsumeDisasterResourceCommandHandler(IDisasterRepository disasterRepository, IUnitOfWork unitOfWork)
+
+        public ConsumeDisasterResourceCommandHandler(IDisasterRepository disasterRepository, IUnitOfWork unitOfWork, HybridCache hybridCache)
         {
             _disasterRepository = disasterRepository;
             _unitOfWork = unitOfWork;
+            _hybridCache = hybridCache;
         }
 
         public async Task<ErrorOr<Success>> Handle(ConsumeDisasterResourceCommand request, CancellationToken cancellationToken)
@@ -33,7 +37,7 @@ namespace Eghatha.Application.Features.Disasters.Commands.ConsumeResource
             if (result.IsError) return result.Errors;
 
             await _unitOfWork.CompleteAsync(cancellationToken);
-
+            await _hybridCache.RemoveByTagAsync("disasters");
             return Result.Success;
         }
     }

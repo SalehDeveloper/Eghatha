@@ -9,6 +9,7 @@ using Eghatha.Domain.Notifications;
 using Eghatha.Domain.Shared.ValueObjects;
 using ErrorOr;
 using MediatR;
+using Microsoft.Extensions.Caching.Hybrid;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,14 +25,17 @@ namespace Eghatha.Application.Features.Disasters.Commands.CreateDisaster
         private readonly IVolunteerRecommendationService _volunteerRecommendationService;
         private readonly IGeocodingService _geocodingService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly HybridCache _hybridCache;
 
-        public CreateDisasterCommandHandler(IDisasterRepository disasterRepository, ITeamRecommendationService teamRecommendationService, IVolunteerRecommendationService volunteerRecommendationService, IGeocodingService geocodingService, IUnitOfWork unitOfWork)
+
+        public CreateDisasterCommandHandler(IDisasterRepository disasterRepository, ITeamRecommendationService teamRecommendationService, IVolunteerRecommendationService volunteerRecommendationService, IGeocodingService geocodingService, IUnitOfWork unitOfWork, HybridCache hybridCache)
         {
             _disasterRepository = disasterRepository;
             _teamRecommendationService = teamRecommendationService;
             _volunteerRecommendationService = volunteerRecommendationService;
             _geocodingService = geocodingService;
             _unitOfWork = unitOfWork;
+            _hybridCache = hybridCache;
         }
 
         public async Task<ErrorOr<CreateDisasterDto>> Handle(
@@ -120,6 +124,7 @@ namespace Eghatha.Application.Features.Disasters.Commands.CreateDisaster
             // Response
             // ---------------------------------------------------
 
+            await _hybridCache.RemoveByTagAsync("disasters");
             return new CreateDisasterDto(
                 disaster.Id,
                 disaster.Status,

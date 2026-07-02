@@ -32,7 +32,7 @@ namespace Eghatha.Application.Features.Disasters.Commands.CloseDisaster
             CancellationToken cancellationToken)
         {
             var disaster = await _disasterRepository
-                .GetByIdAsync(request.DisasterId, cancellationToken);
+                .GetByIdWithVolunteersAndResourcesAsync(request.DisasterId, cancellationToken);
 
             if (disaster is null)
                 return ApplicationErrors.DisasterNotFound;

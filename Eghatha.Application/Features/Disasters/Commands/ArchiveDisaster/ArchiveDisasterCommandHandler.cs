@@ -24,7 +24,7 @@ namespace Eghatha.Application.Features.Disasters.Commands.ArchiveDisaster
         public async  Task<ErrorOr<Success>> Handle(ArchiveDisasterCommand request, CancellationToken cancellationToken)
         {
             var disaster = await _disasterRepository
-                 .GetByIdAsync(request.DisasterId, cancellationToken);
+                 .GetByIdWithReportAsync(request.DisasterId, cancellationToken);
 
             if (disaster is null)
                 return ApplicationErrors.DisasterNotFound;

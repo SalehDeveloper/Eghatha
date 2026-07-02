@@ -11,7 +11,8 @@ namespace Eghatha.Application.Common.Services
     {
         Task SetLocationAsync(Guid teamId, GeoLocation location);
         Task<GeoLocation?> GetLocationAsync(Guid teamId);
-        Task<IReadOnlyList<(Guid teamId, double distance)>> GetNearbyTeamsAsync(
-            GeoLocation location, double radiusKm);
+        Task RemoveLocationAsync(Guid teamId);
+
+
     }
 }
