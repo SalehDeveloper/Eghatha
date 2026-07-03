@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 namespace Eghatha.Infastructure.Services
 {
     using Eghatha.Application.Common.Interfaces;
+    using Eghatha.Application.Features.Disasters.Dtos;
     using Eghatha.Domain.Teams;
     using QuestPDF.Fluent;
     using QuestPDF.Helpers;
@@ -26,7 +27,7 @@ namespace Eghatha.Infastructure.Services
             _teamRepository = teamRepository;
         }
 
-        public async Task<byte[]> Generate(Disaster disaster, CancellationToken cancellationToken)
+        public async Task<byte[]> Generate(Disaster disaster,List<DisasterVolunteerReportDto> volunteers, CancellationToken cancellationToken)
         {
             QuestPDF.Settings.License = LicenseType.Community;
 
@@ -69,6 +70,7 @@ namespace Eghatha.Infastructure.Services
                             ComposeGeneralInformation(column.Item(), disaster);
                             ComposeTeamsSection(column.Item(), disaster, teamDict);
                             ComposeResourcesSection(column.Item(), disaster);
+                            ComposeVolunteersSection(column.Item(), volunteers);
                             ComposeAffectedPeopleSection(column.Item(), disaster);
                         });
 
@@ -273,6 +275,55 @@ namespace Eghatha.Infastructure.Services
                         table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(5).Text(p.Age.ToString());
                         table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(5).Text(p.Phone);
                         table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(5).Text(p.Status.Name);
+                    }
+                });
+            });
+        }
+
+
+        // ================= VOLUNTEERS =================
+        private void ComposeVolunteersSection(IContainer container, List<DisasterVolunteerReportDto> volunteers)
+        {
+            container.Column(column =>
+            {
+                column.Spacing(8);
+
+                column.Item().Text("PARTICIPATING VOLUNTEERS")
+                    .FontSize(14)
+                    .Bold()
+                    .FontColor(Colors.Purple.Darken2);
+
+                if (volunteers is null || volunteers.Count == 0)
+                {
+                    column.Item().Text("No volunteers recorded.").FontColor(Colors.Grey.Darken1);
+                    return;
+                }
+
+                column.Item().Table(table =>
+                {
+                    table.ColumnsDefinition(columns =>
+                    {
+                        columns.RelativeColumn(3);   // Name
+                        columns.RelativeColumn(3);   // Email
+                        columns.ConstantColumn(70);  // Score
+                        columns.RelativeColumn(3);   // Notes
+                    });
+
+                    table.Header(header =>
+                    {
+                        header.Cell().Background(Colors.Purple.Lighten3).Padding(6).Text("Name").Bold();
+                        header.Cell().Background(Colors.Purple.Lighten3).Padding(6).Text("Email").Bold();
+                        header.Cell().Background(Colors.Purple.Lighten3).Padding(6).Text("Score").Bold();
+                        header.Cell().Background(Colors.Purple.Lighten3).Padding(6).Text("Notes").Bold();
+                    });
+
+                    foreach (var v in volunteers)
+                    {
+                        table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(6).Text(v.FullName);
+                        table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(6).Text(v.Email);
+                        table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(6)
+                            .Text(v.AverageScore.HasValue ? $"{v.AverageScore.Value:0.0}/5" : "Not evaluated");
+                        table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(6).Text(v.Notes ?? "-");
                     }
                 });
             });

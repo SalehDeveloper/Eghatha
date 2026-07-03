@@ -84,6 +84,50 @@ namespace Eghatha.Infastructure.Repositories
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
 
+       public async Task<(Disaster Disaster, List<DisasterVolunteerReportDto> Volunteers)> GetByIdForReportGenerationAsync(Guid id , CancellationToken cancellationToken)
+        {
+            var disaster = await _context.Set<Disaster>()
+                .Include(x => x.Teams)
+                .Include(x => x.Resources)
+                .Include(x => x.AffectedPeople)
+                .Include(x => x.Report)
+                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+            if (disaster is null)
+                return (null, new List<DisasterVolunteerReportDto>());
+
+            // EvaluationScores is an owned type — pull raw fields and project the
+            // DTO client-side to avoid relying on EF translating its computed properties.
+            var raw = await (
+                from dv in _context.Set<DisasterVolunteer>()
+                join v in _context.Set<Volunteer>() on dv.VolunteerId equals v.Id
+                join u in _context.Set<ApplicationUser>() on v.UserId equals u.Id
+                where dv.DisasterId == id
+                select new
+                {
+                    v.Id,
+                    FullName = u.FirstName + " " + u.LastName,
+                    u.Email,
+                    u.PhoneNumber,
+                    dv.Notes,
+                    dv.EvaluationScores
+                })
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
+
+            var volunteers = raw.Select(x => new DisasterVolunteerReportDto(
+                x.Id,
+                x.FullName,
+                x.Email,
+                x.PhoneNumber,
+                x.EvaluationScores?.TotalScore,
+                x.EvaluationScores?.AverageScore,
+                x.Notes
+            )).ToList();
+
+            return (disaster, volunteers);
+        }
+
         public async Task AddResourceAsync(DisasterResource resource, CancellationToken cancellationToken)
         {
             await _context.Set<DisasterResource>().AddAsync(resource, cancellationToken);
