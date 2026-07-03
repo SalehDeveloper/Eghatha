@@ -1,4 +1,5 @@
 ﻿using Eghatha.Domain.Abstractions;
+using Eghatha.Domain.Teams.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,13 @@ namespace Eghatha.Domain.Disasters.Events
 {
     public class ResourceDamaged:DomainEvent
     {
-        public ResourceDamaged(Guid disasterId, Guid resourceId, Guid teamId, int quantity)
+        public ResourceDamaged(Guid disasterId, Guid resourceId, Guid teamId, int quantity, ResourceType resourceType)
         {
             DisasterId = disasterId;
             ResourceId = resourceId;
             TeamId = teamId;
             Quantity = quantity;
+            ResourceType = resourceType;
         }
 
         public Guid DisasterId { get; }
@@ -24,5 +26,7 @@ namespace Eghatha.Domain.Disasters.Events
         public Guid TeamId { get; }
 
         public int Quantity { get; }
+
+        public ResourceType ResourceType { get; }
     }
 }

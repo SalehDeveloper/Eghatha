@@ -368,7 +368,7 @@ namespace Eghatha.Domain.Disasters
 
             _resources.Add(res.Value);
 
-            AddDomainEvent(new ResourceDispatchedToDisaster(Id , resourceId, quantitySent , teamId));
+            AddDomainEvent(new ResourceDispatchedToDisaster(Id , resourceId, quantitySent , teamId , resourceType));
 
             return   new DispatchResourceResult(res.Value, true); ;
 
@@ -397,7 +397,7 @@ namespace Eghatha.Domain.Disasters
             if (res.IsError)
                 return res.Errors;
 
-            AddDomainEvent(new ResourceConsumed(Id, resource.ResourceId ,  quantity , resource.TeamId));
+            AddDomainEvent(new ResourceConsumed(Id, resource.ResourceId , quantity , resource.TeamId , resource.ResourceType));
 
             return res;
         }
@@ -421,7 +421,7 @@ namespace Eghatha.Domain.Disasters
             if (res.IsError)
                 return res.Errors;
 
-            AddDomainEvent(new ResourceReturned(Id, resource.ResourceId, resource.TeamId, quantity));
+            AddDomainEvent(new ResourceReturned(Id, resource.ResourceId, resource.TeamId, quantity , resource.ResourceType));
 
             return res;
         }
@@ -443,7 +443,7 @@ namespace Eghatha.Domain.Disasters
             var res=  resource.MarkDamaged(quantity);
             if (res.IsError) return res.Errors;
 
-            AddDomainEvent(new ResourceDamaged(Id , resource.ResourceId , resource.TeamId , quantity));
+            AddDomainEvent(new ResourceDamaged(Id , resource.ResourceId , resource.TeamId , quantity , resource.ResourceType));
 
             return res;
 
