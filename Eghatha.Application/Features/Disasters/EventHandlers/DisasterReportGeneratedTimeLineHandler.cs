@@ -22,7 +22,7 @@ namespace Eghatha.Application.Features.Disasters.EventHandlers
             var timeline = DisasterTimeLineEvent.Create(
                 notification.DisasterId,
                 DisasterTimelineEventTypes.ReportGenerated,
-                $"Final disaster report has been generated {notification.ReportId} ",
+                $"Final disaster report has been generated",
                 _timeProvider.GetUtcNow());
 
             return _repository.AddAsync(timeline, cancellationToken);

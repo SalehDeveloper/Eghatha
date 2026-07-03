@@ -41,7 +41,7 @@ namespace Eghatha.Application.Features.Disasters.Commands.GenerateReport
 
         public async Task<ErrorOr<GenerateDisasterReportDto>> Handle(GenerateDisasterReportCommand request, CancellationToken cancellationToken)
         {
-            var disaster = await _disasterRepository.GetByIdWithAllDetailsAsync(request.DisasterId , cancellationToken);
+            var (disaster , volunteers)  = await _disasterRepository.GetByIdForReportGenerationAsync(request.DisasterId , cancellationToken);
 
             if (disaster is null)
                 return ApplicationErrors.DisasterNotFound;
@@ -53,7 +53,7 @@ namespace Eghatha.Application.Features.Disasters.Commands.GenerateReport
                 return DisasterErrors.CannotGenerateReportWhenDisasterNotClosed;
 
 
-            var pdfBytes = await _disasterReportPdfService.Generate(disaster , cancellationToken);
+            var pdfBytes = await _disasterReportPdfService.Generate(disaster , volunteers , cancellationToken);
 
             var uploadResult = await _cloudinaryService.UploadDisasterReportAsync(disaster.Id, pdfBytes);
 
@@ -63,7 +63,7 @@ namespace Eghatha.Application.Features.Disasters.Commands.GenerateReport
             var reportResult = Report.Create(
             Guid.NewGuid(),
             disaster.Id,
-            BuildSummary(disaster),
+            BuildSummary(disaster , volunteers),
             uploadResult.Value,
             _timeProvider.GetUtcNow());
 
@@ -83,12 +83,14 @@ namespace Eghatha.Application.Features.Disasters.Commands.GenerateReport
 
         }
 
-        private string BuildSummary(Disaster disaster)
+        private string BuildSummary(Disaster disaster , List<DisasterVolunteerReportDto> volunteers)
         {
             return $"Disaster '{disaster.Title}' handled in {disaster.City}. " +
                    $"Teams: {disaster.Teams.Count}, " +
                    $"Resources: {disaster.Resources.Count}, " +
-                   $"Affected: {disaster.AffectedPeople.Count}";
+                   $"Affected: {disaster.AffectedPeople.Count}"+
+                   $"Volunteers: {volunteers.Count}";
+                    
         }
     }
 }

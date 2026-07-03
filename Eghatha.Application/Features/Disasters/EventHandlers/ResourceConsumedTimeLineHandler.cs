@@ -9,24 +9,28 @@ namespace Eghatha.Application.Features.Disasters.EventHandlers
     : INotificationHandler<ResourceConsumed>
     {
         private readonly IDisasterTimeLineRepository _repository;
+        private readonly ITeamRepository _teamRepository; 
         private readonly TimeProvider _timeProvider;
 
         public ResourceConsumedTimeLineHandler(
-            IDisasterTimeLineRepository repository, TimeProvider timeProvider)
+            IDisasterTimeLineRepository repository, TimeProvider timeProvider, ITeamRepository teamRepository)
         {
             _repository = repository;
             _timeProvider = timeProvider;
+            _teamRepository = teamRepository;
         }
 
-        public Task Handle(ResourceConsumed notification, CancellationToken cancellationToken)
+        public async Task Handle(ResourceConsumed notification, CancellationToken cancellationToken)
         {
+            var team = await _teamRepository.GetByIdAsync(notification.TeamId, cancellationToken);
+          
             var timeline = DisasterTimeLineEvent.Create(
                 notification.DisasterId,
                 DisasterTimelineEventTypes.ResourceUpdated,
-                $"Consumed {notification.Quantity} units from resource {notification.ResourceId} Belongs To Team{notification.TeamId}",
+                $"Consumed {notification.Quantity} units from resource {notification.Type} Belongs To Team{team.Name}",
                 _timeProvider.GetUtcNow());
 
-            return _repository.AddAsync(timeline, cancellationToken);
+            await _repository.AddAsync(timeline, cancellationToken);
         }
     }
 

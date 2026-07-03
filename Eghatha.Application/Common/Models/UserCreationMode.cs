@@ -11,4 +11,6 @@ namespace Eghatha.Application.Common.Models
         Regular = 0,
         Invited = 1
     }
+
+
 }

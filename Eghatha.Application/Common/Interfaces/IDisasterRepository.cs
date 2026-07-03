@@ -12,6 +12,7 @@ namespace Eghatha.Application.Common.Interfaces
 {
     public interface IDisasterRepository: IBaseRepository<Disaster>
     {
+        Task<(Disaster Disaster, List<DisasterVolunteerReportDto> Volunteers)> GetByIdForReportGenerationAsync(Guid id, CancellationToken cancellationToken);
         Task<Disaster> GetByIdWithVolunteersAndResourcesAsync(Guid id, CancellationToken cancellationToken);
         Task<Disaster> GetByIdWithTeamsAsync(Guid id, CancellationToken cancellationToken);
 

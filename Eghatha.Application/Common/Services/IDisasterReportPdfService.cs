@@ -1,4 +1,5 @@
-﻿using Eghatha.Domain.Disasters;
+﻿using Eghatha.Application.Features.Disasters.Dtos;
+using Eghatha.Domain.Disasters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace Eghatha.Application.Common.Services
 {
     public interface  IDisasterReportPdfService
     {
-       Task<byte[]> Generate(Disaster disaster , CancellationToken cancellationToken );
+        Task<byte[]> Generate(Disaster disaster, List<DisasterVolunteerReportDto> volunteers, CancellationToken cancellationToken);
     }
 }

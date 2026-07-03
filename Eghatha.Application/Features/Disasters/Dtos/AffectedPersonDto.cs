@@ -8,6 +8,4 @@ namespace Eghatha.Application.Features.Disasters.Dtos
     string Phone,
     string Status,
     string? Notes);
-
-
 }

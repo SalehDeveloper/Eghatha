@@ -10,23 +10,28 @@ namespace Eghatha.Application.Features.Disasters.EventHandlers
     {
         private readonly IDisasterTimeLineRepository _repository;
         private readonly TimeProvider _timeProvider;
+        private readonly ITeamRepository _teamRepository;
 
 
-        public TeamAssignedToDisasterTimeLineHandler(IDisasterTimeLineRepository repository, TimeProvider timeProvider)
+        public TeamAssignedToDisasterTimeLineHandler(IDisasterTimeLineRepository repository, TimeProvider timeProvider, ITeamRepository teamRepository)
         {
             _repository = repository;
             _timeProvider = timeProvider;
+            _teamRepository = teamRepository;
         }
 
-        public Task Handle(TeamAssignedToDisasterEvent notification, CancellationToken cancellationToken)
+        public async Task Handle(TeamAssignedToDisasterEvent notification, CancellationToken cancellationToken)
         {
+            var team = await _teamRepository.GetByIdAsync(notification.TeamId, cancellationToken);
+
+
             var timeline = DisasterTimeLineEvent.Create(
                 notification.DisasterId,
                  DisasterTimelineEventTypes.TeamAssigned,
-                $"Team {notification.TeamId} assigned to disaster in {notification.City}",
+                $"Team {team.Name} assigned to disaster in {notification.City}",
                 _timeProvider.GetUtcNow());
 
-            return _repository.AddAsync(timeline, cancellationToken);
+            await _repository.AddAsync(timeline, cancellationToken);
         }
     }
 }
