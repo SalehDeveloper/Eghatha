@@ -63,6 +63,7 @@ namespace Eghatha.Application.Features.Disasters.Commands.AssignTeams
             await _unitOfWork.CompleteAsync(cancellationToken);
 
             await _hybridCache.RemoveByTagAsync("disasters");
+            await _hybridCache.RemoveByTagAsync("teams");
             return Result.Success;
         }
     }

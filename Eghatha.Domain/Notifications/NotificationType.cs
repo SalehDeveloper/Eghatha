@@ -10,5 +10,6 @@ namespace Eghatha.Domain.Notifications
     {
         DisasterReported = 1,
         VolunteerRegistered = 2,
+        TeamAssignedToDisaster = 3,
     }
 }
