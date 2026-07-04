@@ -372,13 +372,7 @@ namespace Eghatha.Infastructure.Repositories
                    )
                    .ToListAsync(cancellationToken);
         }
-        public async Task<Guid?> GetTeamLeaderByUserId(Guid userId, CancellationToken cancellationToken)
-        {
-            return await _context.Set<TeamMember>().AsNoTracking()
-                .Where(x => x.UserId == userId && x.IsLeader)
-                .Select(x => x.Id)
-                .FirstOrDefaultAsync(cancellationToken);
-        }
+    
         public async Task<TeamMemberInfo> GetCurrentTeamMemberInfo(Guid userId, CancellationToken cancellationToken)
         {
 

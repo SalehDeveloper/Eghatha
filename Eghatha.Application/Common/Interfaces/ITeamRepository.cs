@@ -28,7 +28,7 @@ namespace Eghatha.Application.Common.Interfaces
         Task<IReadOnlyList<Team>> GetAvailableTeamsAsync(IReadOnlyList<TeamSpeciality> specialities, CancellationToken cancellationToken);
         Task<List<Team>> GetTeamsByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken);
 
-        Task<Guid?> GetTeamLeaderByUserId(Guid userId, CancellationToken cancellationToken);
+       
 
         Task<PaginatedList<TeamMemberDto>> GetTeamMembersAsync(Guid teamId, int page, int pageSize, string? searchTerm, string? status, CancellationToken cancellationToken);
 
