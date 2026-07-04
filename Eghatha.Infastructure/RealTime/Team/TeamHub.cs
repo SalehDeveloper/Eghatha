@@ -31,13 +31,13 @@ namespace Eghatha.Infastructure.RealTime.Team
                 return;
             }
 
-            var teamId = await _repository.GetTeamLeaderByUserId(_user.Id.Value , CancellationToken.None);
+            var team = await _repository.GetTeamForAUserAsync(_user.Id.Value , CancellationToken.None);
 
-            if (teamId is not null)
+            if (team is not null)
             {
                 await Groups.AddToGroupAsync(
                     Context.ConnectionId,
-                    $"team-leader-{teamId}");
+                    $"team-leader-{team.Id}");
             }
 
             await base.OnConnectedAsync();
