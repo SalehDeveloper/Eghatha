@@ -27,7 +27,7 @@ namespace Eghatha.Application.Features.Teams.Queries.GetCurrentTeamDisaster
         
           
             if (teamDisaster is null )
-                return ApplicationErrors.NoCurrentDisaster;
+                return ApplicationErrors.NoTeamCurrentDisaster;
 
             return teamDisaster;
         }

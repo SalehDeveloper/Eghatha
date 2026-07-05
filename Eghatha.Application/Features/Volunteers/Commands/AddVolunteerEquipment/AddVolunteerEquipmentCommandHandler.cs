@@ -3,6 +3,7 @@ using Eghatha.Application.Common.Interfaces;
 using Eghatha.Domain.Abstractions;
 using ErrorOr;
 using MediatR;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace Eghatha.Application.Features.Volunteers.Commands.AddVolunteerEquipment
 {
@@ -11,13 +12,17 @@ namespace Eghatha.Application.Features.Volunteers.Commands.AddVolunteerEquipment
     {
         private readonly IVolunteerRepository _repo;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly HybridCache _hybridCache;
+
 
         public AddVolunteerEquipmentCommandHandler(
             IVolunteerRepository repo,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            HybridCache hybridCache)
         {
             _repo = repo;
             _unitOfWork = unitOfWork;
+            _hybridCache = hybridCache;
         }
 
         public async Task<ErrorOr<Updated>> Handle(
@@ -40,7 +45,7 @@ namespace Eghatha.Application.Features.Volunteers.Commands.AddVolunteerEquipment
             await _repo.AddEquipmentAsync(result.Value , cancellationToken);
         
             await _unitOfWork.CompleteAsync(cancellationToken);
-
+            await _hybridCache.RemoveByTagAsync("volunteers");
             return Result.Updated;
         }
     }
