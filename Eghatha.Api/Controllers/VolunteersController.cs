@@ -1,5 +1,6 @@
 ﻿using Eghatha.Api.Mappers;
 using Eghatha.Application.Common.Errors;
+using Eghatha.Application.Features.Teams.Queries.GetCurrentTeamDisaster;
 using Eghatha.Application.Features.Teams.Queries.GetTeamById;
 using Eghatha.Application.Features.Teams.Queries.GetTeams;
 using Eghatha.Application.Features.Volunteers.Commands.AddVolunteerEquipment;
@@ -11,8 +12,10 @@ using Eghatha.Application.Features.Volunteers.Commands.UpdateEquipmentStatus;
 using Eghatha.Application.Features.Volunteers.Commands.UpdateLocation;
 using Eghatha.Application.Features.Volunteers.Commands.UpdateStatus;
 using Eghatha.Application.Features.Volunteers.Commands.UpdateVolunteerEquipment;
+using Eghatha.Application.Features.Volunteers.Dtos;
 using Eghatha.Application.Features.Volunteers.Queries.GetAll;
 using Eghatha.Application.Features.Volunteers.Queries.GetById;
+using Eghatha.Application.Features.Volunteers.Queries.GetCurrentVolunteerDisaster;
 using Eghatha.Application.Features.Volunteers.Queries.GetEquipments;
 using Eghatha.Application.Features.Volunteers.Queries.GetTopVolunteers;
 using Eghatha.Contract.Shared;
@@ -284,7 +287,7 @@ namespace Eghatha.Api.Controllers
 
 
 
-        [Authorize(Roles = ApplicationRole.Volunteer)]
+      //  [Authorize(Roles = ApplicationRole.Volunteer)]
         [HttpPut(ApiEndpoints.Volunteers.IncreaseEquipmentQuantity)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -312,7 +315,7 @@ namespace Eghatha.Api.Controllers
         }
 
 
-        [Authorize(Roles = ApplicationRole.Volunteer)]
+       // [Authorize(Roles = ApplicationRole.Volunteer)]
         [HttpPut(ApiEndpoints.Volunteers.DecreaseEquipmentQuantity)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -394,7 +397,7 @@ namespace Eghatha.Api.Controllers
 
 
 
-        [Authorize(Roles = ApplicationRole.Volunteer)]
+      //  [Authorize(Roles = ApplicationRole.Volunteer)]
         [HttpPut(ApiEndpoints.Volunteers.EquipmentValid)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -422,7 +425,7 @@ namespace Eghatha.Api.Controllers
         }
 
 
-        [Authorize(Roles = ApplicationRole.Volunteer)]
+       // [Authorize(Roles = ApplicationRole.Volunteer)]
         [HttpPut(ApiEndpoints.Volunteers.EquipmentInValid)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -450,7 +453,7 @@ namespace Eghatha.Api.Controllers
         }
 
 
-        [Authorize(Roles = ApplicationRole.Volunteer)]
+        //[Authorize(Roles = ApplicationRole.Volunteer)]
         [HttpDelete(ApiEndpoints.Volunteers.RemoveEquipment)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -549,6 +552,31 @@ namespace Eghatha.Api.Controllers
             var res = await _sender.Send(query, cancellationToken);
 
             return Ok(new PagedResponse<volunteerRankingResponse>(res.PageNumber, res.PageSize, res.TotalPages, res.TotalCount, res.Items.ToResponses()));
+        }
+
+
+
+        [HttpGet(ApiEndpoints.Volunteers.GetCurrentVolunteerDisaster)]
+        [ProducesResponseType(typeof(VolunteerDisasterResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        [EndpointSummary("Retrieves team disaste.")]
+        [EndpointDescription("Returns current disatser for a specific team.")]
+        [EndpointName("GetVolunteerDisaster")]
+        public async Task<IActionResult> GetVolunteerDisaster([FromRoute] Guid volunteerid, CancellationToken cancellationToken)
+        {
+            var query = new GetCurrentVolunteerDisasterQuery(volunteerid);
+
+            var res = await _sender.Send(query, cancellationToken);
+
+
+            return res.Match(
+                v => base.Ok(v.ToResponse()),
+                Problem);
         }
 
         private VolunteerRankingSortBy MapSort(string? sortBy)

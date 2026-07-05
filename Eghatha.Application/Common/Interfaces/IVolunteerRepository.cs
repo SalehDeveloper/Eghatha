@@ -36,6 +36,9 @@ namespace Eghatha.Application.Common.Interfaces
         Task<List<VolunteerDto>> GetVolunteersDetailsByIdsAsync(List<Guid> ids, CancellationToken cancellationToken);
 
         Task<PaginatedList<VolunteerRankingDto>> GetTopVolunteersAsync(int page, int pageSize, string? province, string? city, string? speciality, double? minAverageScore, VolunteerRankingSortBy sortBy, bool descending, CancellationToken cancellationToken);
+        Task<VolunteerDisastersDto> GetVolunteerDisasterAsync(Guid volunteerId, CancellationToken cancellationToken);
+
+
     }
 
 }

@@ -64,9 +64,13 @@ namespace Eghatha.Application.Common.Errors
         code: "Auth.ExpiredAccessToken.Invalid",
         description: "Expired access token is not valid.");
 
-        public static readonly Error NoCurrentDisaster = Error.NotFound(
+        public static readonly Error NoTeamCurrentDisaster = Error.NotFound(
             code: "Team.NoCurrentDisaster",
             description: "team has no current disaster");
+
+        public static readonly Error NoVolunteerCurrentDisaster = Error.NotFound(
+           code: "Volunteer.NoCurrentDisaster",
+           description: "volunteer has no current disaster");
 
     }
 }

@@ -7,7 +7,7 @@ namespace Eghatha.Api.Mappers
 {
     public static class VolunteerMapper
     {
-        public static VolunteerResponse ToResponse(this VolunteerDto dto )
+        public static VolunteerResponse ToResponse(this VolunteerDto dto)
         {
             return new VolunteerResponse(dto.Id, dto.FullName, dto.Email, dto.PhoneNumber, dto.Status, dto.Speciality, dto.province, dto.city, dto.YearsOfExperience, dto.AverageScore);
         }
@@ -29,7 +29,7 @@ namespace Eghatha.Api.Mappers
 
         public static volunteerRankingResponse ToResponse(this VolunteerRankingDto dto)
         {
-            return new volunteerRankingResponse(dto.VolunteerId , dto.FullName , dto.Speciality ,dto.Province , dto.City , dto.TotalMissions, dto.TotalScore, dto.AverageScore, dto.Rank);
+            return new volunteerRankingResponse(dto.VolunteerId, dto.FullName, dto.Speciality, dto.Province, dto.City, dto.TotalMissions, dto.TotalScore, dto.AverageScore, dto.Rank);
         }
 
         public static IReadOnlyCollection<volunteerRankingResponse> ToResponses(this IReadOnlyCollection<VolunteerRankingDto> volunteers)
@@ -37,5 +37,10 @@ namespace Eghatha.Api.Mappers
             return volunteers.Select(t => t.ToResponse()).ToList();
         }
 
+
+        public static VolunteerDisasterResponse ToResponse(this VolunteerDisastersDto dto)
+        {
+            return new VolunteerDisasterResponse(dto.DisasterId, dto.Title, dto.City, dto.Province, dto.Latitude, dto.Longitude, dto.Type, dto.Status, dto.StartTime);
+        }
     }
 }

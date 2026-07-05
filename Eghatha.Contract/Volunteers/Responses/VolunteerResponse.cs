@@ -16,6 +16,8 @@ namespace Eghatha.Contract.Volunteers.Responses
         string city,
         int YearsOfExperience,
         double AverageScore);
-    
-    
+
+
+
+
 }

@@ -1,7 +1,10 @@
 ﻿using Eghatha.Application.Common.Interfaces;
 using Eghatha.Application.Common.Models;
+using Eghatha.Application.Features.Teams.Queries.GetTeamDisasters;
 using Eghatha.Application.Features.Volunteers.Dtos;
 using Eghatha.Application.Features.Volunteers.Queries.GetTopVolunteers;
+using Eghatha.Domain.Disasters;
+using Eghatha.Domain.Disasters.DisasterVolunteers;
 using Eghatha.Domain.Volunteers;
 using Eghatha.Domain.Volunteers.Equipments;
 using Eghatha.Infastructure.Data;
@@ -149,8 +152,9 @@ namespace Eghatha.Infastructure.Repositories
         public async Task<VolunteerDto?> GetVolunteerDetailsByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             var query = from vol in _context.Set<Volunteer>().AsNoTracking()
-                        join user in _context.Set<ApplicationUser>() on vol.UserId equals user.Id
-                        where vol.Id == id
+                        join user in _context.Set<ApplicationUser>()
+                        on vol.UserId equals user.Id
+                        where user.Id == id
                         select new VolunteerDto(vol.Id,
                         $"{user.FirstName} {user.LastName}",
                         user.Email,
@@ -406,5 +410,19 @@ namespace Eghatha.Infastructure.Repositories
                 Items = items
             };
         }
+
+        public async Task<VolunteerDisastersDto> GetVolunteerDisasterAsync(Guid volunteerId, CancellationToken cancellationToken)
+        {
+            var query = from dv in _context.Set<DisasterVolunteer>()
+                        join d in _context.Set<Disaster>()
+                        on dv.DisasterId equals d.Id
+                        where dv.VolunteerId == volunteerId && (d.Status == DisasterStatus.Reported || d.Status == DisasterStatus.InProgress || d.Status == DisasterStatus.Resolved || d.Status == DisasterStatus.Closed)
+                        orderby d.StartTime
+                        select new VolunteerDisastersDto(dv.DisasterId, d.Title, d.City, d.Province, d.Location.Latitude, d.Location.Longitude, d.Type.Name, d.Status.Name, d.StartTime);
+
+
+            return await query.FirstOrDefaultAsync(cancellationToken);
+        }
+
     }
 }

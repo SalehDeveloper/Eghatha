@@ -132,6 +132,7 @@ namespace Eghatha.Api
 
             public const string GetTopVolunteers = $"{Base}/top";
 
+            public const string GetCurrentVolunteerDisaster = $"{Base}/{{volunteerid:guid}}/current-disaster";
 
         }
 
