@@ -1,10 +1,11 @@
-﻿using MediatR;
+﻿using ErrorOr;
+using MediatR;
 using System.Text.Json;
 
 namespace Eghatha.Application.Features.AiAssistant.Queries.AskSystemQuestion
 {
     public class AskSystemQuestionQueryHandler
-    : IRequestHandler<AskSystemQuestionQuery, AskSystemQuestionResult>
+    : IRequestHandler<AskSystemQuestionQuery,ErrorOr<AskSystemQuestionResult>>
     {
         private readonly IAiQueryAssistant _ai;
         private readonly IReportQueryExecutor _executor;
@@ -20,16 +21,19 @@ namespace Eghatha.Application.Features.AiAssistant.Queries.AskSystemQuestion
           
         }
 
-        public async Task<AskSystemQuestionResult> Handle(
+        public async Task<ErrorOr<AskSystemQuestionResult>> Handle(
             AskSystemQuestionQuery request, CancellationToken ct)
         {
             // 1. NL question -> SQL (AI, restricted to report.* views per ReportSchema)
             var sql = await _ai.GenerateSqlAsync(request.Question, ct);
 
+            if (sql.IsError)
+                return sql.Errors;
             // 2. Validate + execute against the ai_reader connection.
             //    Throws InvalidOperationException if SqlGuard rejects it — let it bubble,
             //    the controller will translate it into a 400.
-            var rows = await _executor.ExecuteAsync(sql, ct);
+            var rows = await _executor.ExecuteAsync(sql.Value, ct);
+
 
             // 3. Rows -> natural-language answer (AI again)
             var resultsJson = JsonSerializer.Serialize(rows);
@@ -37,7 +41,7 @@ namespace Eghatha.Application.Features.AiAssistant.Queries.AskSystemQuestion
 
           
 
-            return new AskSystemQuestionResult(answer, sql, rows.Count);
+            return new AskSystemQuestionResult(answer, sql.Value, rows.Value.Count);
         }
     }
 

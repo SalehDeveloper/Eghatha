@@ -1,4 +1,5 @@
 ﻿using Eghatha.Application.Features.AiAssistant;
+using ErrorOr;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -28,12 +29,12 @@ namespace Eghatha.Infastructure.AiAssistant
                     "SQL login with SELECT-only access to the report schema.");
             _logger = logger;
         }
-        public async Task<IReadOnlyList<Dictionary<string, object?>>> ExecuteAsync(string sql, CancellationToken ct)
+        public async Task<ErrorOr<IReadOnlyList<Dictionary<string, object?>>>> ExecuteAsync(string sql, CancellationToken ct)
         {
             if (!SqlGuard.IsSafe(sql, out var reason))
             {
                 _logger.LogWarning("Rejected AI-generated SQL: {Reason}. SQL={Sql}", reason, sql);
-                throw new InvalidOperationException($"Query rejected: {reason}");
+               return Error.Validation("SQLValidation", reason ?? "Query rejected by SQL guard.");
             }
 
             // Hard cap regardless of what the AI wrote — defense-in-depth against
@@ -71,9 +72,7 @@ namespace Eghatha.Infastructure.AiAssistant
                 // Surface a generic message upward — don't leak raw SQL Server error text
                 // (which can reveal schema details) back to the admin/AI.
                 _logger.LogError(ex, "SQL execution failed. SQL={Sql}", wrapped);
-                throw new InvalidOperationException(
-                    "The query could not be executed. It may reference a column or " +
-                    "table that doesn't exist in the report schema.");
+                return Error.Conflict("Execution Failed", "The question cannot be answered from the available report views.");
             }
         }
 

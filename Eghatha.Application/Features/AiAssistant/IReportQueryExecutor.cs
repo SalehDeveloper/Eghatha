@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ErrorOr;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,6 @@ namespace Eghatha.Application.Features.AiAssistant
     {
         /// Validates and executes sql against the report.* views (ai_reader connection).
         /// Throws InvalidOperationException if the query fails validation.
-        Task<IReadOnlyList<Dictionary<string, object?>>> ExecuteAsync(string sql, CancellationToken ct);
+        Task<ErrorOr<IReadOnlyList<Dictionary<string, object?>>>> ExecuteAsync(string sql, CancellationToken ct);
     }
 }

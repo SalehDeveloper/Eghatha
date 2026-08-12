@@ -22,7 +22,9 @@ namespace Eghatha.Api.Controllers
         {
             var command = new AskSystemQuestionQuery(request.Question);
             var result = await _sender.Send(command, ct);
-            return Ok(new AskSystemQuestionResponse(result.Answer));
+            return result.Match(
+               _ => base.Ok(new AskSystemQuestionResponse(result.Value.Answer)),
+               Problem);
         }
     }
 }

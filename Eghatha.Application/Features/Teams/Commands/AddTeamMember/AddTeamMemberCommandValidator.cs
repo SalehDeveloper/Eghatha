@@ -37,8 +37,8 @@ namespace Eghatha.Application.Features.Teams.Commands.AddTeamMember
             RuleFor(x => x.PhoneNumber)
                 .NotEmpty()
                 .WithMessage("Phone number is required.")
-                .Matches(@"^\+?[0-9]{7,15}$")
-                .WithMessage("Invalid phone number format.");
+                .Matches(@"^09\d{8}$")
+                .WithMessage("Phone number must be a valid Syrian mobile number (e.g. 0991234567).");
 
             RuleFor(x => x.JobTitle)
                 .NotEmpty()

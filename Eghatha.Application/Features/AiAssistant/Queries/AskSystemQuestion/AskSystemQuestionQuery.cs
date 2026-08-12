@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using ErrorOr;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Eghatha.Application.Features.AiAssistant.Queries.AskSystemQuestion
 {
-    public record AskSystemQuestionQuery(string Question) : IRequest<AskSystemQuestionResult>;
+    public record AskSystemQuestionQuery(string Question) : IRequest<ErrorOr<AskSystemQuestionResult>>;
     public record AskSystemQuestionResult(
     string Answer,
     string GeneratedSql,

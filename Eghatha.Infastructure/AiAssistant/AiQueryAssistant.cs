@@ -1,4 +1,5 @@
 ﻿using Eghatha.Application.Features.AiAssistant;
+using ErrorOr;
 using Google.GenAI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -52,7 +53,7 @@ namespace Eghatha.Infastructure.AiAssistant
             _logger = logger;
         }
 
-        public async Task<string> GenerateSqlAsync(string question, CancellationToken ct)
+        public async Task<ErrorOr<string>> GenerateSqlAsync(string question, CancellationToken ct)
         {
             var prompt = $"""
             {SqlSystemPrompt}
@@ -73,8 +74,7 @@ namespace Eghatha.Infastructure.AiAssistant
                 question, text);
 
             if (text.Equals("NO_QUERY", StringComparison.OrdinalIgnoreCase))
-                throw new InvalidOperationException(
-                    "That question can't be answered from the available report data.");
+              return Error.Conflict("NoQuery", "The question cannot be answered from the available report views.");
 
             return StripCodeFences(text);
         }
