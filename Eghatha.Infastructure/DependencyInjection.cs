@@ -3,7 +3,9 @@ using Eghatha.Application.Common.Authentication;
 using Eghatha.Application.Common.Interfaces;
 using Eghatha.Application.Common.Models;
 using Eghatha.Application.Common.Services;
+using Eghatha.Application.Features.AiAssistant;
 using Eghatha.Domain.Abstractions;
+using Eghatha.Infastructure.AiAssistant;
 using Eghatha.Infastructure.Data;
 using Eghatha.Infastructure.Data.Interceptors;
 using Eghatha.Infastructure.Identity;
@@ -127,7 +129,8 @@ namespace Eghatha.Infastructure
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<IIdentityCacheService, IdentityCacheService>();
-
+            services.AddScoped<IReportQueryExecutor, ReportQueryExecutor>();
+            services.AddScoped<IAiQueryAssistant, AiQueryAssistant>();
 
 
 

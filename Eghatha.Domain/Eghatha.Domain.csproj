@@ -8,9 +8,11 @@
 	<ItemGroup>
 		<PackageReference Include="Ardalis.SmartEnum" Version="8.2.0" />
 		<PackageReference Include="ErrorOr" Version="2.0.1" />
+		<PackageReference Include="Google.GenAI" Version="1.17.0" />
 		<PackageReference Include="MediatR" Version="12.5.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+		<PackageReference Include="OpenAI" Version="2.13.0" />
 	</ItemGroup>
 
 </Project>

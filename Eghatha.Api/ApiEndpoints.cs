@@ -210,5 +210,11 @@ namespace Eghatha.Api
 
         }
 
+        public static class AiAssistant
+        {
+            public const string Base = $"{apiBase}/ai-assistant";
+            public const string Ask = $"{Base}/ask";
+        }
+
     }
 }

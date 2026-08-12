@@ -8,6 +8,7 @@
 
   <ItemGroup>
 	  <PackageReference Include="CloudinaryDotNet" Version="1.28.0" />
+	  <PackageReference Include="Google.GenAI" Version="1.17.0" />
 	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.14" />
 	  <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.14" />
@@ -24,6 +25,7 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.5" />
     <PackageReference Include="NETCore.MailKit" Version="2.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="OpenAI" Version="2.13.0" />
     <PackageReference Include="QuestPDF" Version="2026.5.0" />
   </ItemGroup>
 

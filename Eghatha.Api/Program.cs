@@ -99,5 +99,4 @@ app.MapHub<TeamHub>(TeamHub.HubUrl);
 
 
 
-
 app.Run();
