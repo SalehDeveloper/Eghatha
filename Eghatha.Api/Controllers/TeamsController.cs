@@ -103,8 +103,8 @@ namespace Eghatha.Api.Controllers
                 teamid,
                 request.Name,
                 speciality,
-                request.Province,
-                request.City
+                request.Latitude,
+                request.Longitude
             );
 
             var result = await _sender.Send(command, cancellationToken);

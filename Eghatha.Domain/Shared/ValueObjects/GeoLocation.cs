@@ -19,6 +19,8 @@ namespace Eghatha.Domain.Shared.ValueObjects
         }
 
 
+       
+
         public static ErrorOr<GeoLocation> Create ( double latitude, double longitude)
         {
             if (latitude < -90 || latitude > 90)

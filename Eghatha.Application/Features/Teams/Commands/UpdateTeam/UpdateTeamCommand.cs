@@ -13,8 +13,8 @@ namespace Eghatha.Application.Features.Teams.Commands.UpdateTeam
      Guid TeamId,
      string? Name,
      TeamSpeciality? Speciality,
-     string? Province,
-     string? City ) : IRequest<ErrorOr<Updated>>;
+     double? Latitude,
+     double? Longitude) : IRequest<ErrorOr<Updated>>;
 
 
 

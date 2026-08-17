@@ -9,7 +9,7 @@ namespace Eghatha.Contract.Teams.Requests
     public record UpdateTeamRequest(
       string? Name,
       string? Speciality,
-      string? Province,
-      string? City
+     double? Latitude,
+     double? Longitude
   );
 }

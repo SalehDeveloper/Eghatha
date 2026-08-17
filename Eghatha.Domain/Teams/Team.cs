@@ -146,24 +146,21 @@ namespace Eghatha.Domain.Teams
         public ErrorOr<Updated> Update(
             string? name,
             TeamSpeciality? speciality,
-            string? province,
-            string? city
+          GeoLocation? geoLocation,
+            string? city , 
+            string? province
             )
         {
             if (name is not null && string.IsNullOrWhiteSpace(name))
                 return TeamErrors.NameRequired;
 
-            if (province is not null && string.IsNullOrWhiteSpace(province))
-                return TeamErrors.ProvinceRequired;
-
-            if (city is not null && string.IsNullOrWhiteSpace(city))
-                return TeamErrors.CityRequired;
 
             if (speciality is not null && !TeamSpeciality.List.Contains(speciality))
                 return TeamErrors.InvalidSpeciality;
 
             Name = name ?? Name;
             Speciality = speciality ?? Speciality;
+            Location = geoLocation ?? Location;
             Province = province ?? Province;
             City = city ?? City;
 
