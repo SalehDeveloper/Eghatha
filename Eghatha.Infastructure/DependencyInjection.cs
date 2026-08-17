@@ -132,7 +132,7 @@ namespace Eghatha.Infastructure
             services.AddScoped<IReportQueryExecutor, ReportQueryExecutor>();
             services.AddScoped<IAiQueryAssistant, AiQueryAssistant>();
 
-
+            services.AddScoped<IDuplicateDisasterDetector, DuplicateDisasterDetector>();
 
             services.AddHttpClient<IGeocodingService, OpenStreetMapService>(client =>
             {

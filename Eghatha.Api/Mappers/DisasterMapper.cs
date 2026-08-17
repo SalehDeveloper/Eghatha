@@ -9,6 +9,9 @@ namespace Eghatha.Api.Mappers
 {
     public static class DisasterMapper
     {
+
+        public static SpamCheckResponse ToResponse(this SpamCheckResultDto dto) =>
+    new(dto.IsSpam, dto.MatchedDisasterId, dto.Confidence, dto.Reasoning);
         public static CreateDisasterResponse ToResponse(this CreateDisasterDto dto)
         {
             return new CreateDisasterResponse(

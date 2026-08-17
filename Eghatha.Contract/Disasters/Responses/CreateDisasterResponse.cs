@@ -27,5 +27,5 @@ namespace Eghatha.Contract.Disasters.Responses
     double DistanceKm,
     double DurationMinutes,
     double Score);
-    
+
 }

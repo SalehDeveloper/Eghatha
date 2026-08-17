@@ -6,6 +6,7 @@ using Eghatha.Application.Features.Disasters.Commands.ArchiveDisaster;
 using Eghatha.Application.Features.Disasters.Commands.AssignResource;
 using Eghatha.Application.Features.Disasters.Commands.AssignTeams;
 using Eghatha.Application.Features.Disasters.Commands.AssignVolunteers;
+using Eghatha.Application.Features.Disasters.Commands.CancelDisaster;
 using Eghatha.Application.Features.Disasters.Commands.CloseDisaster;
 using Eghatha.Application.Features.Disasters.Commands.ConsumeResource;
 using Eghatha.Application.Features.Disasters.Commands.CreateDisaster;
@@ -16,6 +17,7 @@ using Eghatha.Application.Features.Disasters.Commands.ResolveDisaster;
 using Eghatha.Application.Features.Disasters.Commands.ReturnResource;
 using Eghatha.Application.Features.Disasters.Commands.UpdateAffectedPerson;
 using Eghatha.Application.Features.Disasters.Dtos;
+using Eghatha.Application.Features.Disasters.Queries.CheckDisasterSpam;
 using Eghatha.Application.Features.Disasters.Queries.GetAll;
 using Eghatha.Application.Features.Disasters.Queries.GetById;
 using Eghatha.Application.Features.Disasters.Queries.GetDisasterStatuses;
@@ -257,6 +259,27 @@ namespace Eghatha.Api.Controllers
         }
 
 
+
+        [HttpPost(ApiEndpoints.Disasters.Cancel)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [EndpointSummary("cancel disaster")]
+        [EndpointDescription("Marks a disaster as canceled.")]
+        [EndpointName("CancelDisaster")]
+        public async Task<IActionResult> Cancel([FromRoute] Guid disasterId, CancellationToken cancellationToken)
+        {
+            var command = new CancelDisasterCommand(disasterId);
+
+            var result = await _sender.Send(command, cancellationToken);
+
+            return result.Match(
+                _ => NoContent(),
+                Problem);
+        }
+
+
         [HttpPost(ApiEndpoints.Disasters.AddAffectedPersons)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -485,6 +508,34 @@ namespace Eghatha.Api.Controllers
 
             return Ok(res.ToResponse()); 
         }
+
+
+        [HttpGet(ApiEndpoints.Disasters.SpamCheck)]
+        [ProducesResponseType(typeof(SpamCheckResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        [EndpointSummary("Checks whether a disaster report is a likely duplicate/spam report.")]
+        [EndpointDescription("Compares the disaster against recent same-type reports nearby and asks the AI assistant to judge whether it duplicates an existing report.")]
+        [EndpointName("CheckDisasterSpam")]
+        public async Task<IActionResult> CheckDisasterSpam(
+            [FromRoute] Guid disasterId,
+            [FromQuery] double radiusKm,
+            [FromQuery] int windowMinutes,
+            CancellationToken cancellationToken)
+        {
+            var query = new CheckDisasterSpamQuery(
+                disasterId);
+
+            var res = await _sender.Send(query, cancellationToken);
+
+            return res.Match(
+                success => Ok(success.ToResponse()),
+                errors => Problem(errors));
+        }
+
 
         [HttpGet(ApiEndpoints.Disasters.GetTimeline)]
         [ProducesResponseType(typeof(PaginatedList<DisasterTimelineDto>), StatusCodes.Status200OK)]

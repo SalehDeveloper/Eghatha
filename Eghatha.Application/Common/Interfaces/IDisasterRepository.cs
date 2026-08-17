@@ -39,5 +39,7 @@ namespace Eghatha.Application.Common.Interfaces
         Task<PaginatedList<DisasterVolunteerDto>> GetDisasterVolunteersAsync(Guid disasterId, int page, int pageSize, CancellationToken cancellationToken);
 
         Task<Disaster> GetByIdWithReportAsync(Guid id, CancellationToken cancellationToken);
+
+        Task<List<DuplicateCandidateDto>> GetRecentCandidatesByTypeAsync(DisasterType type, DateTimeOffset since, CancellationToken cancellationToken);
     }
 }

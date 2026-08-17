@@ -199,7 +199,7 @@ namespace Eghatha.Domain.Disasters
 
         public ErrorOr<Updated> Cancel(DateTimeOffset date)
         {
-            if (Status == DisasterStatus.Resolved || Status == DisasterStatus.Closed || Status == DisasterStatus.Cancelled)
+            if (Status != DisasterStatus.Reported )
                 return DisasterErrors.InvalidStatusTransition(Status, DisasterStatus.Cancelled);
 
             Status = DisasterStatus.Cancelled;

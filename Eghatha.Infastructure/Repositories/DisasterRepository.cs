@@ -250,5 +250,21 @@ namespace Eghatha.Infastructure.Repositories
             };
 
         }
+
+
+
+        public async Task<List<DuplicateCandidateDto>> GetRecentCandidatesByTypeAsync(
+            DisasterType type, DateTimeOffset since, CancellationToken cancellationToken)
+        {
+            return await _context.Set<Disaster>()
+                .AsNoTracking()
+                .Where(d => d.Type == type
+                    && d.StartTime >= since
+                    && d.Status != DisasterStatus.Cancelled)
+                .Select(d => new DuplicateCandidateDto(
+                    d.Id, d.Title, d.Description, d.Location.Latitude, d.Location.Longitude, d.StartTime))
+                .ToListAsync(cancellationToken);
+        }
+
     }
 }
