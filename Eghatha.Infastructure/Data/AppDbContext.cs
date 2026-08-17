@@ -51,27 +51,7 @@ namespace Eghatha.Infastructure.Data
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
 
-        //private async Task DispatchDomainEventsAsync(CancellationToken cancellationToken)
-        //{
-        //    var domainEntities = ChangeTracker
-        //        .Entries<Entity>()
-        //        .Where(x => x.Entity.DomainEvents.Any())
-        //        .ToList();
-
-        //    var domainEvents = domainEntities
-        //        .SelectMany(x => x.Entity.DomainEvents)
-        //        .ToList();
-
-        //    foreach (var entity in domainEntities)
-        //    {
-        //        entity.Entity.ClearDomainEvents();
-        //    }
-
-        //    foreach (var domainEvent in domainEvents)
-        //    {
-        //        await _mediator.Publish(domainEvent, cancellationToken);
-        //    }
-        //}
+     
 
         private void AddDomainEventsAsOutboxMessages()
         {

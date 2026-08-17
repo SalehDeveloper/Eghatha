@@ -35,5 +35,26 @@ namespace Eghatha.Infastructure.RealTime.Admin
         {
            await _hub.Clients.Group("Admins").NewVolunteerRegisterd(referenceId , message , url, requestedAt);
         }
+
+
+        public async Task NotifyDisasterResolved(Guid disasterId, DateTimeOffset resolvedAt, CancellationToken cancellationToken)
+        {
+            await _hub.Clients.Group("Admins").DisasterResolved(disasterId, resolvedAt);
+        }
+
+        public async Task NotifyTeamStatusUpdated(Guid teamId, string status, CancellationToken cancellationToken)
+        {
+            await _hub.Clients.Group("Admins").TeamStatusUpdated(teamId, status);
+        }
+
+        public async Task NotifyDisasterClosed(Guid disasterId, CancellationToken cancellationToken)
+        {
+            await _hub.Clients.Group("Admins").DisasterClosed(disasterId);
+        }
+
+        public async Task NotifyTeamAssignedToDisaster(Guid teamId, Guid disasterId, CancellationToken cancellationToken)
+        {
+            await _hub.Clients.Group("Admins").TeamAssignedToDisaster(teamId, disasterId);
+        }
     }
 }

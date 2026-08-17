@@ -82,7 +82,7 @@ namespace Eghatha.Infastructure.Services
 
             return result
                 .OrderByDescending(x => x.Score)
-                .Take(10)
+                .Take(50)
                 .ToList();
         }
     }

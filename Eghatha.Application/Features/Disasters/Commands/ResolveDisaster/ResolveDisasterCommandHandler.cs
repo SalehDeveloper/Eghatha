@@ -14,19 +14,22 @@ namespace Eghatha.Application.Features.Disasters.Commands.ResolveDisaster
         private readonly IDisasterRepository _disasterRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly TimeProvider _timeProvider;
-
         private readonly HybridCache _hybridCache;
+       
+
 
         public ResolveDisasterCommandHandler(
             IDisasterRepository disasterRepository,
             IUnitOfWork unitOfWork,
             TimeProvider timeProvider,
-            HybridCache hybridCache)
+            HybridCache hybridCache
+            )
         {
             _disasterRepository = disasterRepository;
             _unitOfWork = unitOfWork;
             _timeProvider = timeProvider;
             _hybridCache = hybridCache;
+            
         }
 
         public async Task<ErrorOr<Success>> Handle(

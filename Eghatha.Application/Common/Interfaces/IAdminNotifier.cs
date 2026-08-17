@@ -14,5 +14,12 @@ namespace Eghatha.Application.Common.Interfaces
 
         Task NotifyNewDisasterReported(Guid referenceId, string message, double latitude, double longitude, string url, DateTimeOffset createdAt, CancellationToken cancellationToken);
 
+        Task NotifyDisasterResolved(Guid disasterId, DateTimeOffset resolvedAt, CancellationToken cancellationToken);
+
+        Task NotifyTeamStatusUpdated(Guid teamId, string status, CancellationToken cancellationToken);
+
+        Task NotifyDisasterClosed(Guid disasterId, CancellationToken cancellationToken);
+
+        Task NotifyTeamAssignedToDisaster(Guid teamId, Guid disasterId, CancellationToken cancellationToken);
     }
 }

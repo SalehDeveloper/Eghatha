@@ -140,7 +140,7 @@ namespace Eghatha.Domain.Teams
             }
 
             Status = newStatus;
-
+            AddDomainEvent(new TeamStatusChangedEvent(Id, Name, Status));
             return Result.Updated;
         }
         public ErrorOr<Updated> Update(
