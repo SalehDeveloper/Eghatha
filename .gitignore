@@ -44,10 +44,7 @@ appsettings.Staging.json
 # Keep the base config (structure) but ignore env-specific
 !appsettings.json
 
-# Docker
-docker-compose.override.yml
-**/Dockerfile*
-**/docker-compose*.yml
+
 
 # User secrets (local only)
 secrets.json
