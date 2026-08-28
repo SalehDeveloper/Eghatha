@@ -1,0 +1,13 @@
+**/bin/
+**/obj/
+
+.git/
+.vs/
+.vscode/
+.idea/
+
+*.user
+*.suo
+
+.env
+docker-compose.override.yml
