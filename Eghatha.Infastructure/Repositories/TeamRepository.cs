@@ -40,6 +40,8 @@ namespace Eghatha.Infastructure.Repositories
         }
         public async Task<Team?> GetTeamForAUserAsync(Guid userId, CancellationToken cancellationToken)
         {
+
+         
             return await _context.Set<Team>().Include(t => t.Members).FirstOrDefaultAsync(t => t.Members.Any(tm => tm.UserId == userId), cancellationToken);
         }
 
@@ -378,11 +380,11 @@ namespace Eghatha.Infastructure.Repositories
 
             var team = await _context.Set<Team>()
                 .Include(x => x.Members)
-                .Where(t => t.Members.Any(tm => tm.UserId == userId)).FirstOrDefaultAsync(cancellationToken);
+                .FirstOrDefaultAsync(t => t.Members.Any(tm => tm.UserId == userId), cancellationToken);
 
-            var teamLeader = team.Leader;
+            var teamLeader = team?.Leader;
 
-            return new TeamMemberInfo(team.Id, teamLeader.UserId == userId);
+            return new TeamMemberInfo(team.Id, teamLeader?.UserId == userId);
 
         }
         public async Task<List<TeamMapDto>> GetTeamsOnMapAsync(CancellationToken cancellationToken)
@@ -408,15 +410,18 @@ namespace Eghatha.Infastructure.Repositories
                 .Select(t => t.Id)
                 .ToHashSet();
 
-            var disasterByTeam = missionTeamIds.Count > 0
-                ? await _context.Set<DisasterTeam>()
-                    .Where(dt => missionTeamIds.Contains(dt.TeamId))
-                    .Select(dt => new { dt.TeamId, dt.DisasterId })
-                    .ToListAsync(cancellationToken)
-                    .ContinueWith(r => r.Result
-                        .GroupBy(x => x.TeamId)
-                        .ToDictionary(g => g.Key, g => g.First().DisasterId))
-                : new Dictionary<Guid, Guid>();
+
+            //For teams that are OnMission or Returning, find which disaster they're assigned to.
+            var disasterAssignments = missionTeamIds.Count > 0
+                                 ? await _context.Set<DisasterTeam>()
+                                .Where(dt => missionTeamIds.Contains(dt.TeamId))
+                                .Select(dt => new { dt.TeamId, dt.DisasterId })
+                                .ToListAsync(cancellationToken)
+                                : [];
+
+            var disasterByTeam = disasterAssignments
+    .GroupBy(x => x.TeamId)
+    .ToDictionary(g => g.Key, g => g.First().DisasterId);
 
             // Resolve locations in parallel (Redis → DB fallback)
             var locationTasks = teams.Select(async t =>

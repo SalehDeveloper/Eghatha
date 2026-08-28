@@ -192,6 +192,8 @@ namespace Eghatha.Infastructure.Repositories
                 .Where(e => e.IsDeleted == false)
                 .AsQueryable();
 
+            
+
 
             EquipmentCategory? equipmentCategory = null;
             if (!string.IsNullOrWhiteSpace(category))

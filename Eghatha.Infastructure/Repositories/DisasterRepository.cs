@@ -59,7 +59,7 @@ namespace Eghatha.Infastructure.Repositories
 
         public async Task<Disaster> GetByIdWithTeamsAndResources(Guid id, CancellationToken cancellationToken)
         {
-            return await _context.Set<Disaster>().Include(x => x.Teams).Include(x => x.Resources).FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Set<Disaster>().Include(x => x.Teams).Include(x => x.Resources).AsSplitQuery().FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<Disaster> GetByIdWithResourcesAsync(Guid id, CancellationToken cancellationToken)
@@ -81,6 +81,7 @@ namespace Eghatha.Infastructure.Repositories
                 .Include(x => x.Resources)
                 .Include(x => x.AffectedPeople)
                 .Include(x => x.Report)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
 
@@ -91,6 +92,7 @@ namespace Eghatha.Infastructure.Repositories
                 .Include(x => x.Resources)
                 .Include(x => x.AffectedPeople)
                 .Include(x => x.Report)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
             if (disaster is null)
