@@ -232,6 +232,7 @@ namespace Eghatha.Domain.Disasters
                 if (volunteer.IsError)
                     return volunteer.Errors;
 
+                _volunteers.Add(volunteer.Value);
                 newVolunteers.Add(volunteer.Value);
             }
 
@@ -353,9 +354,12 @@ namespace Eghatha.Domain.Disasters
 
             if (resource is not null)
             {
-                resource.IncreaseQuantity(quantitySent);
+                var increaseResult = resource.IncreaseQuantity(quantitySent);
 
-                return new DispatchResourceResult(resource , false);
+                if (increaseResult.IsError)
+                    return increaseResult.Errors;
+
+                return new DispatchResourceResult(resource, false);
             }
 
             if (quantitySent <= 0)
