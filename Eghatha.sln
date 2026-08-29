@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.8.12021.73 stable
+VisualStudioVersion = 18.8.12021.73
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
@@ -31,6 +31,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eghatha.Contract", "Eghatha.Contract\Eghatha.Contract.csproj", "{76FF9687-EA59-4407-9B53-8AC707691A62}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eghatha.Tests.Common", "Eghatha.Tests.Common\Eghatha.Tests.Common.csproj", "{2019A22A-EED6-4328-A957-072FCDBBD591}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eghatha.Domain.UnitTests", "Eghatha.Domain.UnitTests\Eghatha.Domain.UnitTests.csproj", "{C846EE05-F719-4D90-ABC3-ECB52EC6982E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +61,14 @@ Global
 		{76FF9687-EA59-4407-9B53-8AC707691A62}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76FF9687-EA59-4407-9B53-8AC707691A62}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76FF9687-EA59-4407-9B53-8AC707691A62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2019A22A-EED6-4328-A957-072FCDBBD591}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2019A22A-EED6-4328-A957-072FCDBBD591}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2019A22A-EED6-4328-A957-072FCDBBD591}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2019A22A-EED6-4328-A957-072FCDBBD591}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C846EE05-F719-4D90-ABC3-ECB52EC6982E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C846EE05-F719-4D90-ABC3-ECB52EC6982E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C846EE05-F719-4D90-ABC3-ECB52EC6982E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C846EE05-F719-4D90-ABC3-ECB52EC6982E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -68,6 +80,8 @@ Global
 		{3FE0E31E-6ED4-4592-A63D-0CF2419D1D4F} = {81564F4F-A344-4756-819F-B2A5AE2EF178}
 		{F1F129ED-5D5B-4A77-8EDB-BB3E6F8A51D6} = {81564F4F-A344-4756-819F-B2A5AE2EF178}
 		{76FF9687-EA59-4407-9B53-8AC707691A62} = {81564F4F-A344-4756-819F-B2A5AE2EF178}
+		{2019A22A-EED6-4328-A957-072FCDBBD591} = {24FDA34F-0829-407F-9F34-953CFBB8D8BD}
+		{C846EE05-F719-4D90-ABC3-ECB52EC6982E} = {24FDA34F-0829-407F-9F34-953CFBB8D8BD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A6A6ED4C-343A-4CDB-9533-AB6CA217F587}
