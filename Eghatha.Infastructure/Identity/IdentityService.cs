@@ -293,5 +293,12 @@ namespace Eghatha.Infastructure.Identity
                           select ur.UserId
                           ).ToListAsync(cancellationToken);
         }
+
+        public async Task<string?> GetUserNameAsync(Guid userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            return user?.UserName;
+        }
     }
 }

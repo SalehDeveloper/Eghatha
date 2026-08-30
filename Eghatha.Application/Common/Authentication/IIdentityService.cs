@@ -36,5 +36,7 @@ namespace Eghatha.Application.Common.Authentication
         Task<bool> UserExistsAsync(string email, CancellationToken cancellationToken);
 
         Task<List<Guid>> GetAdminIdsAsync(CancellationToken cancellationToken);
+
+        Task<string?> GetUserNameAsync(Guid userId);
     }
 }
