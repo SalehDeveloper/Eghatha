@@ -1,7 +1,6 @@
 using Eghatha.Api;
-using Eghatha.Api.Infrastructure;
 using Eghatha.Application;
-using Eghatha.Domain.Teams.TeamResources;
+using Eghatha.Domain.Resources;
 using Eghatha.Infastructure;
 using Eghatha.Infastructure.RealTime.Admin;
 using Eghatha.Infastructure.RealTime.Team;
@@ -56,10 +55,33 @@ builder.Services.AddOpenApi(options =>
 });
 
 var app = builder.Build();
-app.UseRequestLocalization();
+//app.UseRequestLocalization();
+
+
+app.Use(async (context, next) =>
+{
+    var lang = context.Request.Headers.AcceptLanguage;
+    //["Accept-Language"].ToString()
+
+    if (!string.IsNullOrEmpty(lang))
+    {
+        //var culture = new System.Globalization.CultureInfo(lang);
+        var language = "ar";
+
+        CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo(language);
+
+        Thread.CurrentThread.CurrentCulture = new CultureInfo(language);
+
+        Thread.CurrentThread.CurrentUICulture = new CultureInfo(language);
+
+        ValidatorOptions.Global.LanguageManager.Culture = new CultureInfo(language);
 
 
 
+    }
+
+    await next();
+});
 
 if (app.Environment.IsDevelopment())
 {
@@ -88,6 +110,11 @@ else
 
 app.UseCoreMiddlewares(config);
 app.MapControllers();
+
+app.Map("/lang1", () => Results.Ok(TeamErrorsTest.TeamErrors_Speciality_Invalid));
+
+app.Map("/lang2", () => Results.Ok(VolunteerErrors.VolunteerErrors_SpecialityInvalid));
+
 app.MapHub<AdminHub>(AdminHub.HubUrl);
 app.MapHub<TeamHub>(TeamHub.HubUrl);
 

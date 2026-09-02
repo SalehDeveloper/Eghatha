@@ -1,7 +1,5 @@
-﻿using Asp.Versioning;
-using Eghatha.Api.Infrastructure;
+﻿using Eghatha.Api.Infrastructure;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.Extensions.Options;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
@@ -19,12 +17,12 @@ namespace Eghatha.Api
                .AddControllerWithJsonConfiguration()
                .AddAppRateLimiting()
                .AddAppOutputCaching()
-               .AddCustomLocalization()
+               // .AddCustomLocalization()
                .AddSignalR();
 
             return services;
 
-         
+
         }
 
         public static IServiceCollection AddCustomProblemDetails(this IServiceCollection services)
@@ -126,7 +124,7 @@ namespace Eghatha.Api
         }
         public static IApplicationBuilder UseCoreMiddlewares(this IApplicationBuilder app, IConfiguration configuration)
         {
-          
+
             app.UseExceptionHandler();
 
             app.UseCors("_myAllowSpecificOrigins");
