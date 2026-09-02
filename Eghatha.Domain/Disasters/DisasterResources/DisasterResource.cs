@@ -1,6 +1,6 @@
 ﻿using Eghatha.Domain.Abstractions;
 using Eghatha.Domain.Shared.Errors;
-using Eghatha.Domain.Teams.Resources;
+using Eghatha.Domain.Teams.TeamResources;
 using ErrorOr;
 using System;
 using System.Collections.Generic;

@@ -1,6 +1,6 @@
 ﻿using Eghatha.Domain.Disasters;
 using Eghatha.Domain.Disasters.DisasterResources;
-using Eghatha.Domain.Teams.Resources;
+using Eghatha.Domain.Teams.TeamResources;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;

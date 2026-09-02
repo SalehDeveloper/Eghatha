@@ -6,7 +6,7 @@ using Eghatha.Domain.Disasters.DisasterVolunteers;
 using Eghatha.Domain.Disasters.Events;
 using Eghatha.Domain.Shared.Errors;
 using Eghatha.Domain.Shared.ValueObjects;
-using Eghatha.Domain.Teams.Resources;
+using Eghatha.Domain.Teams.TeamResources;
 using Eghatha.Tests.Common.Disasters;
 using System;
 using System.Collections.Generic;

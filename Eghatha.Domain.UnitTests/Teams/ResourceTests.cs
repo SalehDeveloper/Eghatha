@@ -1,6 +1,6 @@
 ﻿using Eghatha.Domain.Shared.Errors;
 using Eghatha.Domain.Teams;
-using Eghatha.Domain.Teams.Resources;
+using Eghatha.Domain.Teams.TeamResources;
 using Eghatha.Tests.Common.Teams;
 using System;
 using System.Collections.Generic;

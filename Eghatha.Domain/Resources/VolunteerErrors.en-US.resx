@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- VolunteerErrors -->
+  <data name="VolunteerErrors.StatusRequired" xml:space="preserve">
+    <value>volunteer status is required</value>
+  </data>
+  <data name="VolunteerErrors.StatusInvalid" xml:space="preserve">
+    <value>invalid volunteer status</value>
+  </data>
+  <data name="VolunteerErrors.SpecialityRequired" xml:space="preserve">
+    <value>volunteer status is required</value>
+  </data>
+  <data name="VolunteerErrors.SpecialityInvalid" xml:space="preserve">
+    <value>invalid volunteer status</value>
+  </data>
+  <data name="VolunteerErrors.LocationRequired" xml:space="preserve">
+    <value>volunteer location is required</value>
+  </data>
+  <data name="VolunteerErrors.ExperienceMustBeGreaterThanZero" xml:space="preserve">
+    <value>years of experience must be greater than zero</value>
+  </data>
+  <data name="VolunteerErrors.EquipmentRequired" xml:space="preserve">
+    <value>volunteer equipment is required</value>
+  </data>
+  <data name="VolunteerErrors.EquipmentAlreadyAssigned" xml:space="preserve">
+    <value>volnteer equipments already has this equipment</value>
+  </data>
+  <data name="VolunteerErrors.ScoreMustBeGreaterThanZero" xml:space="preserve">
+    <value>Volunteer score should be greater than zero</value>
+  </data>
+  <data name="VolunteerErrors.City.Required" xml:space="preserve">
+    <value>Team city is required.</value>
+  </data>
+  <data name="VolunteerErrors.Province.Required" xml:space="preserve">
+    <value>Volunteer province is required.</value>
+  </data>
+
+  <!-- EquipmentErrors -->
+  <data name="VolunteerErrors.Equipment.IdRequired" xml:space="preserve">
+    <value>VolunteerErrors.equipment id is required</value>
+  </data>
+  <data name="VolunteerErrors.Equipment.NameRequired" xml:space="preserve">
+    <value>equipment name is required</value>
+  </data>
+  <data name="VolunteerErrors.Equipment.UnSupportedCategory" xml:space="preserve">
+    <value>equipment category unsupported</value>
+  </data>
+  <data name="VolunteerErrors.Equipment.InvalidStatus" xml:space="preserve">
+    <value>invalid requpment status</value>
+  </data>
+  <data name="VolunteerErrors.Equipment.QuantityShouldBeGreaterThanZero" xml:space="preserve">
+    <value>equipment quantity should be greater than zero</value>
+  </data>
+  <data name="VolunteerErrors.Equipment.AlreadyDeleted" xml:space="preserve">
+    <value>equipemtn already deleted</value>
+  </data>
+  <data name="VolunteerErrors.Equipment.NotFound" xml:space="preserve">
+    <value>equipment not found</value>
+  </data>
+  <data name="VolunteerErrors.Equipment.NotEnough" xml:space="preserve">
+    <value>Not enough equipment available to perform the operation.</value>
+  </data>
+</root>

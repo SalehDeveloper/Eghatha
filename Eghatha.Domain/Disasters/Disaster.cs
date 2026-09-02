@@ -7,7 +7,6 @@ using Eghatha.Domain.Disasters.Events;
 using Eghatha.Domain.Disasters.Reports;
 using Eghatha.Domain.Shared.Errors;
 using Eghatha.Domain.Shared.ValueObjects;
-using Eghatha.Domain.Teams.Resources;
 using ErrorOr;
 using System.Security.AccessControl;
 
@@ -334,7 +333,7 @@ namespace Eghatha.Domain.Disasters
         }
 
 
-        public ErrorOr<DispatchResourceResult> DispatchResource(Guid resourceId, Guid teamId, Teams.Resources.ResourceType resourceType, int quantitySent, DateTimeOffset assignedAt, string? notes = null)
+        public ErrorOr<DispatchResourceResult> DispatchResource(Guid resourceId, Guid teamId, Teams.TeamResources.ResourceType resourceType, int quantitySent, DateTimeOffset assignedAt, string? notes = null)
         {
             if (resourceId == Guid.Empty)
                 return DomainErrors.IdMustBeProvided("Resource");
