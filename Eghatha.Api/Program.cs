@@ -1,6 +1,7 @@
 using Eghatha.Api;
+using Eghatha.Api.Infrastructure;
 using Eghatha.Application;
-using Eghatha.Domain.Teams.Resources;
+using Eghatha.Domain.Teams.TeamResources;
 using Eghatha.Infastructure;
 using Eghatha.Infastructure.RealTime.Admin;
 using Eghatha.Infastructure.RealTime.Team;
@@ -11,6 +12,7 @@ using System.Globalization;
 var builder = WebApplication.CreateBuilder(args);
 
 var config = builder.Configuration;
+
 
 builder.Services
     .AddPresentation(config)
@@ -38,7 +40,7 @@ builder.Services.AddCors(options =>
 
 
 
-// Add OpenAPI services for .NET 9
+
 builder.Services.AddOpenApi(options =>
 {
     options.AddDocumentTransformer((document, context, cancellationToken) =>
@@ -54,7 +56,7 @@ builder.Services.AddOpenApi(options =>
 });
 
 var app = builder.Build();
-
+app.UseRequestLocalization();
 
 
 
@@ -79,17 +81,10 @@ else
 
 //TODO: Add middleware to handle selected language from request header
 
-var language = "ar";
 
-CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo(language);
 
-Thread.CurrentThread.CurrentCulture = new CultureInfo(language);
 
-Thread.CurrentThread.CurrentUICulture = new CultureInfo(language);
 
-ValidatorOptions.Global.LanguageManager.Culture = new CultureInfo(language);
-
-app.Map("/lang", () => Results.Ok(TeamErrorsTest.Hello));
 
 app.UseCoreMiddlewares(config);
 app.MapControllers();

@@ -19,6 +19,7 @@ namespace Eghatha.Api
                .AddControllerWithJsonConfiguration()
                .AddAppRateLimiting()
                .AddAppOutputCaching()
+               .AddCustomLocalization()
                .AddSignalR();
 
             return services;
@@ -107,6 +108,22 @@ namespace Eghatha.Api
             return services;
         }
 
+        public static IServiceCollection AddCustomLocalization(this IServiceCollection services)
+        {
+            services.AddLocalization(opt => opt.ResourcesPath = "Resources");
+            services.AddSingleton<IDomainErrorLocalizer, DomainErrorLocalizer>();
+
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                var supportedCultures = new[] { "ar-SA", "en-US" };
+
+                options.SetDefaultCulture("ar-SA")
+                       .AddSupportedCultures(supportedCultures)
+                       .AddSupportedUICultures(supportedCultures);
+            });
+
+            return services;
+        }
         public static IApplicationBuilder UseCoreMiddlewares(this IApplicationBuilder app, IConfiguration configuration)
         {
           
