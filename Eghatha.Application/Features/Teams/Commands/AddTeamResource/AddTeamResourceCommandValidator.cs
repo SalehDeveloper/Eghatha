@@ -8,15 +8,14 @@ namespace Eghatha.Application.Features.Teams.Commands.AddTeamResource
         public AddTeamResourceCommandValidator()
         {
             RuleFor(x => x.TeamId)
-                .NotEmpty().WithMessage("TeamId is required");
+                .NotEmpty();
 
-           
+
 
             RuleFor(x => x.Quantity)
                 .GreaterThan(0)
-                .WithMessage("Quantity must be greater than 0")
-                .LessThanOrEqualTo(100)
-                .WithMessage("Quantity is too large");
+                .LessThanOrEqualTo(100);
+               
         }
     }
 

@@ -9,15 +9,15 @@ namespace Eghatha.Application.Features.Volunteers.Commands.IncreaseVolunteerEqui
         {
             RuleFor(x => x.VolunteerId)
                 .NotEmpty()
-                .WithMessage("VolunteerId is required.");
+                ;
 
             RuleFor(x => x.EquipmentId)
                 .NotEmpty()
-                .WithMessage("EquipmentId is required.");
+                ;
 
             RuleFor(x => x.Quantity)
                 .GreaterThan(0)
-                .WithMessage("Quantity must be greater than 0.");
+                ;
         }
     }
 }

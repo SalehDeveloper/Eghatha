@@ -1,5 +1,5 @@
 ﻿using Eghatha.Domain.Teams;
-using Eghatha.Domain.Teams.Resources;
+using Eghatha.Domain.Teams.TeamResources;
 using ErrorOr;
 using MediatR;
 using System;

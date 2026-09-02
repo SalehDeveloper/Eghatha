@@ -8,10 +8,10 @@ namespace Eghatha.Application.Features.Teams.Commands.DeActivateTeamMember
         public UpdateTeamMemberStatusCommandValidator()
         {
             RuleFor(x => x.TeamId)
-                .NotEmpty().WithMessage("TeamId is required");
+                .NotEmpty();
 
             RuleFor(x => x.MemeberId)
-                .NotEmpty().WithMessage("MemberId is required");
+                .NotEmpty();
 
          
         }

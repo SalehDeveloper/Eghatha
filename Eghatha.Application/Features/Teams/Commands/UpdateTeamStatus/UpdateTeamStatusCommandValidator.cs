@@ -8,7 +8,7 @@ namespace Eghatha.Application.Features.Teams.Commands.UpdateTeamStatus
         public UpdateTeamStatusCommandValidator()
         {
             RuleFor(x => x.Id)
-                .NotEmpty().WithMessage("Team Id is required");
+                .NotEmpty();
 
           
         }

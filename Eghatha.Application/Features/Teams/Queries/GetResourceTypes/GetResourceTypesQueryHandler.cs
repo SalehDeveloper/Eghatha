@@ -1,4 +1,4 @@
-﻿using Eghatha.Domain.Teams.Resources;
+﻿using Eghatha.Domain.Teams.TeamResources;
 using MediatR;
 
 namespace Eghatha.Application.Features.Teams.Queries.GetResourceTypes

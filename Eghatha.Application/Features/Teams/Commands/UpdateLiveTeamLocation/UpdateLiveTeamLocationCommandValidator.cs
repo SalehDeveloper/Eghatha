@@ -12,8 +12,8 @@ namespace Eghatha.Application.Features.Teams.Commands.UpdateLiveTeamLocation
         public UpdateLiveTeamLocationCommandValidator()
         {
             RuleFor(x => x.TeamId).NotEmpty()
-              .NotNull()
-              .WithMessage("Id is required");
+              .NotNull();
+              
            
             RuleFor(x => x.Latitude)
           .InclusiveBetween(-90, 90);

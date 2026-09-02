@@ -9,7 +9,7 @@ namespace Eghatha.Application.Features.Volunteers.Commands.UpdateStatus
         {
             RuleFor(x => x.VolunteerId)
                 .NotEmpty()
-                .WithMessage("VolunteerId is required.");
+               ;
 
           
         }

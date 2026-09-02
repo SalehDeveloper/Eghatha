@@ -1,7 +1,7 @@
 ﻿using Eghatha.Application.Common.Errors;
 using Eghatha.Application.Common.Interfaces;
 using Eghatha.Domain.Abstractions;
-using Eghatha.Domain.Teams.Resources;
+using Eghatha.Domain.Teams.TeamResources;
 using ErrorOr;
 using MediatR;
 using Microsoft.Extensions.Caching.Hybrid;

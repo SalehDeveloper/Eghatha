@@ -8,12 +8,10 @@ namespace Eghatha.Application.Features.Volunteers.Commands.UpdateEquipmentStatus
         public UpdateVolunteerEquipmentStatusCommandValidator()
         {
             RuleFor(x => x.VolunteerId)
-                .NotEmpty()
-                .WithMessage("VolunteerId is required.");
+                .NotEmpty();
 
             RuleFor(x => x.EquipmentId)
-                .NotEmpty()
-                .WithMessage("EquipmentId is required.");
+                .NotEmpty();
 
         }
     }
