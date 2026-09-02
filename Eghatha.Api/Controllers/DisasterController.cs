@@ -35,7 +35,7 @@ using Eghatha.Contract.Teams.Responses;
 using Eghatha.Domain.Disasters;
 using Eghatha.Domain.Disasters.AffectedPersons;
 using Eghatha.Domain.Teams;
-using Eghatha.Domain.Teams.Resources;
+using Eghatha.Domain.Teams.TeamResources;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

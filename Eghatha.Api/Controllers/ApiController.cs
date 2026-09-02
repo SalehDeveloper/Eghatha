@@ -1,4 +1,5 @@
-﻿using ErrorOr;
+﻿using Eghatha.Api.Infrastructure;
+using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -14,7 +15,9 @@ namespace Eghatha.Api.Controllers
         {
             _sender = sender;
         }
-
+        private IDomainErrorLocalizer? _errorLocalizer;
+        protected IDomainErrorLocalizer ErrorLocalizer =>
+            _errorLocalizer ??= HttpContext.RequestServices.GetRequiredService<IDomainErrorLocalizer>();
         protected IActionResult ValidationProblem(List<Error> errors)
         {
 
@@ -24,7 +27,7 @@ namespace Eghatha.Api.Controllers
             {
                 modelStateDictionary.AddModelError(
                     error.Code,
-                    error.Description);
+                      ErrorLocalizer.Localize(error));
 
             }
 
@@ -44,7 +47,7 @@ namespace Eghatha.Api.Controllers
                 _ => StatusCodes.Status500InternalServerError
             };
 
-            return Problem(statusCode: statusCode, detail: error.Description);
+            return Problem(statusCode: statusCode, detail: ErrorLocalizer.Localize(error));
         }
 
         protected IActionResult Problem(List<Error> errors)

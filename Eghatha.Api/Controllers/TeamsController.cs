@@ -24,14 +24,15 @@ using Eghatha.Contract.Shared;
 using Eghatha.Contract.Teams.Requests;
 using Eghatha.Contract.Teams.Responses;
 using Eghatha.Domain.Teams;
-using Eghatha.Domain.Teams.Resources;
 using Eghatha.Domain.Teams.TeamMembers;
+using Eghatha.Domain.Teams.TeamResources;
 using ErrorOr;
 using MediatR;
 using MediatR.NotificationPublishers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Query.Internal;
+using System.Globalization;
 
 namespace Eghatha.Api.Controllers
 {
@@ -40,6 +41,7 @@ namespace Eghatha.Api.Controllers
         public TeamsController(ISender sender) : base(sender)
         {
         }
+
 
 
         //[Authorize(ApplicationRole.Admin)]
@@ -56,7 +58,7 @@ namespace Eghatha.Api.Controllers
         public async Task<IActionResult> CreateTeam(CreateTeamRequest request, CancellationToken cancellationToken)
         {
             if (!TeamSpeciality.TryFromName(request.Speciality, true, out var speciality))
-                return Problem(TeamErrors.InvalidSpeciality);
+                return Problem(ErrorLocalizer.Localize(TeamErrors.InvalidSpeciality));
 
             var command = new CreateTeamCommand(request.Name, speciality, request.Latitude, request.Longitude);
 
@@ -94,7 +96,7 @@ namespace Eghatha.Api.Controllers
             if (request.Speciality is not null)
             {
                 if (!TeamSpeciality.TryFromName(request.Speciality, true, out var parsed))
-                    return Problem(TeamErrors.InvalidSpeciality);
+                    return Problem(ErrorLocalizer.Localize(TeamErrors.InvalidSpeciality));
 
                 speciality = parsed;
             }
@@ -387,7 +389,7 @@ namespace Eghatha.Api.Controllers
             if (request.resourceType is not null)
             {
                 if (!ResourceType.TryFromName(request.resourceType, true, out var parsed))
-                    return Problem(TeamErrors.InvalidSpeciality);
+                    return Problem(ErrorLocalizer.Localize( TeamErrors.InvalidSpeciality));
 
                 type = parsed;
             }
@@ -471,7 +473,7 @@ namespace Eghatha.Api.Controllers
             {
 
                 if (!TeamSpeciality.TryFromName(filter.Speciality, true, out var _))
-                    return Problem(TeamErrors.InvalidSpeciality);
+                    return Problem(ErrorLocalizer.Localize(TeamErrors.InvalidSpeciality));
 
             }
 
@@ -481,7 +483,7 @@ namespace Eghatha.Api.Controllers
             {
 
                 if (!TeamStatus.TryFromName(filter.Status, true, out var _))
-                    return Problem(TeamErrors.InvalidSpeciality);
+                    return Problem(ErrorLocalizer.Localize( TeamErrors.InvalidStatus));
 
             }
 
@@ -586,7 +588,7 @@ namespace Eghatha.Api.Controllers
             {
 
                 if (!TeamMemberStatus.TryFromName(filter.MemberStatus, true, out var parsed))
-                    return Problem(TeamErrors.InvalidSpeciality);
+                    return Problem(ErrorLocalizer.Localize( TeamErrors.InvalidSpeciality));
                 status = parsed;
             }
 
@@ -620,7 +622,7 @@ namespace Eghatha.Api.Controllers
             {
 
                 if (!ResourceType.TryFromName(filter.Type, true, out var parsed))
-                    return Problem(TeamErrors.InvalidSpeciality);
+                    return Problem(ErrorLocalizer.Localize(TeamErrors.InvalidSpeciality));
                 type = parsed;
             }
 
