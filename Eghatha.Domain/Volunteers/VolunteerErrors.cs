@@ -11,48 +11,48 @@ namespace Eghatha.Domain.Volunteers
     public static class VolunteerErrors
     {
         public static Error StatusRequired = Error.Validation(
-            code: "Volunteer.StatusRequired",
+            code: "VolunteerErrors.StatusRequired",
             description: "volunteer status is required");
 
         public static Error StatusInvalid = Error.Validation(
-            code: "Volunteer.StatusInvalid",
+            code: "VolunteerErrors.StatusInvalid",
             description: "invalid volunteer status ");
 
         public static Error SpecialityRequired = Error.Validation(
-            code: "Volunteer.SpecialityRequired",
+            code: "VolunteerErrors.SpecialityRequired",
             description: "volunteer status is required");
 
         public static Error SpecialityInvalid = Error.Validation(
-            code: "Volunteer.SpecialityInvalid",
+            code: "VolunteerErrors.SpecialityInvalid",
             description: "invalid volunteer status ");
 
         public static Error LocationRequired = Error.Validation(
-          code: "Volunteer.LocationRequired",
+          code: "VolunteerErrors.LocationRequired",
           description: "volunteer location is required");
 
         public static Error ExperienceMustBeGreaterThanZero = Error.Validation(
-          code: "Volunteer.ExperienceMustBeGreaterThanZero",
+          code: "VolunteerErrors.ExperienceMustBeGreaterThanZero",
           description: "years of experience must be greater than zero");
 
 
         public static Error EquipmentRequired = Error.Validation(
-            code: "Volunteer.EquipmentRequired",
+            code: "VolunteerErrors.EquipmentRequired",
             description: "volunteer equipment is required");
 
         public static Error EquipmentAlreadyAssigned = Error.Conflict(
-            code: "Volunteer.EquipmentAlreadyAssigned",
+            code: "VolunteerErrors.EquipmentAlreadyAssigned",
             description: "volnteer equipments already has this equipment");
 
         public static Error ScoreMustBeGreaterThanZero = Error.Validation(
-            code: "Volunteer.ScoreMustBeGreaterThanZero",
+            code: "VolunteerErrors.ScoreMustBeGreaterThanZero",
             description: "Volunteer score should be greater than zero");
 
         public static Error CityRequired = Error.Validation(
-          code: "Volunteer.City.Required",
+          code: "VolunteerErrors.City.Required",
           description: "Team city is required.");
 
         public static Error ProvinceRequired = Error.Validation(
-            code: "Volunteer.Province.Required",
+            code: "VolunteerErrors.Province.Required",
             description: "Volunteer province is required.");
 
     }

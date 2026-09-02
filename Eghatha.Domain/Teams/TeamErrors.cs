@@ -31,6 +31,10 @@ namespace Eghatha.Domain.Teams
             code: "TeamErrors.Location.Required",
             description: "Team location is required.");
 
+        public static Error LocationMustBeInsyria = Error.Validation(
+          code: "TeamErrors.Location.MustBeInSyria",
+          description: "Team location must be within Syria.");
+
         public static Error CreatedByAdminIdRequired = Error.Validation(
            code: "TeamErrors.AdminId.Required",
            description: "id for  admin who created the team is required.");
@@ -68,7 +72,7 @@ namespace Eghatha.Domain.Teams
             description: "Team status is invalid.");
 
         public static Error MemberMustBeActiveToBecomeLeader =
-        Error.Conflict("Team.MemberNotActive", "Only active members can become leader.");
+        Error.Conflict("TeamErrors.MemberNotActive", "Only active members can become leader.");
 
         public static Error InvalidStatusTransition(TeamStatus current, TeamStatus next) => Error.Conflict(
  code: "TeamErrors.InvalidStatusTransition",

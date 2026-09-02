@@ -2,8 +2,8 @@
 using Eghatha.Domain.Shared.Errors;
 using Eghatha.Domain.Shared.ValueObjects;
 using Eghatha.Domain.Teams.Events;
-using Eghatha.Domain.Teams.Resources;
 using Eghatha.Domain.Teams.TeamMembers;
+using Eghatha.Domain.Teams.TeamResources;
 using ErrorOr;
 using System;
 using System.Collections.Generic;
@@ -60,7 +60,19 @@ namespace Eghatha.Domain.Teams
             CreatedByAdminId = createdByAdminId;
         }
 
+        private static bool BeWithinSyria(GeoLocation location)
+        {
+            // Approximate Syria borders
+            const double minLat = 32.3;
+            const double maxLat = 37.4;
+            const double minLon = 35.7;
+            const double maxLon = 42.4;
 
+            return location.Latitude >= minLat &&
+                   location.Latitude <= maxLat &&
+                   location.Longitude >= minLon &&
+                   location.Longitude <= maxLon;
+        }
         public static ErrorOr<Team> Create(
             Guid id,
             string name,
@@ -91,6 +103,9 @@ namespace Eghatha.Domain.Teams
             if (location == null)
                 return TeamErrors.LocationRequired;
 
+            if (!BeWithinSyria(location))
+                return TeamErrors.LocationMustBeInsyria;
+
             if (createdByAdminId == Guid.Empty)
                 return TeamErrors.CreatedByAdminIdRequired;
 
@@ -100,14 +115,18 @@ namespace Eghatha.Domain.Teams
 
 
         }
-
+       
         public ErrorOr<Updated> UpdateBaseLocation(GeoLocation newLocation)
         {
             if (newLocation is null)
                 return TeamErrors.LocationRequired;
-
+         
+            if (!BeWithinSyria(newLocation))
+                return TeamErrors.LocationMustBeInsyria;
+            
             Location = newLocation;
 
+         
             // add domain event , and push the update to the admin 
             AddDomainEvent(new TeamLocationChangedEvent(Id, Name, Location));
             return Result.Updated;
