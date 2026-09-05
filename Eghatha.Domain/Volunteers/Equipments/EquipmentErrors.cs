@@ -1,9 +1,4 @@
 ﻿using ErrorOr;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Eghatha.Domain.Volunteers.Equipments
 {
@@ -11,40 +6,40 @@ namespace Eghatha.Domain.Volunteers.Equipments
     {
         public static readonly Error IdRequired = Error.Validation(
             code: "VolunteerErrors.Equipment.IdRequired",
-            description: "VolunteerErrors.equipment id is required");
+            description: Resources.VolunteerErrors.VolunteerErrors_EquipmentRequired);
 
         public static readonly Error NameRequired = Error.Validation(
           code: "VolunteerErrors.Equipment.NameRequired",
-          description: "equipment name is required");
+          description: Resources.VolunteerErrors.VolunteerErrors_Equipment_NameRequired);
 
 
         public static readonly Error UnSupportedCategory = Error.Validation(
           code: "VolunteerErrors.Equipment.UnSupportedCategory",
-          description: "equipment category unsupported");
+          description: Resources.VolunteerErrors.VolunteerErrors_Equipment_UnSupportedCategory);
 
         public static readonly Error InvalidStatus = Error.Validation(
          code: "VolunteerErrors.Equipment.InvalidStatus",
-         description: "invalid requpment status ");
+         description: Resources.VolunteerErrors.VolunteerErrors_Equipment_InvalidStatus);
 
 
         public static readonly Error QuantityShouldBeGreaterThanZero = Error.Validation(
           code: "VolunteerErrors.Equipment.QuantityShouldBeGreaterThanZero",
-          description: "equipment quantity should be greater than zero");
+          description: Resources.VolunteerErrors.VolunteerErrors_Equipment_QuantityShouldBeGreaterThanZero);
 
         public static readonly Error AlreadyDeleted = Error.Conflict(
             code: "VolunteerErrors.Equipment.AlreadyDeleted",
-            description: "equipemtn already deleted");
+            description: Resources.VolunteerErrors.VolunteerErrors_Equipment_AlreadyDeleted);
 
         public static readonly Error NotFound = Error.NotFound(
             code: "VolunteerErrors.Equipment.NotFound",
-            description: "equipment not found");
+            description: Resources.VolunteerErrors.VolunteerErrors_Equipment_NotFound);
 
         public static readonly Error NotEnoughEquipments = Error.Conflict(
         code: "VolunteerErrors.Equipment.NotEnough",
-        description: "Not enough equipment available to perform the operation."
+        description: Resources.VolunteerErrors.VolunteerErrors_Equipment_NotEnough);
 
 
-    );
+
 
 
     }

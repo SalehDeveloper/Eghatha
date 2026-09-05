@@ -1,16 +1,10 @@
 ﻿using Eghatha.Application.Common.Errors;
 using Eghatha.Application.Common.Interfaces;
 using Eghatha.Domain.Abstractions;
-using Eghatha.Domain.Disasters;
 using Eghatha.Domain.Teams;
 using ErrorOr;
 using MediatR;
 using Microsoft.Extensions.Caching.Hybrid;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Eghatha.Application.Features.Disasters.Commands.AssignTeams
 {
@@ -34,18 +28,16 @@ namespace Eghatha.Application.Features.Disasters.Commands.AssignTeams
             var disaster = await _disasterRepository.GetByIdWithTeamsAsync(request.DisasterId, cancellationToken);
 
             if (disaster == null) return ApplicationErrors.DisasterNotFound;
-           
+
             var teams = await _teamRepository.GetTeamsByIdsAsync(request.TeamIds, cancellationToken);
 
             if (teams.Count != request.TeamIds.Count) return ApplicationErrors.TeamNotFound;
 
-            foreach(var team in teams )
+            foreach (var team in teams)
             {
                 if (team.Status != TeamStatus.Active && team.Status != TeamStatus.Returning)
                 {
-                    return Error.Conflict(
-                    code: "Team.NotAvailable",
-                    description: $"Team '{team.Name}' is not available");
+                    return ApplicationErrors.TeamNotAvailable;
                 }
 
                 var assignResult = disaster.AssignTeam(team.Id);
@@ -54,8 +46,8 @@ namespace Eghatha.Application.Features.Disasters.Commands.AssignTeams
                     return assignResult.Errors;
 
                 team.UpdateStatus(TeamStatus.OnMission);
-                    
-                
+
+
             }
 
             disaster.StartResponse();

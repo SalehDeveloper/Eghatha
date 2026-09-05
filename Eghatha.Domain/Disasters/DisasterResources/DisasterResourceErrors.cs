@@ -1,35 +1,29 @@
-﻿using Ardalis.SmartEnum;
-using ErrorOr;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ErrorOr;
 
 namespace Eghatha.Domain.Disasters.DisasterResources
 {
     public static class DisasterResourceErrors
     {
-       public static readonly Error ResourceConsumptionExceedsSent = Error.Conflict(
-            code: "DisasterResourceErrors.ResourceConsumptionExceedsSent",
-            description: "resource consumption exceeds sent quantity");
-    
-        
+        public static readonly Error ResourceConsumptionExceedsSent = Error.Conflict(
+             code: "DisasterResourceErrors.ResourceConsumptionExceedsSent",
+             description: Resources.DisasterErrors.DisasterErrors_ResourceConsumptionExceedsSent);
+
+
         public static readonly Error InvalidReturnQuantity = Error.Conflict(
             code: "DisasterResourceErrors.InvalidReturnQuantity",
-            description: "return quantity cannot exceed remaining quantity");
+            description: Resources.DisasterErrors.DisasterErrors_InvalidReturnQuantity);
 
 
         public static readonly Error InvalidDamagedQuantity = Error.Conflict(
             code: "DisasterResourceErrors.InvalidDamagedQuantity",
-            description: "damaged quantity cannot exceed remaining quantity");
+            description: Resources.DisasterErrors.DisasterErrors_InvalidDamagedQuantity);
 
         public static readonly Error ResourceNotFound = Error.NotFound(
             code: "DisasterResourceErrors.ResourceNotFound",
-            description: "resource not found");
+            description: Resources.DisasterErrors.DisasterErrors_ResourceNotFound);
 
         public static readonly Error ResourceIsNotConsumable = Error.Conflict(
             code: "DisasterResourceErrors.ResourceIsNotConsumable",
-            description: "reousnce is not consumable");
+            description: Resources.DisasterErrors.DisasterErrors_ResourceIsNotConsumable);
     }
 }

@@ -1,26 +1,21 @@
 ﻿using Eghatha.Application.Common.Authentication;
-using Eghatha.Application.Common.Interfaces;
+using Eghatha.Application.Common.Messages;
 using Eghatha.Application.Common.Models;
 using Eghatha.Application.Common.Services;
 using ErrorOr;
 using MediatR;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Eghatha.Application.Features.Authentication.Commands.RequestPasswordReset
 {
     public class RequestPasswordResetCommandHandler : IRequestHandler<RequestPasswordResetCommand, ErrorOr<string>>
     {
         private readonly IIdentityService _identityService;
- 
+
         private readonly IEmailService _emailService;
-       
+
         private readonly OtpSettings _otpSettings;
-       
+
         private readonly IOtpService _otpService;
 
         public RequestPasswordResetCommandHandler(
@@ -53,7 +48,7 @@ namespace Eghatha.Application.Features.Authentication.Commands.RequestPasswordRe
                _otpSettings.PasswordResetExpirationMinutes
             );
 
-            return $"We've sent a code to your email address. Please check your inbox to reset your password.";
+            return ApplicationMessages.PasswordResetCodeSent;
         }
     }
 }

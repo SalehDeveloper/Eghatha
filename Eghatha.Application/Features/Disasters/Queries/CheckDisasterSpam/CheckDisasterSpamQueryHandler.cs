@@ -1,4 +1,6 @@
-﻿using Eghatha.Application.Common.Interfaces;
+﻿using Eghatha.Application.Common.Errors;
+using Eghatha.Application.Common.Interfaces;
+using Eghatha.Application.Common.Messages;
 using Eghatha.Application.Common.Models;
 using Eghatha.Application.Common.Services;
 using Eghatha.Application.Features.AiAssistant;
@@ -30,8 +32,9 @@ namespace Eghatha.Application.Features.Disasters.Queries.CheckDisasterSpam
             CheckDisasterSpamQuery request, CancellationToken cancellationToken)
         {
             var disaster = await _disasterRepo.GetByIdAsync(request.DisasterId, cancellationToken);
+
             if (disaster is null)
-                return Error.NotFound("Disaster.NotFound", "Disaster not found.");
+                return ApplicationErrors.DisasterNotFound;
 
             var since = DateTimeOffset.UtcNow.AddMinutes(-request.WindowMinutes);
 
@@ -41,7 +44,7 @@ namespace Eghatha.Application.Features.Disasters.Queries.CheckDisasterSpam
                 .ToList();
 
             if (candidates.Count == 0)
-                return new SpamCheckResultDto(false, null, 0, "No recent reports of the same type found.");
+                return new SpamCheckResultDto(false, null, 0, ApplicationMessages.NoRecentReportsOfSameType);
 
             var destinations = candidates
                 .Select(c => new RouteDestination(c.DisasterId, new GeoLocation(c.Latitude, c.Longitude)))
@@ -57,7 +60,7 @@ namespace Eghatha.Application.Features.Disasters.Queries.CheckDisasterSpam
             var nearbyCandidates = candidates.Where(c => nearbyIds.Contains(c.DisasterId)).ToList();
 
             if (nearbyCandidates.Count == 0)
-                return new SpamCheckResultDto(false, null, 0, "No same-type reports within the routing radius.");
+                return new SpamCheckResultDto(false, null, 0, ApplicationMessages.NoSameTypeReportsWithinRoutingRadius);
 
             var newReport = new NewDisasterReportDto(
                 disaster.Id, disaster.Title, disaster.Description,

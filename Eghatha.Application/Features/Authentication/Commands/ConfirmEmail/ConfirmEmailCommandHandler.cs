@@ -1,15 +1,11 @@
 ﻿using Eghatha.Application.Common.Authentication;
 using Eghatha.Application.Common.Errors;
+using Eghatha.Application.Common.Messages;
 using Eghatha.Application.Common.Models;
 using Eghatha.Application.Common.Services;
 using Eghatha.Domain.Abstractions;
 using ErrorOr;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Eghatha.Application.Features.Authentication.Commands.ConfirmEmail
 {
@@ -28,16 +24,16 @@ namespace Eghatha.Application.Features.Authentication.Commands.ConfirmEmail
 
         public async Task<ErrorOr<string>> Handle(ConfirmEmailCommand request, CancellationToken cancellationToken)
         {
-           
 
-            var user = await _identityService.GetIdentityUserByEmailAsync(request.Email , cancellationToken);
-           
+
+            var user = await _identityService.GetIdentityUserByEmailAsync(request.Email, cancellationToken);
+
             if (user.IsError) return user.Errors;
 
             if (user.Value.IsEmailConfirmed)
                 return ApplicationErrors.EmailAlreadyConfirmed;
 
-            var res = await _otpService.ValidateAsync(OtpType.ConfirmEmail, request.Email , request.Otp );
+            var res = await _otpService.ValidateAsync(OtpType.ConfirmEmail, request.Email, request.Otp);
 
             if (res.IsError) return res.Errors;
 
@@ -49,14 +45,14 @@ namespace Eghatha.Application.Features.Authentication.Commands.ConfirmEmail
             {
                 await _identityService.ConfirmEmail(user.Value.Email);
                 await _identityService.ActivateUser(user.Value.Id);
-            }   
-  
-            await _otpService.RemoveAsync(OtpType.ConfirmEmail , request.Email);
+            }
+
+            await _otpService.RemoveAsync(OtpType.ConfirmEmail, request.Email);
 
 
             await _unitOfWork.CompleteAsync(cancellationToken);
-          
-            return $"Email confirmed Successfully , now you can login to your account";
+
+            return ApplicationMessages.EmailConfirmedSuccessfully;
         }
     }
 }

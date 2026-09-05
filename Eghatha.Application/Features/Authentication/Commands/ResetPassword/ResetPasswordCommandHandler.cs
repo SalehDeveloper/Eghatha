@@ -1,16 +1,10 @@
 ﻿using Eghatha.Application.Common.Authentication;
-using Eghatha.Application.Common.Errors;
+using Eghatha.Application.Common.Messages;
 using Eghatha.Application.Common.Models;
 using Eghatha.Application.Common.Services;
 using Eghatha.Domain.Abstractions;
 using ErrorOr;
 using MediatR;
-using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Eghatha.Application.Features.Authentication.Commands.ResetPassword
 {
@@ -38,13 +32,13 @@ namespace Eghatha.Application.Features.Authentication.Commands.ResetPassword
 
             if (res.IsError) return res.Errors;
 
-            var resetPasswordResult = await _identityService.ResetPasswordAsync(request.Email  , request.NewPassword , cancellationToken);
+            var resetPasswordResult = await _identityService.ResetPasswordAsync(request.Email, request.NewPassword, cancellationToken);
 
             await _otpService.RemoveAsync(OtpType.ResetPassword, request.Email);
 
             await _unitOfWork.CompleteAsync(cancellationToken);
-           
-            return "Password reseted successful";
+
+            return ApplicationMessages.PasswordResetSuccess;
         }
     }
 }

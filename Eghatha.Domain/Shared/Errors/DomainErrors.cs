@@ -1,10 +1,4 @@
 ﻿using ErrorOr;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Eghatha.Domain.Shared.Errors
 {
@@ -12,7 +6,7 @@ namespace Eghatha.Domain.Shared.Errors
     {
         public static readonly Error UserIdRequired = Error.Validation(
             code: "User.UserId.Required",
-            description: "UserId is required .");
+            description: Resources.DomainErrors.User_UserId_Required);
 
 
         public static Error IdMustBeProvided(string entityName) => Error.Validation(

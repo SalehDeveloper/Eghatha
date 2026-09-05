@@ -1,20 +1,12 @@
-﻿using Eghatha.Application.Common.Authentication;
-using Eghatha.Application.Common.Interfaces;
-using Eghatha.Application.Common.Models;
+﻿using Eghatha.Application.Common.Interfaces;
 using Eghatha.Application.Common.Services;
 using Eghatha.Application.Features.Disasters.Dtos;
 using Eghatha.Domain.Abstractions;
 using Eghatha.Domain.Disasters;
-using Eghatha.Domain.Notifications;
 using Eghatha.Domain.Shared.ValueObjects;
 using ErrorOr;
 using MediatR;
 using Microsoft.Extensions.Caching.Hybrid;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Eghatha.Application.Features.Disasters.Commands.CreateDisaster
 {
@@ -42,12 +34,7 @@ namespace Eghatha.Application.Features.Disasters.Commands.CreateDisaster
             CreateDisasterCommand request,
             CancellationToken cancellationToken)
         {
-            
-          
 
-            // ---------------------------------------------------
-            // Location
-            // ---------------------------------------------------
 
             var locationResult = GeoLocation.Create(
                 request.Latitude,
@@ -56,10 +43,8 @@ namespace Eghatha.Application.Features.Disasters.Commands.CreateDisaster
             if (locationResult.IsError)
                 return locationResult.Errors;
 
-            var loc = await _geocodingService.ResolveAsync(locationResult.Value.Latitude , locationResult.Value.Longitude, cancellationToken);
-            // ---------------------------------------------------
-            // Reporter
-            // ---------------------------------------------------
+            var loc = await _geocodingService.ResolveAsync(locationResult.Value.Latitude, locationResult.Value.Longitude, cancellationToken);
+
 
             var reporterResult = ReporterInfo.Create(
                 request.ReporterName,
@@ -69,9 +54,7 @@ namespace Eghatha.Application.Features.Disasters.Commands.CreateDisaster
             if (reporterResult.IsError)
                 return reporterResult.Errors;
 
-            // ---------------------------------------------------
-            // Disaster Creation
-            // ---------------------------------------------------
+
 
             var disasterResult = Disaster.Create(
                 Guid.NewGuid(),
@@ -79,7 +62,7 @@ namespace Eghatha.Application.Features.Disasters.Commands.CreateDisaster
                 request.Title,
                 request.Description,
                 locationResult.Value,
-                loc.Province , 
+                loc.Province,
                 loc.City,
                 DateTimeOffset.UtcNow,
                 reporterResult.Value,
@@ -90,39 +73,30 @@ namespace Eghatha.Application.Features.Disasters.Commands.CreateDisaster
 
             var disaster = disasterResult.Value;
 
-            // ---------------------------------------------------
-            // Save Disaster
-            // ---------------------------------------------------
+
 
             await _disasterRepository.AddAsync(
                 disaster,
                 cancellationToken);
 
-      
 
-            await _unitOfWork.CompleteAsync( cancellationToken);
 
-            // ---------------------------------------------------
-            // Team Recommendation
-            // ---------------------------------------------------
+            await _unitOfWork.CompleteAsync(cancellationToken);
+
+
 
             var recommendedTeams =
                 await _teamRecommendationService.RecommendAsync(
                     disaster,
                     cancellationToken);
 
-            // ---------------------------------------------------
-            // Volunteer Recommendation
-            // ---------------------------------------------------
+
 
             var recommendedVolunteers =
                 await _volunteerRecommendationService.RecommendAsync(
                     disaster,
                     cancellationToken);
 
-            // ---------------------------------------------------
-            // Response
-            // ---------------------------------------------------
 
             await _hybridCache.RemoveByTagAsync("disasters");
             return new CreateDisasterDto(

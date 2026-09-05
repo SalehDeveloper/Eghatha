@@ -1,5 +1,9 @@
 ﻿using Eghatha.Api.Infrastructure;
+using Eghatha.Api.Middlewares;
+using Eghatha.Infastructure.RealTime.Admin;
+using Eghatha.Infastructure.RealTime.Team;
 using Microsoft.AspNetCore.RateLimiting;
+using Scalar.AspNetCore;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
@@ -12,12 +16,12 @@ namespace Eghatha.Api
         public static IServiceCollection AddPresentation(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddCustomProblemDetails()
+                .AddOpenApi()
                .AddCustomApiVersioning()
                .AddExceptionHandling()
                .AddControllerWithJsonConfiguration()
                .AddAppRateLimiting()
                .AddAppOutputCaching()
-               // .AddCustomLocalization()
                .AddSignalR();
 
             return services;
@@ -106,24 +110,62 @@ namespace Eghatha.Api
             return services;
         }
 
-        public static IServiceCollection AddCustomLocalization(this IServiceCollection services)
+        public static IServiceCollection AddCors(this IServiceCollection services)
         {
-            services.AddLocalization(opt => opt.ResourcesPath = "Resources");
-            services.AddSingleton<IDomainErrorLocalizer, DomainErrorLocalizer>();
+            var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
-            services.Configure<RequestLocalizationOptions>(options =>
+            services.AddCors(options =>
             {
-                var supportedCultures = new[] { "ar-SA", "en-US" };
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  policy =>
+                                  {
+                                      policy.WithOrigins("https://localhost:7243")
+                                            .AllowAnyHeader()
+                                            .AllowAnyMethod()
+                                            .AllowCredentials();
 
-                options.SetDefaultCulture("ar-SA")
-                       .AddSupportedCultures(supportedCultures)
-                       .AddSupportedUICultures(supportedCultures);
+                                  });
             });
 
             return services;
         }
+
+        public static IServiceCollection AddOpenApi(this IServiceCollection services)
+        {
+            services.AddOpenApi(options =>
+            {
+                options.AddDocumentTransformer((document, context, cancellationToken) =>
+                {
+                    document.Servers.Clear();
+                    document.Servers.Add(new()
+                    {
+                        Url = "/"
+                    });
+
+                    return Task.CompletedTask;
+                });
+            });
+
+            return services;
+        }
+        public static WebApplication MapApiDocs(this WebApplication app)
+        {
+            app.MapOpenApi();
+
+            app.MapScalarApiReference(options =>
+            {
+                options.WithTitle("Eghatha API")
+                       .WithTheme(ScalarTheme.BluePlanet)
+                       .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+            });
+
+            return app;
+        }
+
         public static IApplicationBuilder UseCoreMiddlewares(this IApplicationBuilder app, IConfiguration configuration)
         {
+
+            app.UseMiddleware<LocalizationMiddleware>();
 
             app.UseExceptionHandler();
 
@@ -144,6 +186,12 @@ namespace Eghatha.Api
             return app;
         }
 
+        public static IEndpointRouteBuilder MapHubs(this IEndpointRouteBuilder app)
+        {
+            app.MapHub<AdminHub>(AdminHub.HubUrl);
+            app.MapHub<TeamHub>(TeamHub.HubUrl);
 
+            return app;
+        }
     }
 }

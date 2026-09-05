@@ -1,15 +1,11 @@
 ﻿using Eghatha.Application.Common.Authentication;
 using Eghatha.Application.Common.Errors;
+using Eghatha.Application.Common.Messages;
 using Eghatha.Application.Common.Models;
 using Eghatha.Application.Common.Services;
 using ErrorOr;
 using MediatR;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Eghatha.Application.Features.Authentication.Commands.ResendEmailConfirmationCode
 {
@@ -52,7 +48,7 @@ namespace Eghatha.Application.Features.Authentication.Commands.ResendEmailConfir
                _otpSettings.EmailExpirationMinutes
             );
 
-            return $"We've sent a code to your email address. Please check your inbox to confirm your email.";
+            return ApplicationMessages.EmailConfirmationCodeSent;
         }
     }
 }

@@ -55,7 +55,7 @@ namespace Eghatha.Api.Controllers
         {
 
             if (!VolunteerSpeciality.TryFromName(request.Speciality, true, out var speciality))
-                return Problem(ErrorLocalizer.Localize( VolunteerErrors.SpecialityInvalid));
+                return Problem( VolunteerErrors.SpecialityInvalid);
 
             var command = new CreateVolunteerCommand(request.FirstName,
                 request.LastName,
@@ -97,7 +97,7 @@ namespace Eghatha.Api.Controllers
             {
 
                 if (!VolunteerSpeciality.TryFromName(filter.Speciality, true, out var _))
-                    return Problem(ErrorLocalizer.Localize(VolunteerErrors.SpecialityInvalid));
+                    return Problem(VolunteerErrors.SpecialityInvalid);
                
             }
 
@@ -266,7 +266,7 @@ namespace Eghatha.Api.Controllers
             {
 
                 if (!EquipmentCategory.TryFromName(request.Category, true, out var parsed))
-                    return Problem(ErrorLocalizer.Localize(EquipmentErrors.UnSupportedCategory));
+                    return Problem(EquipmentErrors.UnSupportedCategory);
                 category = parsed;
             }
             var command = new AddVolunteerEquipmentCommand(
@@ -363,7 +363,7 @@ namespace Eghatha.Api.Controllers
             if (request.Status is not null)
             {
                 if (!EquipmentStatus.TryFromName(request.Status, true, out var parsed))
-                    return Problem(ErrorLocalizer.Localize(EquipmentErrors.InvalidStatus));
+                    return Problem(EquipmentErrors.InvalidStatus);
 
                 status = parsed;
             }
@@ -372,8 +372,8 @@ namespace Eghatha.Api.Controllers
 
             if (request.Category is not null)
             {
-                if (!EquipmentCategory.TryFromName(request.Status, true, out var parsed))
-                    return Problem(ErrorLocalizer.Localize( EquipmentErrors.UnSupportedCategory));
+                if (!EquipmentCategory.TryFromName(request.Category, true, out var parsed))
+                    return Problem(EquipmentErrors.UnSupportedCategory);
 
                 category = parsed;
             }
@@ -502,7 +502,7 @@ namespace Eghatha.Api.Controllers
             {
 
                 if (!EquipmentCategory.TryFromName(filter.Category, true, out var _))
-                    return Problem( ErrorLocalizer.Localize(EquipmentErrors.UnSupportedCategory));
+                    return Problem( EquipmentErrors.UnSupportedCategory);
                 
             }
 
@@ -534,7 +534,7 @@ namespace Eghatha.Api.Controllers
             {
 
                 if (!VolunteerSpeciality.TryFromName(filter.Speciality, true, out var _))
-                    return Problem(ErrorLocalizer.Localize(VolunteerErrors.SpecialityInvalid));
+                    return Problem(VolunteerErrors.SpecialityInvalid);
              
             }
 

@@ -189,4 +189,10 @@
   <data name="TeamErrors.Status.Required" xml:space="preserve">
     <value>حالة الفريق مطلوبة</value>
   </data>
+  <data name="TeamErrors_AdminId_Required" xml:space="preserve">
+    <value>عرف الادمن الذي قام بانشاء الفريق مطلوب</value>
+  </data>
+  <data name="TeamErrors_Resource_InvalidType" xml:space="preserve">
+    <value>نوع المورد غير موجود</value>
+  </data>
 </root>

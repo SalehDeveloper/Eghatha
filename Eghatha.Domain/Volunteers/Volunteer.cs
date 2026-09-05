@@ -1,11 +1,9 @@
 ﻿using Eghatha.Domain.Abstractions;
 using Eghatha.Domain.Shared.Errors;
 using Eghatha.Domain.Shared.ValueObjects;
-using Eghatha.Domain.Teams;
 using Eghatha.Domain.Volunteers.Equipments;
 using Eghatha.Domain.Volunteers.Events;
 using ErrorOr;
-using Microsoft.AspNetCore.Http;
 
 
 namespace Eghatha.Domain.Volunteers
@@ -56,13 +54,13 @@ namespace Eghatha.Domain.Volunteers
             Status = status;
             Speciality = speciality;
             Location = location;
-            City= city; 
-            Province= province; 
+            City = city;
+            Province = province;
             YearsOfExperience = yearsOfExperience;
             Cv = cv;
             TotalMissions = 0;
             TotalScore = 0;
-         
+
 
         }
 
@@ -72,11 +70,11 @@ namespace Eghatha.Domain.Volunteers
             VolunteerSpeciality speciality,
             GeoLocation location,
             string province,
-            string city , 
+            string city,
             int yearsOfExperience,
             string cv)
-          
-            
+
+
         {
             if (id == Guid.Empty)
                 return DomainErrors.IdMustBeProvided(nameof(Volunteer));
@@ -108,7 +106,7 @@ namespace Eghatha.Domain.Volunteers
                 return VolunteerErrors.ExperienceMustBeGreaterThanZero;
 
 
-            var volunteer =  new  Volunteer(
+            var volunteer = new Volunteer(
                 id,
                 userId,
                 status,
@@ -150,10 +148,10 @@ namespace Eghatha.Domain.Volunteers
             if (location is null)
                 return VolunteerErrors.LocationRequired;
 
-           
+
             Location = location;
             City = city;
-            Province= province;
+            Province = province;
             return Result.Updated;
         }
 
@@ -194,7 +192,7 @@ namespace Eghatha.Domain.Volunteers
 
             _equipments.Add(equipment.Value);
 
-           
+
 
             return equipment.Value;
         }

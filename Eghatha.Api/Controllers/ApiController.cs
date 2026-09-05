@@ -14,9 +14,7 @@ namespace Eghatha.Api.Controllers
         {
             _sender = sender;
         }
-        //private IDomainErrorLocalizer? _errorLocalizer;
-        //protected IDomainErrorLocalizer ErrorLocalizer =>
-        //    _errorLocalizer ??= HttpContext.RequestServices.GetRequiredService<IDomainErrorLocalizer>();
+
         protected IActionResult ValidationProblem(List<Error> errors)
         {
 

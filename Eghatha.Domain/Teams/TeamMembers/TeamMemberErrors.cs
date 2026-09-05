@@ -1,32 +1,26 @@
 ﻿using Ardalis.SmartEnum;
-using Eghatha.Domain.Disasters;
 using ErrorOr;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Eghatha.Domain.Teams.TeamMembers
 {
     public class TeamMemberErrors : SmartEnum<TeamMemberErrors>
     {
-        public static readonly Error JobTitleRequired= Error.Validation(
+        public static readonly Error JobTitleRequired = Error.Validation(
             code: "TeamErrors.Member.JobTitleRequired",
-            description: "Job title is required.");
+            description: Resources.TeamErrors.TeamErrors_Member_JobTitleRequired);
 
         public static Error CannotSetToActiveWhenInMission = Error.Conflict(
        code: "TeamErrors.Member.Status.CannotSetToActiveWhenInMission",
-       description: "Cannot set team-member status to active when it's on a mission.");
+       description: Resources.TeamErrors.TeamErrors_Member_Status_CannotSetToActiveWhenInMission);
 
 
         public static Error StatusRequired = Error.Validation(
             code: "TeamErrors.Member.Status.Required",
-            description: "Team-Member status is required.");
+            description: Resources.TeamErrors.TeamErrors_Member_Status_Required);
 
         public static Error InvalidStatus = Error.Validation(
            code: "TeamErrors.Member.Status.Invalid",
-           description: "Team-Member status is invalid.");
+           description: Resources.TeamErrors.TeamErrors_Member_Status_Invalid);
 
         public static Error InvalidStatusTransition(TeamMemberStatus current, TeamMemberStatus next) => Error.Conflict(
    code: "TeamErrors.Member.InvalidStatusTransition",

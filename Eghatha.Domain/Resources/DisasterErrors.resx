@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- DisasterErrors -->
+  <data name="DisasterErrors_ReporterNameRequired" xml:space="preserve">
+    <value>reporter name is required</value>
+  </data>
+  <data name="DisasterErrors_ReporterContactRequired" xml:space="preserve">
+    <value>reporter contact is required</value>
+  </data>
+  <data name="DisasterErrors_ReporterIdRequired" xml:space="preserve">
+    <value>reporter Id is required</value>
+  </data>
+  <data name="DisasterErrors_TitleRequired" xml:space="preserve">
+    <value>title is required</value>
+  </data>
+  <data name="DisasterErrors_DescriptionRequired" xml:space="preserve">
+    <value>description is required</value>
+  </data>
+  <data name="DisasterErrors_LocationRequired" xml:space="preserve">
+    <value>location is required</value>
+  </data>
+  <data name="DisasterErrors_ReporterInfoRequired" xml:space="preserve">
+    <value>reporter info is required</value>
+  </data>
+  <data name="DisasterErrors_CustomTypeDescriptionRequired" xml:space="preserve">
+    <value>description type is required</value>
+  </data>
+  <data name="DisasterErrors_InvalidParticipantScore" xml:space="preserve">
+    <value>participant Scores must be between 1 and 5</value>
+  </data>
+  <data name="DisasterErrors_VolunteerAlreadyAssigned" xml:space="preserve">
+    <value>volunteer already assigned to disaster</value>
+  </data>
+  <data name="DisasterErrors_CannotAssignVolunteerWhenNotInValidStatus" xml:space="preserve">
+    <value>you cannot assign a volunteer when disaster not in a reported or in-progress status</value>
+  </data>
+  <data name="DisasterErrors_CannotAssignResourceWhenNotInValidStatus" xml:space="preserve">
+    <value>you cannot assign a resource when disaster not in a reported or in-progress status</value>
+  </data>
+  <data name="DisasterErrors_CannotRemoveVolunteerWhenNotReported" xml:space="preserve">
+    <value>you cannot remove a volunteer when disaster not in repoted status</value>
+  </data>
+  <data name="DisasterErrors_CannotAddAffectedPersonsWhenNotResolved" xml:space="preserve">
+    <value>you cannot add affected persons when disaster not in resolved status</value>
+  </data>
+  <data name="DisasterErrors_CannotUpdateAffectedPersonsWhenDisasterNotResolved" xml:space="preserve">
+    <value>you cannot updated affected persons when disaster not in resolved status</value>
+  </data>
+  <data name="DisasterErrors_CannotGenerateReportWhenDisasterNotClosed" xml:space="preserve">
+    <value>report cannot be generated if the disaster is not closed</value>
+  </data>
+  <data name="DisasterErrors_Volunteer_NotFound" xml:space="preserve">
+    <value>volunteer is not assinged to this disaster</value>
+  </data>
+  <data name="DisasterErrors_ResourceQuantityshouldBeGreaterThanZero" xml:space="preserve">
+    <value>resource allocated for a disaster should be greater then zero</value>
+  </data>
+  <data name="DisasterErrors_AffectedPerson_NotFound" xml:space="preserve">
+    <value>affected person no found in this disaster</value>
+  </data>
+  <data name="DisasterErrors_ReportAlreadyExist" xml:space="preserve">
+    <value>disaster already has a report</value>
+  </data>
+  <data name="DisasterErrors_CannotAssignTeamWhenNotInValidStatus" xml:space="preserve">
+    <value>you cannot assign a team when disaster not in a reported or in-progress status</value>
+  </data>
+  <data name="DisasterErrors_TeamAlreadyAssigned" xml:space="preserve">
+    <value>team already assigned to disaster</value>
+  </data>
+  <data name="DisasterErrors_Team_NotFound" xml:space="preserve">
+    <value>team is not assinged to this disaster</value>
+  </data>
+  <data name="DisasterErrors_Type_Invalid" xml:space="preserve">
+    <value>disaster type is invalid.</value>
+  </data>
+  <data name="DisasterErrors_ProvinceRequired" xml:space="preserve">
+    <value>province is required</value>
+  </data>
+  <data name="DisasterErrors_CityRequired" xml:space="preserve">
+    <value>city is required</value>
+  </data>
+  <data name="DisasterErrors_TeamNotAssignedToDisaster" xml:space="preserve">
+    <value>team not assigned to this disaster</value>
+  </data>
+  <data name="DisasterErrors_InvalidStatus" xml:space="preserve">
+    <value>invalid disaster status</value>
+  </data>
+  <data name="DisasterErrors_FailedToAssign" xml:space="preserve">
+    <value>failed to assign volunteer is already assigned or not available now</value>
+  </data>
+  <data name="DisasterErrors_CannotArchiveWithoutReport" xml:space="preserve">
+    <value>report must be generated before archiving the disaster</value>
+  </data>
+  <data name="DisasterErrors_CannotCloseDisasterWithUnevaluatedVolunteers" xml:space="preserve">
+    <value>all volunteers must be evaluated before closing the disaster</value>
+  </data>
+  <data name="DisasterErrors_CannotCloseDisasterWithUnmanagedResources" xml:space="preserve">
+    <value>all resources must be managed before closing the disaster</value>
+  </data>
+
+  <!-- DisasterResourceErrors -->
+  <data name="DisasterErrors_ResourceConsumptionExceedsSent" xml:space="preserve">
+    <value>resource consumption exceeds sent quantity</value>
+  </data>
+  <data name="DisasterErrors_InvalidReturnQuantity" xml:space="preserve">
+    <value>return quantity cannot exceed remaining quantity</value>
+  </data>
+  <data name="DisasterErrors_InvalidDamagedQuantity" xml:space="preserve">
+    <value>damaged quantity cannot exceed remaining quantity</value>
+  </data>
+  <data name="DisasterErrors_ResourceNotFound" xml:space="preserve">
+    <value>resource not found</value>
+  </data>
+  <data name="DisasterErrors_ResourceIsNotConsumable" xml:space="preserve">
+    <value>reousnce is not consumable</value>
+  </data>
+
+  <!-- AffectedPersonErrors -->
+  <data name="DisasterErrors_AffectedPerson_Name_Required" xml:space="preserve">
+    <value>Name is required.</value>
+  </data>
+  <data name="DisasterErrors_AffectedPerson_Age_Invalid" xml:space="preserve">
+    <value>age should be greater than zero.</value>
+  </data>
+  <data name="DisasterErrors_AffectedPerson_Status_Invalid" xml:space="preserve">
+    <value>invalid status.</value>
+  </data>
+</root>

@@ -1,76 +1,78 @@
 ﻿using ErrorOr;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Eghatha.Application.Common.Errors
 {
-    public  static class ApplicationErrors
+    public static class ApplicationErrors
     {
         public static readonly Error InvalidRefreshToken = Error.Unauthorized(
            code: "Auth.InvalidRefreshToken",
-           description: "Invalid RefreshToken.");
+           description: Resources.ApplicationErrors.Auth_InvalidRefreshToken);
 
         public static readonly Error InvalidOtp = Error.Conflict(
            code: "Auth.InvalidOtp",
-           description: "Otp code is wrong or expired.");
+           description: Resources.ApplicationErrors.Auth_InvalidOtp);
 
 
         public static readonly Error EmailAlreadyConfirmed = Error.Conflict(
            code: "Auth.EmailAlreadyConfirmed",
-           description: "Email is already confirmed.");
+           description: Resources.ApplicationErrors.Auth_EmailAlreadyConfirmed);
 
         public static readonly Error TeamNotFound = Error.NotFound(
             code: "Team.NotFound",
-            description: "Team not found.");
+            description: Resources.ApplicationErrors.Team_NotFound);
+
+        public static readonly Error TeamNotAvailable = Error.Conflict(
+           code: "Team.NotAvailable",
+           description: Resources.ApplicationErrors.Team_NotAvailable);
+
+
+
         public static readonly Error DisasterNotFound = Error.NotFound(
          code: "Disaster.NotFound",
-         description: "Disaster not found.");
+         description: Resources.ApplicationErrors.Disaster_NotFound);
 
 
         public static readonly Error VolunteerNotFound = Error.NotFound(
             code: "Volunteer.NotFound",
-            description: "Volunteer not found.");
+            description: Resources.ApplicationErrors.Volunteer_NotFound);
 
         public static readonly Error DisasterResourceNotFound = Error.NotFound(
          code: "DisasterResourceNotFound.NotFound",
-         description: "Disaster-resource not found.");
+         description: Resources.ApplicationErrors.DisasterResourceNotFound_NotFound);
 
         public static readonly Error RegisterationNotFound = Error.NotFound(
            code: "RegisterationNotFound.NotFound",
-           description: "Volunteer registeration not found.");
+           description: Resources.ApplicationErrors.RegisterationNotFound_NotFound);
 
         public static readonly Error UserWithEmailAlreadyExitst = Error.Conflict(
             code: "User.UserWithEmailAlreadyExitst",
-            description:"user with this email alreadt exist");
+            description: Resources.ApplicationErrors.User_UserWithEmailAlreadyExitst);
 
 
         public static readonly Error NotificationNotFound = Error.NotFound(
             code: "Notification.NotFound",
-            description: "notification not found.");
+            description: Resources.ApplicationErrors.Notification_NotFound);
 
         public static readonly Error RefreshTokenExpired = Error.Conflict(
       code: "Auth.RefreshToken.Expired",
-      description: "Refresh token is invalid or has expired.");
+      description: Resources.ApplicationErrors.Auth_RefreshToken_Expired);
 
         public static readonly Error UserIdClaimInvalid = Error.Conflict(
     code: "Auth.UserIdClaim.Invalid",
-    description: "Invalid userId claim.");
+    description: Resources.ApplicationErrors.Auth_UserIdClaim_Invalid);
 
 
         public static readonly Error ExpiredAccessTokenInvalid = Error.Conflict(
         code: "Auth.ExpiredAccessToken.Invalid",
-        description: "Expired access token is not valid.");
+        description: Resources.ApplicationErrors.Auth_ExpiredAccessToken_Invalid);
 
         public static readonly Error NoTeamCurrentDisaster = Error.NotFound(
             code: "Team.NoCurrentDisaster",
-            description: "team has no current disaster");
+            description: Resources.ApplicationErrors.Team_NoCurrentDisaster);
 
         public static readonly Error NoVolunteerCurrentDisaster = Error.NotFound(
            code: "Volunteer.NoCurrentDisaster",
-           description: "volunteer has no current disaster");
+           description: Resources.ApplicationErrors.Volunteer_NoCurrentDisaster);
 
     }
 }

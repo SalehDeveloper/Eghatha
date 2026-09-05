@@ -1,4 +1,5 @@
-﻿using Eghatha.Application.Common.Interfaces;
+﻿using Eghatha.Application.Common.Errors;
+using Eghatha.Application.Common.Interfaces;
 using Eghatha.Domain.Abstractions;
 using ErrorOr;
 using MediatR;
@@ -25,11 +26,11 @@ namespace Eghatha.Application.Features.Notifications.Commands.MarkAllAsRead
         {
             var userId = _user.Id.Value;
 
-            var result = await _notificationRepository.GetNotificationRecipientsByUserIdAsync( userId, cancellationToken);
-           
+            var result = await _notificationRepository.GetNotificationRecipientsByUserIdAsync(userId, cancellationToken);
+
             if (result is null || !result.Any())
             {
-                return Error.NotFound("Notifications.NotFound", "No notifications found for the user.");
+                return ApplicationErrors.NotificationNotFound;
             }
 
             foreach (var recipient in result)

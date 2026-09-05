@@ -58,7 +58,7 @@ namespace Eghatha.Api.Controllers
         public async Task<IActionResult> CreateTeam(CreateTeamRequest request, CancellationToken cancellationToken)
         {
             if (!TeamSpeciality.TryFromName(request.Speciality, true, out var speciality))
-                return Problem(ErrorLocalizer.Localize(TeamErrors.InvalidSpeciality));
+                return Problem(TeamErrors.InvalidSpeciality);
 
             var command = new CreateTeamCommand(request.Name, speciality, request.Latitude, request.Longitude);
 
@@ -96,7 +96,7 @@ namespace Eghatha.Api.Controllers
             if (request.Speciality is not null)
             {
                 if (!TeamSpeciality.TryFromName(request.Speciality, true, out var parsed))
-                    return Problem(ErrorLocalizer.Localize(TeamErrors.InvalidSpeciality));
+                    return Problem(TeamErrors.InvalidSpeciality);
 
                 speciality = parsed;
             }
@@ -389,7 +389,7 @@ namespace Eghatha.Api.Controllers
             if (request.resourceType is not null)
             {
                 if (!ResourceType.TryFromName(request.resourceType, true, out var parsed))
-                    return Problem(ErrorLocalizer.Localize( TeamErrors.InvalidSpeciality));
+                    return Problem(TeamErrors.InvalidSpeciality);
 
                 type = parsed;
             }
@@ -473,7 +473,7 @@ namespace Eghatha.Api.Controllers
             {
 
                 if (!TeamSpeciality.TryFromName(filter.Speciality, true, out var _))
-                    return Problem(ErrorLocalizer.Localize(TeamErrors.InvalidSpeciality));
+                    return Problem(TeamErrors.InvalidSpeciality);
 
             }
 
@@ -483,7 +483,7 @@ namespace Eghatha.Api.Controllers
             {
 
                 if (!TeamStatus.TryFromName(filter.Status, true, out var _))
-                    return Problem(ErrorLocalizer.Localize( TeamErrors.InvalidStatus));
+                    return Problem( TeamErrors.InvalidStatus);
 
             }
 
@@ -588,7 +588,7 @@ namespace Eghatha.Api.Controllers
             {
 
                 if (!TeamMemberStatus.TryFromName(filter.MemberStatus, true, out var parsed))
-                    return Problem(ErrorLocalizer.Localize( TeamErrors.InvalidSpeciality));
+                    return Problem(TeamErrors.InvalidSpeciality);
                 status = parsed;
             }
 
@@ -622,7 +622,7 @@ namespace Eghatha.Api.Controllers
             {
 
                 if (!ResourceType.TryFromName(filter.Type, true, out var parsed))
-                    return Problem(ErrorLocalizer.Localize(TeamErrors.InvalidSpeciality));
+                    return Problem(TeamErrors.InvalidSpeciality);
                 type = parsed;
             }
 

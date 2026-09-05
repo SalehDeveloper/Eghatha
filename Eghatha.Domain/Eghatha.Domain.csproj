@@ -15,25 +15,70 @@
 		<PackageReference Include="OpenAI" Version="2.13.0" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Compile Update="Resources\TeamErrorsTest.Designer.cs">
+	  <Compile Update="Resources\DisasterErrors.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
-	    <DependentUpon>TeamErrorsTest.resx</DependentUpon>
+	    <DependentUpon>DisasterErrors.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\DomainErrors.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>DomainErrors.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\NotificationErrors.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>NotificationErrors.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\RefreshTokenErrors.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>RefreshTokenErrors.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\TeamErrors.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>TeamErrors.resx</DependentUpon>
 	  </Compile>
 	  <Compile Update="Resources\VolunteerErrors.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>VolunteerErrors.resx</DependentUpon>
 	  </Compile>
+	  <Compile Update="Resources\VolunteerRegisterationErrors.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>VolunteerRegisterationErrors.resx</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 	<ItemGroup>
-	  <EmbeddedResource Update="Resources\TeamErrorsTest.resx">
+	  <EmbeddedResource Update="Resources\DisasterErrors.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>
-	    <LastGenOutput>TeamErrorsTest.Designer.cs</LastGenOutput>
+	    <LastGenOutput>DisasterErrors.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\DomainErrors.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>DomainErrors.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\NotificationErrors.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>NotificationErrors.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\RefreshTokenErrors.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>RefreshTokenErrors.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\TeamErrors.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>TeamErrors.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="Resources\VolunteerErrors.resx">
 	    <Generator>PublicResXFileCodeGenerator</Generator>
 	    <LastGenOutput>VolunteerErrors.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\VolunteerRegisterationErrors.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>VolunteerRegisterationErrors.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	</ItemGroup>
 

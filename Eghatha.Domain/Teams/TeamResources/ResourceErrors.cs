@@ -1,10 +1,4 @@
-﻿using Ardalis.SmartEnum;
-using ErrorOr;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ErrorOr;
 
 namespace Eghatha.Domain.Teams.TeamResources
 {
@@ -12,34 +6,34 @@ namespace Eghatha.Domain.Teams.TeamResources
     {
         public static readonly Error InvalidResourceType = Error.Validation(
             code: "TeamErrors.Resource.InvalidType",
-            description: "The provided resource type is invalid."
+            description: Resources.TeamErrors.TeamErrors_Resource_InvalidType
         );
 
         public static readonly Error ResourceTypeRequired = Error.Validation(
             code: "TeamErrors.Resource.TypeRequired",
-            description: "The resource type is required."
+            description: Resources.TeamErrors.TeamErrors_Resource_TypeRequired
         );
 
         public static readonly Error StatusRequired = Error.Validation(
             code: "TeamErrors.Resource.StatusRequired",
-            description: "The resource status is required."
+            description: Resources.TeamErrors.TeamErrors_Resource_StatusRequired
         );
 
 
         public static readonly Error QuantityShouldBeGreaterThanZero = Error.Validation(
             code: "TeamErrors.Resource.QuantityInvalid",
-            description: "The quantity should be greater than or equal to zero.");
+            description: Resources.TeamErrors.TeamErrors_Resource_QuantityInvalid);
 
-        public static readonly Error   NotEnoughResources = Error.Conflict(
+        public static readonly Error NotEnoughResources = Error.Conflict(
             code: "TeamErrors.Resource.NotEnough",
-            description: "Not enough resources available to perform the operation."
+            description: Resources.TeamErrors.TeamErrors_Resource_NotEnough
 
 
         );
-    
+
         public static Error NotFound = Error.NotFound(
             code: "TeamErrors.Resource.NotFound",
-            description: "The specified resource was not found."
+            description: Resources.TeamErrors.TeamErrors_Resource_NotFound
         );
     }
 }

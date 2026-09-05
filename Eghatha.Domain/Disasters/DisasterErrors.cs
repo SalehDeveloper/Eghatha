@@ -1,9 +1,4 @@
 ﻿using ErrorOr;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Eghatha.Domain.Disasters
 {
@@ -11,35 +6,35 @@ namespace Eghatha.Domain.Disasters
     {
         public static Error ReporterNameRequired = Error.Validation(
             code: "DisasterErrors.ReporterNameRequired",
-            description: "reporter name is required");
+            description: Resources.DisasterErrors.DisasterErrors_ReporterNameRequired);
 
         public static Error ReporterContactRequired = Error.Validation(
             code: "DisasterErrors.ReporterContactRequired",
-            description: "reporter contact is required");
+            description: Resources.DisasterErrors.DisasterErrors_ReporterContactRequired);
 
         public static Error ReporterIdRequired = Error.Validation(
               code: "DisasterErrors.ReporterIdRequired",
-            description: "reporter Id is required");
+            description: Resources.DisasterErrors.DisasterErrors_ReporterIdRequired);
 
         public static Error TitleRequired = Error.Validation(
            code: "DisasterErrors.TitleRequired",
-            description: "title is required");
+            description: Resources.DisasterErrors.DisasterErrors_TitleRequired);
 
         public static Error DescriptionRequired = Error.Validation(
         code: "DisasterErrors.DescriptionRequired",
-         description: "description is required");
+         description: Resources.DisasterErrors.DisasterErrors_DescriptionRequired);
 
         public static Error LocationRequired = Error.Validation(
         code: "DisasterErrors.LocationRequired",
-         description: "location is required");
+         description: Resources.DisasterErrors.DisasterErrors_LocationRequired);
 
         public static Error ReporterInfoRequired = Error.Validation(
        code: "DisasterErrors.ReporterInfoRequired",
-        description: "reporter info is required");
+        description: Resources.DisasterErrors.DisasterErrors_ReporterInfoRequired);
 
         public static Error CustomTypeDescriptionRequired = Error.Validation(
             code: "DisasterErrors.CustomTypeDescriptionRequired",
-        description: "description type is required");
+        description: Resources.DisasterErrors.DisasterErrors_CustomTypeDescriptionRequired);
 
         public static Error InvalidStatusTransition(DisasterStatus current, DisasterStatus next) => Error.Conflict(
         code: "DisasterErrors.InvalidStatusTransition",
@@ -47,101 +42,101 @@ namespace Eghatha.Domain.Disasters
 
         public static Error InvalidScore = Error.Validation(
             code: "DisasterErrors.InvalidParticipantScore",
-            description: "participant Scores must be between 1 and 5");
+            description: Resources.DisasterErrors.DisasterErrors_InvalidParticipantScore);
 
         public static Error VolunteerAlreadyAssigned = Error.Conflict(
             code: "DisasterErrors.VolunteerAlreadyAssigned",
-            description: "volunteer already assigned to disaster");
+            description: Resources.DisasterErrors.DisasterErrors_VolunteerAlreadyAssigned);
 
         public static Error CannotAssignVolunteerWhenNotInValidStatus = Error.Conflict(
             code: "DisasterErrors.CannotAssignVolunteerWhenNotInValidStatus",
-            description:"you cannot assign a volunteer when disaster not in a reported or in-progress status ");
+            description: Resources.DisasterErrors.DisasterErrors_CannotAssignVolunteerWhenNotInValidStatus);
 
 
         public static Error CannotAssignResourceWhenNotInValidStatus = Error.Conflict(
                code: "DisasterErrors.CannotAssignResourceWhenNotInValidStatus",
-               description: "you cannot assign a resource when disaster not in a reported or in-progress status ");
+               description: Resources.DisasterErrors.DisasterErrors_CannotAssignResourceWhenNotInValidStatus);
 
         public static Error CannotRemoveVolunteerWhenNotInReportedStatus = Error.Conflict(
            code: "DisasterErrors.CannotRemoveVolunteerWhenNotReported",
-           description: "you cannot remove a volunteer when disaster not in repoted status");
+           description: Resources.DisasterErrors.DisasterErrors_CannotRemoveVolunteerWhenNotReported);
 
         public static Error CannotAddAffectedPersonsWhenDisasterNotResolved = Error.Conflict(
             code: "DisasterErrors.CannotAddAffectedPersonsWhenNotResolved",
-            description: "you cannot add affected persons when disaster not in resolved status");
+            description: Resources.DisasterErrors.DisasterErrors_CannotAddAffectedPersonsWhenNotResolved);
 
         public static Error CannotUpdateAffectedPersonsWhenDisasterNotResolved = Error.Conflict(
            code: "DisasterErrors.CannotUpdateAffectedPersonsWhenDisasterNotResolved",
-           description: "you cannot updated affected persons when disaster not in resolved status");
+           description: Resources.DisasterErrors.DisasterErrors_CannotUpdateAffectedPersonsWhenDisasterNotResolved);
 
         public static Error CannotGenerateReportWhenDisasterNotClosed = Error.Conflict(
             code: "DisasterErrors.CannotGenerateReportWhenDisasterNotClosed",
-            description:"report cannot be generated if the disaster is not closed");
+            description: Resources.DisasterErrors.DisasterErrors_CannotGenerateReportWhenDisasterNotClosed);
 
 
         public static Error volunteerNotFound = Error.NotFound(
             code: "DisasterErrors.Volunteer.NotFound",
-            description:"volunteer is not assinged to this disaster");
+            description: Resources.DisasterErrors.DisasterErrors_Volunteer_NotFound);
 
         public static Error ResourceQuantityshouldBeGreaterThanZero = Error.Validation(
             code: "DisasterErrors.ResourceQuantityshouldBeGreaterThanZero",
-            description:"resource allocated for a disaster should be greater then zero");
+            description: Resources.DisasterErrors.DisasterErrors_ResourceQuantityshouldBeGreaterThanZero);
 
         public static Error AffectedPeronNotFound = Error.NotFound(
             code: "DisasterErrors.AffectedPerson.NotFound",
-            description: "affected person no found in this disaster");
+            description: Resources.DisasterErrors.DisasterErrors_AffectedPerson_NotFound);
 
         public static Error ReportAlreadyExists = Error.Conflict(
             code: "DisasterErrors.ReportAlreadyExist",
-            description: "disaster already has a report");
+            description: Resources.DisasterErrors.DisasterErrors_ReportAlreadyExist);
 
         public static Error CannotAssignTeamWhenNotInValidStatus = Error.Conflict(
           code: "DisasterErrors.CannotAssignTeamWhenNotInValidStatus",
-          description: "you cannot assign a team when disaster not in a reported or in-progress status ");
+          description: Resources.DisasterErrors.DisasterErrors_CannotAssignTeamWhenNotInValidStatus);
 
         public static Error TeamAlreadyAssigned = Error.Conflict(
           code: "DisasterErrors.TeamAlreadyAssigned",
-          description: "team already assigned to disaster");
+          description: Resources.DisasterErrors.DisasterErrors_TeamAlreadyAssigned);
 
         public static Error TeamNotFound = Error.NotFound(
           code: "DisasterErrors.Team.NotFound",
-          description: "team is not assinged to this disaster");
+          description: Resources.DisasterErrors.DisasterErrors_Team_NotFound);
 
         public static Error InvalidType = Error.Validation(
         code: "DisasterErrors.Type.Invalid",
-        description: "disaster type is invalid.");
+        description: Resources.DisasterErrors.DisasterErrors_Type_Invalid);
 
         public static Error ProvinceRequired = Error.Validation(
             code: "DisasterErrors.ProvinceRequired",
-            description: "province is required");
+            description: Resources.DisasterErrors.DisasterErrors_ProvinceRequired);
 
         public static Error CityRequired = Error.Validation(
           code: "DisasterErrors.CityRequired",
-          description: "city is required");
+          description: Resources.DisasterErrors.DisasterErrors_CityRequired);
 
         public static Error TeamNotAssignedToDisaster = Error.Conflict(
             code: "DisasterErrors.TeamNotAssignedToDisaster",
-            description:"team not assigned to this disaster ");
+            description: Resources.DisasterErrors.DisasterErrors_TeamNotAssignedToDisaster);
 
         public static Error InvalidStatus = Error.Validation(
              code: "DisasterErrors.InvalidStatus",
-             description: "invalid disaster status");
+             description: Resources.DisasterErrors.DisasterErrors_InvalidStatus);
 
         public static Error FailedToAssign = Error.Conflict(
             code: "DisasterErrors.FailedToAssign",
-            description: "failed to assign volunteer is already assigned or not available now");
+            description: Resources.DisasterErrors.DisasterErrors_FailedToAssign);
 
         public static Error CannotArchiveWithoutReport = Error.Conflict(
             code: "DisasterErrors.CannotArchiveWithoutReport",
-            description: "report must be generated before archiving the disaster");
+            description: Resources.DisasterErrors.DisasterErrors_CannotArchiveWithoutReport);
 
         public static Error CannotCloseDisasterWithUnevaluatedVolunteers = Error.Conflict(
              code: "DisasterErrors.CannotCloseDisasterWithUnevaluatedVolunteers",
-            description: "all volunteers must be evaluated before closing the disaster");
+            description: Resources.DisasterErrors.DisasterErrors_CannotCloseDisasterWithUnevaluatedVolunteers);
 
         public static Error CannotCloseDisasterWithUnmanagedResources = Error.Conflict(
              code: "DisasterErrors.CannotCloseDisasterWithUnmanagedResources",
-            description: "all resources must be managed before closing the disaster");
+            description: Resources.DisasterErrors.DisasterErrors_CannotCloseDisasterWithUnmanagedResources);
 
     }
 }

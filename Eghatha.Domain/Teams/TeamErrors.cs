@@ -1,10 +1,4 @@
-﻿using Eghatha.Domain.Teams.TeamMembers;
-using ErrorOr;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ErrorOr;
 
 namespace Eghatha.Domain.Teams
 {
@@ -12,67 +6,67 @@ namespace Eghatha.Domain.Teams
     {
         public static Error NameRequired = Error.Validation(
             code: "TeamErrors.Name.Required",
-            description: "Team name is required.");
+            description: Resources.TeamErrors.TeamErrors_Name_Required);
 
 
         public static Error SpecialityRequired = Error.Validation(
             code: "TeamErrors.Speciality.Required",
-            description: "Team speciality is required.");
+            description: Resources.TeamErrors.TeamErrors_Speciality_Required);
 
         public static Error ProvinceRequired = Error.Validation(
             code: "TeamErrors.Province.Required",
-            description: "Team province is required.");
+            description: Resources.TeamErrors.TeamErrors_Province_Required);
 
         public static Error CityRequired = Error.Validation(
             code: "TeamErrors.City.Required",
-            description: "Team city is required.");
+            description: Resources.TeamErrors.TeamErrors_City_Required);
 
         public static Error LocationRequired = Error.Validation(
             code: "TeamErrors.Location.Required",
-            description: "Team location is required.");
+            description: Resources.TeamErrors.TeamErrors_Location_Required);
 
         public static Error LocationMustBeInsyria = Error.Validation(
           code: "TeamErrors.Location.MustBeInSyria",
-          description: "Team location must be within Syria.");
+          description: Resources.TeamErrors.TeamErrors_Location_MustBeInSyria);
 
         public static Error CreatedByAdminIdRequired = Error.Validation(
            code: "TeamErrors.AdminId.Required",
-           description: "id for  admin who created the team is required.");
+           description: Resources.TeamErrors.TeamErrors_AdminId_Required);
 
         public static Error InvalidSpeciality = Error.Validation(
             code: "TeamErrors.Speciality.Invalid",
-            description: "Team speciality is invalid.");
+            description: Resources.TeamErrors.TeamErrors_Speciality_Invalid);
 
         public static Error CannotSetToActiveWhenInMission = Error.Conflict(
             code: "TeamErrors.Status.CannotSetToActiveWhenInMission",
-            description: "Cannot set team status to active when it's on a mission.");
-        
+            description: Resources.TeamErrors.TeamErrors_Status_CannotSetToActiveWhenInMission);
+
         public static Error TeamAlreadyHasLeader = Error.Conflict(
             code: "TeamErrors.AlreadyHasLeader",
-            description: "Team already has a leader.");
+            description: Resources.TeamErrors.TeamErrors_AlreadyHasLeader);
 
         public static Error CannotRemoveMemberWhenInMission = Error.Conflict(
             code: "TeamErrors.CannotRemoveMemberWhenInMission",
-            description: "Cannot remove team member when the team is on a mission.");
+            description: Resources.TeamErrors.TeamErrors_CannotRemoveMemberWhenInMission);
 
         public static Error MemberNotFound = Error.NotFound(
             code: "TeamErrors.MemberNotFound",
-            description: "Team member not found.");
+            description: Resources.TeamErrors.TeamErrors_MemberNotFound);
 
         public static Error CannotRemoveLeader = Error.Conflict(
-             code:"TeamErrors.CannotRemoveLeader",
-             description:"you cannot remove a leader member");
+             code: "TeamErrors.CannotRemoveLeader",
+             description: Resources.TeamErrors.TeamErrors_CannotRemoveLeader);
 
         public static Error StatusRequired = Error.Validation(
             code: "TeamErrors.Status.Required",
-            description: "Team status is required.");
+            description: Resources.TeamErrors.TeamErrors_Status_Required);
 
         public static Error InvalidStatus = Error.Validation(
             code: "TeamErrors.Status.Invalid",
-            description: "Team status is invalid.");
+            description: Resources.TeamErrors.TeamErrors_Status_Invalid);
 
         public static Error MemberMustBeActiveToBecomeLeader =
-        Error.Conflict("TeamErrors.MemberNotActive", "Only active members can become leader.");
+        Error.Conflict("TeamErrors.MemberNotActive", Resources.TeamErrors.TeamErrors_MemberNotActive);
 
         public static Error InvalidStatusTransition(TeamStatus current, TeamStatus next) => Error.Conflict(
  code: "TeamErrors.InvalidStatusTransition",

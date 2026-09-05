@@ -1,10 +1,4 @@
 ﻿using ErrorOr;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Eghatha.Domain.Volunteers
 {
@@ -12,48 +6,48 @@ namespace Eghatha.Domain.Volunteers
     {
         public static Error StatusRequired = Error.Validation(
             code: "VolunteerErrors.StatusRequired",
-            description: "volunteer status is required");
+            description: Resources.VolunteerErrors.VolunteerErrors_StatusRequired);
 
         public static Error StatusInvalid = Error.Validation(
             code: "VolunteerErrors.StatusInvalid",
-            description: "invalid volunteer status ");
+            description: Resources.VolunteerErrors.VolunteerErrors_StatusInvalid);
 
         public static Error SpecialityRequired = Error.Validation(
             code: "VolunteerErrors.SpecialityRequired",
-            description: "volunteer status is required");
+            description: Resources.VolunteerErrors.VolunteerErrors_SpecialityRequired);
 
         public static Error SpecialityInvalid = Error.Validation(
             code: "VolunteerErrors.SpecialityInvalid",
-            description: "invalid volunteer status ");
+            description: Resources.VolunteerErrors.VolunteerErrors_SpecialityInvalid);
 
         public static Error LocationRequired = Error.Validation(
           code: "VolunteerErrors.LocationRequired",
-          description: "volunteer location is required");
+          description: Resources.VolunteerErrors.VolunteerErrors_LocationRequired);
 
         public static Error ExperienceMustBeGreaterThanZero = Error.Validation(
           code: "VolunteerErrors.ExperienceMustBeGreaterThanZero",
-          description: "years of experience must be greater than zero");
+          description: Resources.VolunteerErrors.VolunteerErrors_ExperienceMustBeGreaterThanZero);
 
 
         public static Error EquipmentRequired = Error.Validation(
             code: "VolunteerErrors.EquipmentRequired",
-            description: "volunteer equipment is required");
+            description: Resources.VolunteerErrors.VolunteerErrors_EquipmentRequired);
 
         public static Error EquipmentAlreadyAssigned = Error.Conflict(
             code: "VolunteerErrors.EquipmentAlreadyAssigned",
-            description: "volnteer equipments already has this equipment");
+            description: Resources.VolunteerErrors.VolunteerErrors_EquipmentAlreadyAssigned);
 
         public static Error ScoreMustBeGreaterThanZero = Error.Validation(
             code: "VolunteerErrors.ScoreMustBeGreaterThanZero",
-            description: "Volunteer score should be greater than zero");
+            description: Resources.VolunteerErrors.VolunteerErrors_ScoreMustBeGreaterThanZero);
 
         public static Error CityRequired = Error.Validation(
           code: "VolunteerErrors.City.Required",
-          description: "Team city is required.");
+          description: Resources.VolunteerErrors.VolunteerErrors_City_Required);
 
         public static Error ProvinceRequired = Error.Validation(
             code: "VolunteerErrors.Province.Required",
-            description: "Volunteer province is required.");
+            description: Resources.VolunteerErrors.VolunteerErrors_Province_Required);
 
     }
 }

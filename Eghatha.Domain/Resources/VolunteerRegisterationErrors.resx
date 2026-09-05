@@ -117,76 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="TeamErrors.AlreadyHasLeader" xml:space="preserve">
-    <value>team already has a leader</value>
-  </data>
-  <data name="TeamErrors.CannotRemoveLeader" xml:space="preserve">
-    <value>cannot remove leader</value>
-  </data>
-  <data name="TeamErrors.CannotRemoveMemberWhenInMission" xml:space="preserve">
-    <value>cannot remove member when team in mission</value>
-  </data>
-  <data name="TeamErrors.City.Required" xml:space="preserve">
-    <value>city is required</value>
-  </data>
-  <data name="TeamErrors.Location.MustBeInSyria" xml:space="preserve">
-    <value>team location must be in syria</value>
-  </data>
-  <data name="TeamErrors.Location.Required" xml:space="preserve">
-    <value>location is required</value>
-  </data>
-  <data name="TeamErrors.Member.JobTitleRequired" xml:space="preserve">
-    <value>job-title required</value>
-  </data>
-  <data name="TeamErrors.Member.Status.CannotSetToActiveWhenInMission" xml:space="preserve">
-    <value>member cannot set to active in mission</value>
-  </data>
-  <data name="TeamErrors.Member.Status.Invalid" xml:space="preserve">
-    <value>Member status invalid</value>
-  </data>
-  <data name="TeamErrors.Member.Status.Required" xml:space="preserve">
-    <value>Member status required</value>
-  </data>
-  <data name="TeamErrors.MemberNotActive" xml:space="preserve">
-    <value>member must be active to become a leader</value>
-  </data>
-  <data name="TeamErrors.MemberNotFound" xml:space="preserve">
-    <value>team member not found</value>
-  </data>
-  <data name="TeamErrors.Name.Required" xml:space="preserve">
-    <value>team name is required</value>
-  </data>
-  <data name="TeamErrors.Province.Required" xml:space="preserve">
-    <value>province is required</value>
-  </data>
-  <data name="TeamErrors.Resource.NotEnough" xml:space="preserve">
-    <value>resource quantity not enough to perform the operation</value>
-  </data>
-  <data name="TeamErrors.Resource.NotFound" xml:space="preserve">
-    <value>the specific resource not found</value>
-  </data>
-  <data name="TeamErrors.Resource.QuantityInvalid" xml:space="preserve">
-    <value>resource quantity should be greater than zero</value>
-  </data>
-  <data name="TeamErrors.Resource.StatusRequired" xml:space="preserve">
-    <value>resource status required</value>
-  </data>
-  <data name="TeamErrors.Resource.TypeRequired" xml:space="preserve">
-    <value>resource type required</value>
-  </data>
-  <data name="TeamErrors.Speciality.Invalid" xml:space="preserve">
-    <value>speciality invalid</value>
-  </data>
-  <data name="TeamErrors.Speciality.Required" xml:space="preserve">
-    <value>team speciality is required</value>
-  </data>
-  <data name="TeamErrors.Status.CannotSetToActiveWhenInMission" xml:space="preserve">
-    <value>cannot set to acitve when in mission</value>
-  </data>
-  <data name="TeamErrors.Status.Invalid" xml:space="preserve">
-    <value>invalid team status</value>
-  </data>
-  <data name="TeamErrors.Status.Required" xml:space="preserve">
-    <value>team status required</value>
+  <data name="VolunteerRegisterationErrors_AlreadyProcessed" xml:space="preserve">
+    <value>registeration already processed</value>
   </data>
 </root>
